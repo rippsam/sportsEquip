@@ -37,20 +37,10 @@ var state = {
 var slowTimer = null;
 
 /* ── DOM refs ── */
-var catStrip   = document.getElementById('category-strip');
 var productGrid = document.getElementById('product-grid');
 var loadMoreBtn = document.getElementById('btn-load-more');
 
 /* ── Skeletons ── */
-function showSkeletonChips(n) {
-  catStrip.innerHTML = '';
-  for (var i = 0; i < n; i++) {
-    var s = document.createElement('span');
-    s.className = 'skeleton skeleton-chip';
-    catStrip.appendChild(s);
-  }
-}
-
 function showSkeletonCards(n) {
   productGrid.innerHTML = '';
   for (var i = 0; i < n; i++) {
@@ -60,32 +50,6 @@ function showSkeletonCards(n) {
   }
 }
 
-/* ── Category strip ── */
-function renderCategoryStrip() {
-  catStrip.innerHTML = '';
-
-  var allBtn = document.createElement('button');
-  allBtn.className = 'cat' + (state.activeCategoryId === null ? ' active' : '');
-  allBtn.textContent = 'All';
-  allBtn.addEventListener('click', function() {
-    if (state.activeCategoryId === null) return;
-    setActiveCategory(null);
-  });
-  catStrip.appendChild(allBtn);
-
-  state.visibleCategories.forEach(function(c) {
-    var btn = document.createElement('button');
-    btn.className = 'cat' + (state.activeCategoryId === c.category_id ? ' active' : '');
-    btn.textContent = c.category_name;
-    btn.dataset.categoryId = c.category_id;
-    btn.addEventListener('click', function() {
-      if (state.activeCategoryId === c.category_id) return;
-      setActiveCategory(c.category_id);
-    });
-    catStrip.appendChild(btn);
-  });
-}
-
 function setActiveCategory(catId) {
   state.activeCategoryId = catId;
   state.products   = [];
@@ -93,7 +57,6 @@ function setActiveCategory(catId) {
   state.samplerOffsets = {};
   state.hasMore    = true;
   productGrid.innerHTML = '';
-  renderCategoryStrip();
   loadProducts();
 }
 
@@ -301,7 +264,6 @@ document.addEventListener('DOMContentLoaded', function() {
   var params     = new URLSearchParams(location.search);
   var deptParam  = params.get('dept');
 
-  showSkeletonChips(8);
   showSkeletonCards(8);
   setLoadMoreState('loading');
 
@@ -318,12 +280,9 @@ document.addEventListener('DOMContentLoaded', function() {
       state.visibleCategories = state.allCategories;
     }
 
-    renderCategoryStrip();
     loadProducts();
   }).catch(function(err) {
     console.error('getAllCategories error:', err);
-    catStrip.innerHTML = '';
-    /* Still attempt to load products if we have no category to filter by */
     if (state.visibleCategories.length === 0) {
       productGrid.innerHTML = '<div class="error-state"><strong>Could not load categories</strong>Please refresh the page.</div>';
       setLoadMoreState('done');
