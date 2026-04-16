@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sports Equip</title>
+  <!--
+  ============================================================
+  SPORTS EQUIP — Design Handoff
+  ============================================================
+  AESTHETIC: Apple minimalism meets Nike boldness.
+  - White/light surfaces, near-black (#111) typography
+  - Clean pill-shaped CTAs (Apple-style)
+  - Bold full-bleed dark hero with athlete image (Nike-style)
+  - No loud accent colors — black, white, grays only
+  - Blue (#0071e3) used only for links, like Apple
+  - Red (#c00) used only for the Sale nav item
+  - Product cards: light gray (#f5f5f7) rounded surfaces
+
+  HERO IMAGE: Replace `src` on .hero-img with your hosted image.
+  Currently references: MultiSport.jpg (multi-sport athlete collage,
+  dark background, hockey/soccer/boxing/volleyball/football players)
+
+  FONTS: Uses system-ui stack. For production, swap to:
+    - Display: "Bebas Neue" or "DM Serif Display" for hero headline
+    - Body: "DM Sans" or "Figtree" for all UI text
+  ============================================================
+  PAGES INCLUDED:
+  1. Homepage (nav → hero → categories → products → promos → brands → trust → footer)
+  2. Product Detail Page (PDP) — Nike Air Zoom Pegasus 41
+  ============================================================
+  -->
+  <style>
+    /* ── Reset ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; background: #fff; color: #111; }
+    a { text-decoration: none; color: inherit; }
+    button { font-family: inherit; }
+
+    /* ── Design Tokens ── */
+    :root {
+      --black: #111;
+      --black-mid: #1d1d1f;
+      --black-soft: #333;
+      --gray-bg: #f5f5f7;
+      --gray-border: #e5e5e5;
+      --gray-muted: #888;
+      --gray-light: #ddd;
+      --blue-link: #0071e3;
+      --red-sale: #c00;
+      --white: #fff;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 20px;
+      --radius-pill: 30px;
+    }
+
+    /* ════════════════════════════════════════
+       NAV
+    ════════════════════════════════════════ */
+    .nav {
+      background: rgba(255, 255, 255, 0.97);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      height: 52px;
+      border-bottom: 0.5px solid var(--gray-border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-logo {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--black);
+      letter-spacing: -0.5px;
+      cursor: pointer;
+    }
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      list-style: none;
+    }
+    .nav-links li a {
+      font-size: 13px;
+      color: #444;
+      transition: color 0.15s;
+    }
+    .nav-links li a:hover { color: var(--black); }
+    .nav-links li a.sale { color: var(--red-sale); }
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .nav-icon-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #444;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px;
+      transition: color 0.15s;
+    }
+    .nav-icon-btn:hover { color: var(--black); }
+    .cart-dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      background: var(--black);
+      border-radius: 50%;
+      margin-left: 2px;
+    }
+
+    /* ════════════════════════════════════════
+       HERO
+    ════════════════════════════════════════ */
+    .hero {
+      position: relative;
+      min-height: 560px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 0 0 80px;
+      overflow: hidden;
+      background: #000;
+    }
+    .hero-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center center;
+      opacity: 0.72;
+    }
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.05) 0%,
+        rgba(0, 0, 0, 0.55) 55%,
+        rgba(0, 0, 0, 0.82) 100%
+      );
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .hero-eyebrow {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #bbb;
+      margin-bottom: 18px;
+    }
+    .hero-headline {
+      font-size: 64px;
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1.02;
+      letter-spacing: -2.5px;
+      margin-bottom: 18px;
+    }
+    .hero-sub {
+      font-size: 16px;
+      color: #ccc;
+      margin-bottom: 36px;
+      line-height: 1.6;
+      max-width: 460px;
+    }
+    .hero-ctas {
+      display: flex;
+      gap: 12px;
+    }
+    .cta-white {
+      background: var(--white);
+      color: var(--black);
+      font-size: 13px;
+      font-weight: 600;
+      border: none;
+      border-radius: var(--radius-pill);
+      padding: 12px 28px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .cta-white:hover { background: #e8e8e8; }
+    .cta-outline {
+      background: transparent;
+      color: var(--white);
+      font-size: 13px;
+      font-weight: 500;
+      border: 1.5px solid rgba(255, 255, 255, 0.5);
+      border-radius: var(--radius-pill);
+      padding: 12px 28px;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+    .cta-outline:hover { border-color: rgba(255,255,255,0.85); }
+
+    /* ════════════════════════════════════════
+       CATEGORY STRIP
+    ════════════════════════════════════════ */
+    .cats-row {
+      background: var(--white);
+      border-bottom: 0.5px solid var(--gray-border);
+      display: flex;
+      justify-content: center;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .cats-row::-webkit-scrollbar { display: none; }
+    .cat {
+      padding: 16px 26px;
+      font-size: 13px;
+      color: #555;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .cat:hover { color: var(--black); }
+    .cat.active {
+      color: var(--black);
+      border-bottom: 2px solid var(--black);
+    }
+
+    /* ════════════════════════════════════════
+       SECTIONS
+    ════════════════════════════════════════ */
+    .section { padding: 56px 40px; }
+    .section.gray { background: var(--gray-bg); }
+    .sec-eyebrow {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--gray-muted);
+      margin-bottom: 10px;
+    }
+    .sec-title {
+      font-size: 30px;
+      font-weight: 600;
+      color: var(--black);
+      letter-spacing: -0.6px;
+    }
+    .sec-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 36px;
+    }
+    .see-all {
+      font-size: 13px;
+      color: var(--blue-link);
+      cursor: pointer;
+    }
+    .see-all:hover { text-decoration: underline; }
+
+    /* ════════════════════════════════════════
+       PRODUCT GRID & CARDS
+    ════════════════════════════════════════ */
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 18px;
+    }
+    .pcard {
+      background: var(--gray-bg);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.15s;
+    }
+    .pcard:hover {
+      background: #ebebed;
+      transform: translateY(-2px);
+    }
+    .pcard-img {
+      height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      /* In production: use <img> tags with product photography */
+      background: var(--gray-bg);
+    }
+    .pcard-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    .pcard-body { padding: 14px 18px 18px; }
+    .pcard-brand {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--gray-muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .pcard-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--black);
+      margin-bottom: 3px;
+      line-height: 1.35;
+    }
+    .pcard-category {
+      font-size: 11px;
+      color: var(--gray-muted);
+      margin-bottom: 10px;
+    }
+    .pcard-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .pcard-price {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--black);
+    }
+    .pcard-orig {
+      font-size: 11px;
+      color: #aaa;
+      text-decoration: line-through;
+      margin-left: 5px;
+    }
+    .badge {
+      font-size: 10px;
+      font-weight: 500;
+      padding: 2px 7px;
+      border-radius: 20px;
+      margin-left: 5px;
+    }
+    .badge-sale { background: #fee2e2; color: #991b1b; }
+    .badge-new  { background: #e8f5e9; color: #1b5e20; }
+    .add-to-cart-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--black);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: none;
+      color: var(--white);
+      font-size: 18px;
+      line-height: 1;
+      transition: background 0.15s;
+    }
+    .add-to-cart-icon:hover { background: #333; }
+
+    /* ════════════════════════════════════════
+       PROMO SPLIT CARDS
+    ════════════════════════════════════════ */
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .split-card {
+      border-radius: var(--radius-xl);
+      min-height: 280px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 32px;
+    }
+    .split-card.dark  { background: var(--black); }
+    .split-card.dark2 { background: var(--black-mid); }
+    .split-eyebrow {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gray-muted);
+      margin-bottom: 8px;
+    }
+    .split-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--white);
+      letter-spacing: -0.4px;
+      margin-bottom: 8px;
+      line-height: 1.15;
+    }
+    .split-desc {
+      font-size: 13px;
+      color: #888;
+      margin-bottom: 18px;
+      line-height: 1.5;
+    }
+    .split-link {
+      font-size: 13px;
+      color: var(--blue-link);
+      cursor: pointer;
+    }
+    .split-link:hover { text-decoration: underline; }
+
+    /* ════════════════════════════════════════
+       BRANDS
+    ════════════════════════════════════════ */
+    .brands-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .brand-chip {
+      background: var(--white);
+      border: 0.5px solid #ddd;
+      border-radius: var(--radius-sm);
+      padding: 12px 22px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #444;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .brand-chip:hover { border-color: #999; color: var(--black); }
+
+    /* ════════════════════════════════════════
+       TRUST BAR
+    ════════════════════════════════════════ */
+    .trust {
+      background: var(--black);
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .trust-item {
+      padding: 32px 36px;
+      border-right: 0.5px solid #2a2a2a;
+    }
+    .trust-item:last-child { border-right: none; }
+    .trust-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--white);
+      margin-bottom: 8px;
+    }
+    .trust-desc {
+      font-size: 12px;
+      color: #666;
+      line-height: 1.55;
+    }
+
+    /* ════════════════════════════════════════
+       FOOTER
+    ════════════════════════════════════════ */
+    .footer {
+      background: var(--gray-bg);
+      border-top: 0.5px solid var(--gray-border);
+      padding: 44px 40px 20px;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 28px;
+      margin-bottom: 36px;
+    }
+    .footer-col-title {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--black);
+      margin-bottom: 12px;
+    }
+    .footer-link {
+      font-size: 12px;
+      color: #666;
+      display: block;
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: color 0.15s;
+    }
+    .footer-link:hover { color: var(--black); }
+    .footer-bottom {
+      border-top: 0.5px solid #ddd;
+      padding-top: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .footer-copy { font-size: 11px; color: #aaa; }
+    .footer-legal { display: flex; gap: 18px; }
+    .footer-legal span { font-size: 11px; color: #aaa; cursor: pointer; }
+    .footer-legal span:hover { color: var(--black); }
+
+    /* ════════════════════════════════════════
+       PAGE DIVIDER (between homepage + PDP)
+    ════════════════════════════════════════ */
+    .page-divider {
+      background: var(--gray-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 40px;
+      border-top: 0.5px solid var(--gray-border);
+      gap: 16px;
+    }
+    .page-divider::before,
+    .page-divider::after {
+      content: '';
+      flex: 1;
+      height: 0.5px;
+      background: #ddd;
+    }
+    .page-divider-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #aaa;
+      white-space: nowrap;
+    }
+
+    /* ════════════════════════════════════════
+       PRODUCT DETAIL PAGE (PDP)
+    ════════════════════════════════════════ */
+    .pdp-breadcrumb {
+      padding: 14px 40px;
+      font-size: 12px;
+      color: var(--gray-muted);
+      border-bottom: 0.5px solid var(--gray-border);
+      background: var(--white);
+    }
+    .pdp-breadcrumb span { color: var(--blue-link); cursor: pointer; }
+    .pdp-breadcrumb span:hover { text-decoration: underline; }
+
+    .pdp {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      background: var(--white);
+    }
+
+    /* Gallery */
+    .pdp-gallery {
+      background: var(--gray-bg);
+      padding: 48px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      min-height: 520px;
+    }
+    .pdp-main-img {
+      width: 100%;
+      max-width: 340px;
+      height: 300px;
+      background: #ebebed;
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .pdp-main-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    .pdp-thumbs {
+      display: flex;
+      gap: 10px;
+    }
+    .pdp-thumb {
+      width: 60px;
+      height: 60px;
+      background: #e0e0e0;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      border: 1.5px solid transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      transition: border-color 0.15s;
+    }
+    .pdp-thumb.active { border-color: var(--black); }
+    .pdp-thumb img { width: 100%; height: 100%; object-fit: contain; }
+
+    /* Info panel */
+    .pdp-info {
+      padding: 48px 44px;
+      display: flex;
+      flex-direction: column;
+    }
+    .pdp-brand {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gray-muted);
+      margin-bottom: 8px;
+    }
+    .pdp-name {
+      font-size: 30px;
+      font-weight: 600;
+      color: var(--black);
+      letter-spacing: -0.6px;
+      margin-bottom: 6px;
+      line-height: 1.15;
+    }
+    .pdp-subtitle {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 14px;
+    }
+    .pdp-rating {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .stars { font-size: 14px; letter-spacing: 2px; color: var(--black); }
+    .rating-txt { font-size: 13px; color: var(--gray-muted); }
+    .rating-link {
+      font-size: 13px;
+      color: var(--blue-link);
+      cursor: pointer;
+    }
+    .hr { height: 0.5px; background: var(--gray-border); margin: 18px 0; }
+    .pdp-price {
+      font-size: 30px;
+      font-weight: 600;
+      color: var(--black);
+      margin-bottom: 4px;
+    }
+    .pdp-stock {
+      font-size: 12px;
+      color: var(--blue-link);
+      margin-bottom: 22px;
+    }
+    .label-sm {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--black);
+      margin-bottom: 10px;
+    }
+    .label-sm .label-value { font-weight: 400; color: #666; }
+    .label-sm .label-link {
+      color: var(--blue-link);
+      font-weight: 400;
+      cursor: pointer;
+    }
+
+    /* Color swatches */
+    .color-row { display: flex; gap: 8px; margin-bottom: 22px; }
+    .color-dot {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: box-shadow 0.15s;
+    }
+    .color-dot.active {
+      box-shadow: 0 0 0 2px #fff, 0 0 0 3.5px var(--black);
+    }
+
+    /* Size grid */
+    .size-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
+    .size-btn {
+      width: 50px;
+      height: 42px;
+      border-radius: var(--radius-sm);
+      border: 0.5px solid #ddd;
+      background: var(--white);
+      font-size: 13px;
+      color: var(--black);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.15s, background 0.15s, color 0.15s;
+    }
+    .size-btn:hover { border-color: #999; }
+    .size-btn.active {
+      background: var(--black);
+      color: var(--white);
+      border-color: var(--black);
+    }
+    .size-btn.unavailable {
+      color: #ccc;
+      cursor: not-allowed;
+      border-color: #eee;
+    }
+
+    /* CTAs */
+    .pdp-ctas { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+    .btn-black {
+      background: var(--black);
+      color: var(--white);
+      font-size: 14px;
+      font-weight: 500;
+      border: none;
+      border-radius: var(--radius-pill);
+      padding: 15px;
+      cursor: pointer;
+      width: 100%;
+      transition: background 0.15s;
+    }
+    .btn-black:hover { background: #333; }
+    .btn-ghost {
+      background: transparent;
+      color: var(--black);
+      font-size: 14px;
+      font-weight: 500;
+      border: 1px solid #ccc;
+      border-radius: var(--radius-pill);
+      padding: 15px;
+      cursor: pointer;
+      width: 100%;
+      transition: border-color 0.15s;
+    }
+    .btn-ghost:hover { border-color: #888; }
+
+    /* Feature list */
+    .feature-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .feature-check {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #f0f0f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .feature-txt { font-size: 13px; color: #555; line-height: 1.5; }
+
+    /* ════════════════════════════════════════
+       PDP TABS
+    ════════════════════════════════════════ */
+    .pdp-tabs {
+      border-top: 0.5px solid var(--gray-border);
+      display: flex;
+      background: var(--white);
+    }
+    .pdp-tab {
+      padding: 16px 28px;
+      font-size: 13px;
+      color: var(--gray-muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .pdp-tab:hover { color: var(--black); }
+    .pdp-tab.active {
+      color: var(--black);
+      border-bottom: 2px solid var(--black);
+    }
+    .tab-content {
+      padding: 36px 40px;
+      background: var(--white);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+    }
+
+    /* Specs table */
+    .specs-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--black);
+      margin-bottom: 14px;
+    }
+    .spec-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 0.5px solid #f0f0f0;
+      font-size: 13px;
+    }
+    .spec-key { color: var(--gray-muted); }
+    .spec-val { color: var(--black); font-weight: 500; }
+
+    /* Reviews */
+    .reviews-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--black);
+      margin-bottom: 14px;
+    }
+    .review-card {
+      background: var(--gray-bg);
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
+      margin-bottom: 12px;
+    }
+    .review-name {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--black);
+      margin-bottom: 4px;
+    }
+    .review-stars {
+      font-size: 12px;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+    .review-body { font-size: 12px; color: #555; line-height: 1.55; }
+
+    /* ════════════════════════════════════════
+       RESPONSIVE — TABLET / MOBILE
+       (basic breakpoints — expand as needed)
+    ════════════════════════════════════════ */
+    @media (max-width: 1024px) {
+      .product-grid { grid-template-columns: repeat(2, 1fr); }
+      .pdp { grid-template-columns: 1fr; }
+      .tab-content { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .nav { padding: 0 20px; }
+      .nav-links { display: none; } /* replace with hamburger menu */
+      .hero { min-height: 420px; padding-bottom: 56px; }
+      .hero-headline { font-size: 40px; letter-spacing: -1.5px; }
+      .section { padding: 40px 20px; }
+      .split { grid-template-columns: 1fr; }
+      .trust { grid-template-columns: 1fr; }
+      .trust-item { border-right: none; border-bottom: 0.5px solid #2a2a2a; }
+      .footer { padding: 32px 20px 16px; }
+      .footer-grid { grid-template-columns: repeat(2, 1fr); }
+      .pdp-info { padding: 32px 20px; }
+      .pdp-gallery { padding: 32px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════
+     HOMEPAGE
+════════════════════════════════════════ -->
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-logo">Sports Equip</div>
+  <ul class="nav-links">
+    <li><a href="#">Men</a></li>
+    <li><a href="#">Women</a></li>
+    <li><a href="#">Kids</a></li>
+    <li><a href="#">Equipment</a></li>
+    <li><a href="#">Brands</a></li>
+    <li><a href="#" class="sale">Sale</a></li>
+  </ul>
+  <div class="nav-right">
+    <!-- Search -->
+    <button class="nav-icon-btn" aria-label="Search">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <circle cx="6.5" cy="6.5" r="4.5" stroke="currentColor" stroke-width="1.2"/>
+        <line x1="10.2" y1="10.2" x2="14" y2="14" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+      </svg>
+    </button>
+    <!-- Account -->
+    <button class="nav-icon-btn" aria-label="Account">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <circle cx="8" cy="5" r="3" stroke="currentColor" stroke-width="1.2"/>
+        <path d="M2 14c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+      </svg>
+    </button>
+    <!-- Cart -->
+    <button class="nav-icon-btn" aria-label="Cart (3 items)">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M2 3h12l-1.5 8H3.5L2 3z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>
+        <circle cx="5.5" cy="13" r="1" fill="currentColor"/>
+        <circle cx="10.5" cy="13" r="1" fill="currentColor"/>
+      </svg>
+      <span class="cart-dot"></span>
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<!--
+  IMPORTANT: Replace the src below with your hosted image URL or a relative path.
+  The image is a multi-sport athlete collage on a dark/black background.
+  Recommended: full-width landscape image, min 1600×900px.
+-->
+<section class="hero">
+  <img
+    class="hero-img"
+    src="MultiSport.jpg"
+    alt="Athletes from multiple sports — hockey, soccer, boxing, volleyball, and football"
+  />
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">Spring / Summer 2026</p>
+    <h1 class="hero-headline">Move without<br>limits.</h1>
+    <p class="hero-sub">Performance gear engineered for every athlete.<br>From first step to finish line.</p>
+    <div class="hero-ctas">
+      <button class="cta-white">Shop now</button>
+      <button class="cta-outline">Explore collections</button>
+    </div>
+  </div>
+</section>
+
+<!-- CATEGORY STRIP -->
+<nav class="cats-row" aria-label="Sport categories">
+  <span class="cat active">All</span>
+  <span class="cat">Running</span>
+  <span class="cat">Training</span>
+  <span class="cat">Basketball</span>
+  <span class="cat">Soccer</span>
+  <span class="cat">Golf</span>
+  <span class="cat">Outdoor</span>
+  <span class="cat">Footwear</span>
+  <span class="cat">Accessories</span>
+</nav>
+
+<!-- NEW ARRIVALS -->
+<section class="section">
+  <div class="sec-header">
+    <div>
+      <p class="sec-eyebrow">Featured</p>
+      <h2 class="sec-title">New arrivals</h2>
+    </div>
+    <a href="#" class="see-all">See all →</a>
+  </div>
+  <div class="product-grid">
+
+    <!-- Product 1 -->
+    <article class="pcard">
+      <div class="pcard-img">
+        <!-- Replace with: <img src="path/to/pegasus.jpg" alt="Nike Air Zoom Pegasus 41" /> -->
+        <svg width="120" height="120" viewBox="0 0 120 120" fill="none"><ellipse cx="60" cy="82" rx="50" ry="20" fill="#e0ddd8"/><rect x="24" y="42" width="72" height="40" rx="20" fill="#111"/><rect x="14" y="56" width="92" height="18" rx="9" fill="#444"/><rect x="24" y="42" width="72" height="12" rx="6" fill="#333"/></svg>
+      </div>
+      <div class="pcard-body">
+        <p class="pcard-brand">Nike</p>
+        <p class="pcard-name">Air Zoom Pegasus 41</p>
+        <p class="pcard-category">Men's running shoe</p>
+        <div class="pcard-bottom">
+          <span class="pcard-price">$139.99</span>
+          <button class="add-to-cart-icon" aria-label="Add to cart">+</button>
+        </div>
+      </div>
+    </article>
+
+    <!-- Product 2 -->
+    <article class="pcard">
+      <div class="pcard-img">
+        <svg width="120" height="120" viewBox="0 0 120 120" fill="none"><rect x="30" y="14" width="60" height="82" rx="10" fill="#222"/><rect x="38" y="24" width="44" height="28" rx="5" fill="#555"/><rect x="38" y="60" width="44" height="6" rx="2" fill="#444"/><rect x="38" y="72" width="30" height="6" rx="2" fill="#444"/></svg>
+      </div>
+      <div class="pcard-body">
+        <p class="pcard-brand">Adidas</p>
+        <p class="pcard-name">Tiro 23 Training Jacket</p>
+        <p class="pcard-category">Men's soccer jacket</p>
+        <div class="pcard-bottom">
+          <div>
+            <span class="pcard-price">$54.99</span>
+            <span class="pcard-orig">$80</span>
+            <span class="badge badge-sale">Sale</span>
+          </div>
+          <button class="add-to-cart-icon" aria-label="Add to cart">+</button>
+        </div>
+      </div>
+    </article>
+
+    <!-- Product 3 -->
+    <article class="pcard">
+      <div class="pcard-img">
+        <svg width="120" height="120" viewBox="0 0 120 120" fill="none"><rect x="34" y="18" width="52" height="72" rx="10" fill="#1a1a1a"/><rect x="42" y="28" width="36" height="36" rx="4" fill="#333"/><circle cx="60" cy="46" r="12" fill="#111"/><circle cx="60" cy="46" r="7" fill="#444"/><rect x="46" y="76" width="28" height="5" rx="2" fill="#333"/></svg>
+      </div>
+      <div class="pcard-body">
+        <p class="pcard-brand">Garmin</p>
+        <p class="pcard-name">Forerunner 265 GPS Watch</p>
+        <p class="pcard-category">Running smartwatch</p>
+        <div class="pcard-bottom">
+          <div>
+            <span class="pcard-price">$449.99</span>
+            <span class="badge badge-new">New</span>
+          </div>
+          <button class="add-to-cart-icon" aria-label="Add to cart">+</button>
+        </div>
+      </div>
+    </article>
+
+    <!-- Product 4 -->
+    <article class="pcard">
+      <div class="pcard-img">
+        <svg width="120" height="120" viewBox="0 0 120 120" fill="none"><ellipse cx="60" cy="60" rx="40" ry="40" fill="#ddd"/><ellipse cx="60" cy="60" rx="27" ry="27" fill="#bbb"/><circle cx="60" cy="60" r="7" fill="#999"/><line x1="20" y1="60" x2="100" y2="60" stroke="#999" stroke-width="2"/><line x1="60" y1="20" x2="60" y2="100" stroke="#999" stroke-width="2"/><ellipse cx="60" cy="60" rx="40" ry="40" stroke="#999" stroke-width="1.5" fill="none"/></svg>
+      </div>
+      <div class="pcard-body">
+        <p class="pcard-brand">Wilson</p>
+        <p class="pcard-name">Pro Staff RF97 Tennis Racket</p>
+        <p class="pcard-category">Performance racket</p>
+        <div class="pcard-bottom">
+          <div>
+            <span class="pcard-price">$189.99</span>
+            <span class="pcard-orig">$230</span>
+            <span class="badge badge-sale">Sale</span>
+          </div>
+          <button class="add-to-cart-icon" aria-label="Add to cart">+</button>
+        </div>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- PROMO SPLIT -->
+<section class="section gray">
+  <div class="split">
+    <div class="split-card dark">
+      <p class="split-eyebrow">Just dropped</p>
+      <h3 class="split-title">New Balance<br>Fresh Foam X</h3>
+      <p class="split-desc">Maximum cushion. Zero compromise. Built for the long run.</p>
+      <a href="#" class="split-link">Shop the drop →</a>
+    </div>
+    <div class="split-card dark2">
+      <p class="split-eyebrow">Limited time</p>
+      <h3 class="split-title">Up to 40% off<br>top brands</h3>
+      <p class="split-desc">Nike, Adidas, Under Armour — all on sale for a limited time.</p>
+      <a href="#" class="split-link">Shop the sale →</a>
+    </div>
+  </div>
+</section>
+
+<!-- TOP BRANDS -->
+<section class="section">
+  <div class="sec-header">
+    <div>
+      <p class="sec-eyebrow">Browse</p>
+      <h2 class="sec-title">Top brands</h2>
+    </div>
+    <a href="#" class="see-all">All brands →</a>
+  </div>
+  <div class="brands-row">
+    <span class="brand-chip">Nike</span>
+    <span class="brand-chip">Adidas</span>
+    <span class="brand-chip">Under Armour</span>
+    <span class="brand-chip">New Balance</span>
+    <span class="brand-chip">The North Face</span>
+    <span class="brand-chip">Garmin</span>
+    <span class="brand-chip">Wilson</span>
+    <span class="brand-chip">Callaway</span>
+    <span class="brand-chip">Patagonia</span>
+    <span class="brand-chip">Brooks</span>
+  </div>
+</section>
+
+<!-- TRUST BAR -->
+<div class="trust">
+  <div class="trust-item">
+    <p class="trust-title">Free shipping over $75</p>
+    <p class="trust-desc">Fast delivery on qualifying orders. Easy, free returns on everything.</p>
+  </div>
+  <div class="trust-item">
+    <p class="trust-title">30-day returns</p>
+    <p class="trust-desc">Not the right fit? Return or exchange within 30 days, no questions asked.</p>
+  </div>
+  <div class="trust-item">
+    <p class="trust-title">Expert advice</p>
+    <p class="trust-desc">Talk to real athletes and gear specialists — 7 days a week, no bots.</p>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-col-title">Shop</p>
+      <a href="#" class="footer-link">Men's gear</a>
+      <a href="#" class="footer-link">Women's gear</a>
+      <a href="#" class="footer-link">Kids' gear</a>
+      <a href="#" class="footer-link">Equipment</a>
+      <a href="#" class="footer-link">Sale</a>
+    </div>
+    <div>
+      <p class="footer-col-title">Support</p>
+      <a href="#" class="footer-link">Order status</a>
+      <a href="#" class="footer-link">Returns & exchanges</a>
+      <a href="#" class="footer-link">Sizing guide</a>
+      <a href="#" class="footer-link">Contact us</a>
+      <a href="#" class="footer-link">FAQ</a>
+    </div>
+    <div>
+      <p class="footer-col-title">Company</p>
+      <a href="#" class="footer-link">About</a>
+      <a href="#" class="footer-link">Careers</a>
+      <a href="#" class="footer-link">Rewards</a>
+      <a href="#" class="footer-link">Gift cards</a>
+      <a href="#" class="footer-link">Press</a>
+    </div>
+    <div>
+      <p class="footer-col-title">Stay connected</p>
+      <a href="#" class="footer-link">Instagram</a>
+      <a href="#" class="footer-link">X / Twitter</a>
+      <a href="#" class="footer-link">YouTube</a>
+      <a href="#" class="footer-link">Newsletter</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-copy">Copyright © 2026 Sports Equip Inc.</p>
+    <div class="footer-legal">
+      <span>Privacy policy</span>
+      <span>Terms of use</span>
+      <span>Accessibility</span>
+    </div>
+  </div>
+</footer>
+
+
+<!-- ════════════════════════════════════════
+     PRODUCT DETAIL PAGE (PDP)
+     Nike Air Zoom Pegasus 41
+════════════════════════════════════════ -->
+
+<div class="page-divider">
+  <span class="page-divider-label">Product detail page — Nike Air Zoom Pegasus 41</span>
+</div>
+
+<!-- Breadcrumb -->
+<div class="pdp-breadcrumb">
+  <span>Home</span> / <span>Running</span> / <span>Footwear</span> / Nike Air Zoom Pegasus 41
+</div>
+
+<!-- Main PDP grid -->
+<div class="pdp">
+
+  <!-- Left: Gallery -->
+  <div class="pdp-gallery">
+    <div class="pdp-main-img">
+      <!--
+        Replace with real product image:
+        <img src="path/to/pegasus-black.jpg" alt="Nike Air Zoom Pegasus 41 in Black/White" />
+      -->
+      <svg width="220" height="220" viewBox="0 0 220 220" fill="none">
+        <ellipse cx="110" cy="158" rx="90" ry="34" fill="#ddd"/>
+        <rect x="38" y="82" width="144" height="76" rx="38" fill="#111"/>
+        <rect x="24" y="108" width="172" height="36" rx="18" fill="#333"/>
+        <rect x="38" y="82" width="144" height="22" rx="11" fill="#222"/>
+        <rect x="65" y="66" width="90" height="22" rx="11" fill="#444"/>
+      </svg>
+    </div>
+    <!-- Thumbnails — 4 color variants -->
+    <div class="pdp-thumbs">
+      <div class="pdp-thumb active">
+        <svg width="36" height="26" viewBox="0 0 36 26" fill="none"><ellipse cx="18" cy="21" rx="16" ry="6" fill="#ddd"/><rect x="4" y="8" width="28" height="14" rx="7" fill="#111"/></svg>
+      </div>
+      <div class="pdp-thumb">
+        <svg width="36" height="26" viewBox="0 0 36 26" fill="none"><ellipse cx="18" cy="21" rx="16" ry="6" fill="#ddd"/><rect x="4" y="8" width="28" height="14" rx="7" fill="#444"/></svg>
+      </div>
+      <div class="pdp-thumb">
+        <svg width="36" height="26" viewBox="0 0 36 26" fill="none"><ellipse cx="18" cy="21" rx="16" ry="6" fill="#ddd"/><rect x="4" y="8" width="28" height="14" rx="7" fill="#185FA5"/></svg>
+      </div>
+      <div class="pdp-thumb">
+        <svg width="36" height="26" viewBox="0 0 36 26" fill="none"><ellipse cx="18" cy="21" rx="16" ry="6" fill="#ddd"/><rect x="4" y="8" width="28" height="14" rx="7" fill="#c00"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right: Product info -->
+  <div class="pdp-info">
+    <p class="pdp-brand">Nike</p>
+    <h1 class="pdp-name">Air Zoom Pegasus 41</h1>
+    <p class="pdp-subtitle">Men's road running shoe</p>
+
+    <div class="pdp-rating">
+      <span class="stars">★★★★★</span>
+      <span class="rating-txt">4.8</span>
+      <a href="#reviews" class="rating-link">2,841 reviews</a>
+    </div>
+
+    <div class="hr"></div>
+
+    <p class="pdp-price">$139.99</p>
+    <p class="pdp-stock">In stock — ships in 1–2 days</p>
+
+    <!-- Color -->
+    <p class="label-sm">Color — <span class="label-value">Black / White</span></p>
+    <div class="color-row">
+      <div class="color-dot active" style="background:#111;" title="Black / White"></div>
+      <div class="color-dot" style="background:#555;" title="Smoke Grey"></div>
+      <div class="color-dot" style="background:#185FA5;" title="Royal Blue"></div>
+      <div class="color-dot" style="background:#c00;" title="University Red"></div>
+      <div class="color-dot" style="background:#888;" title="Wolf Grey"></div>
+    </div>
+
+    <!-- Size -->
+    <p class="label-sm">
+      Size — <span class="label-value">Select a size</span>
+      · <a href="#" class="label-link">Size guide</a>
+    </p>
+    <div class="size-row">
+      <button class="size-btn unavailable" disabled>7</button>
+      <button class="size-btn">7.5</button>
+      <button class="size-btn">8</button>
+      <button class="size-btn active">8.5</button>
+      <button class="size-btn">9</button>
+      <button class="size-btn">9.5</button>
+      <button class="size-btn">10</button>
+      <button class="size-btn">10.5</button>
+      <button class="size-btn">11</button>
+      <button class="size-btn unavailable" disabled>12</button>
+    </div>
+
+    <!-- CTAs -->
+    <div class="pdp-ctas">
+      <button class="btn-black">Add to cart</button>
+      <button class="btn-ghost">Add to wishlist</button>
+    </div>
+
+    <!-- Feature bullets -->
+    <div class="feature-row">
+      <div class="feature-check">
+        <svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#111" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <p class="feature-txt">Zoom Air unit for responsive cushioning on every stride</p>
+    </div>
+    <div class="feature-row">
+      <div class="feature-check">
+        <svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#111" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <p class="feature-txt">Engineered mesh upper for breathability and a secure fit</p>
+    </div>
+    <div class="feature-row">
+      <div class="feature-check">
+        <svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#111" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <p class="feature-txt">Free shipping & 30-day returns on all footwear orders</p>
+    </div>
+  </div>
+</div>
+
+<!-- PDP Tabs -->
+<div class="pdp-tabs" role="tablist">
+  <button class="pdp-tab active" role="tab">Details & specs</button>
+  <button class="pdp-tab" role="tab">Reviews (2,841)</button>
+  <button class="pdp-tab" role="tab">Shipping & returns</button>
+</div>
+
+<div class="tab-content" id="reviews">
+  <!-- Specs -->
+  <div>
+    <p class="specs-title">Specifications</p>
+    <div class="spec-row"><span class="spec-key">Weight</span><span class="spec-val">9.9 oz / 281g</span></div>
+    <div class="spec-row"><span class="spec-key">Heel-to-toe drop</span><span class="spec-val">10mm</span></div>
+    <div class="spec-row"><span class="spec-key">Cushion type</span><span class="spec-val">Zoom Air + ReactX foam</span></div>
+    <div class="spec-row"><span class="spec-key">Upper material</span><span class="spec-val">Engineered mesh</span></div>
+    <div class="spec-row"><span class="spec-key">Outsole</span><span class="spec-val">Waffle rubber — road</span></div>
+    <div class="spec-row"><span class="spec-key">Best for</span><span class="spec-val">Daily training, long runs</span></div>
+    <div class="spec-row"><span class="spec-key">Fit type</span><span class="spec-val">True to size</span></div>
+    <div class="spec-row"><span class="spec-key">SKU</span><span class="spec-val">DH4072-001</span></div>
+  </div>
+
+  <!-- Reviews -->
+  <div>
+    <p class="reviews-title">Customer reviews</p>
+    <div class="review-card">
+      <p class="review-name">Jordan M. — verified buyer</p>
+      <div class="review-stars">★★★★★</div>
+      <p class="review-body">Best daily trainer I've owned. The cushioning is incredible for long runs and they look great too. Totally true to size.</p>
+    </div>
+    <div class="review-card">
+      <p class="review-name">Sarah K. — verified buyer</p>
+      <div class="review-stars">★★★★☆</div>
+      <p class="review-body">Really comfortable right out of the box. Slightly narrow in the toe box for wide feet — consider sizing up half a size.</p>
+    </div>
+    <div class="review-card">
+      <p class="review-name">Marcus T. — verified buyer</p>
+      <div class="review-stars">★★★★★</div>
+      <p class="review-body">Upgraded from the Pegasus 40 and it's a noticeable improvement. Lighter, more responsive, holds up great after 100+ miles.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     BASIC JS — Tab switching, size selection, color selection
+════════════════════════════════════════ -->
+<script>
+  // Tab switching
+  document.querySelectorAll('.pdp-tab').forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      document.querySelectorAll('.pdp-tab').forEach(function(t) { t.classList.remove('active'); });
+      this.classList.add('active');
+    });
+  });
+
+  // Size selection
+  document.querySelectorAll('.size-btn:not(.unavailable)').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.size-btn').forEach(function(b) { b.classList.remove('active'); });
+      this.classList.add('active');
+    });
+  });
+
+  // Color swatch selection
+  document.querySelectorAll('.color-dot').forEach(function(dot) {
+    dot.addEventListener('click', function() {
+      document.querySelectorAll('.color-dot').forEach(function(d) { d.classList.remove('active'); });
+      this.classList.add('active');
+    });
+  });
+
+  // Category strip
+  document.querySelectorAll('.cat').forEach(function(cat) {
+    cat.addEventListener('click', function() {
+      document.querySelectorAll('.cat').forEach(function(c) { c.classList.remove('active'); });
+      this.classList.add('active');
+    });
+  });
+
+  // Thumbnail selection
+  document.querySelectorAll('.pdp-thumb').forEach(function(thumb) {
+    thumb.addEventListener('click', function() {
+      document.querySelectorAll('.pdp-thumb').forEach(function(t) { t.classList.remove('active'); });
+      this.classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>

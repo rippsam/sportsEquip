@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Product &mdash; Sports Equip</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a class="nav-logo" href="index.html">Sports Equip</a>
+  <ul id="nav-dept-links" class="nav-links"></ul>
+  <div class="nav-right">
+    <button class="nav-icon-btn" aria-label="Search">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <circle cx="6.5" cy="6.5" r="4.5" stroke="currentColor" stroke-width="1.2"/>
+        <line x1="10.2" y1="10.2" x2="14" y2="14" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+      </svg>
+    </button>
+    <button class="nav-icon-btn" aria-label="Account">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <circle cx="8" cy="5" r="3" stroke="currentColor" stroke-width="1.2"/>
+        <path d="M2 14c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+      </svg>
+    </button>
+    <button class="nav-icon-btn" aria-label="Cart">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M2 3h12l-1.5 8H3.5L2 3z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>
+        <circle cx="5.5" cy="13" r="1" fill="currentColor"/>
+        <circle cx="10.5" cy="13" r="1" fill="currentColor"/>
+      </svg>
+    </button>
+  </div>
+</nav>
+
+<!-- BREADCRUMB -->
+<div id="pdp-breadcrumb" class="pdp-breadcrumb">
+  <a href="index.html">&larr; Back</a>
+</div>
+
+<!-- PDP GRID -->
+<div class="pdp">
+  <div id="pdp-gallery" class="pdp-gallery">
+    <!-- Populated by product.js -->
+  </div>
+  <div id="pdp-info" class="pdp-info">
+    <!-- Populated by product.js -->
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="pdp-tabs" role="tablist">
+  <button class="pdp-tab active" role="tab">Details &amp; specs</button>
+  <button class="pdp-tab" role="tab">Shipping &amp; returns</button>
+</div>
+
+<div class="tab-content">
+  <!-- Details tab (active) -->
+  <div class="tab-panel active" id="tab-details">
+    <!-- Populated by product.js -->
+  </div>
+
+  <!-- Shipping tab -->
+  <div class="tab-panel" id="tab-shipping">
+    <div class="tab-panel-inner">
+      <div>
+        <p class="specs-title">Shipping</p>
+        <div class="spec-row"><span class="spec-key">Standard shipping</span><span class="spec-val">Free over $75</span></div>
+        <div class="spec-row"><span class="spec-key">Express shipping</span><span class="spec-val">$12.99 (2&ndash;3 days)</span></div>
+        <div class="spec-row"><span class="spec-key">Overnight shipping</span><span class="spec-val">$24.99 (next day)</span></div>
+        <div class="spec-row"><span class="spec-key">Processing time</span><span class="spec-val">1&ndash;2 business days</span></div>
+      </div>
+      <div>
+        <p class="specs-title">Returns &amp; exchanges</p>
+        <div class="spec-row"><span class="spec-key">Return window</span><span class="spec-val">30 days from delivery</span></div>
+        <div class="spec-row"><span class="spec-key">Condition</span><span class="spec-val">Unused, original tags</span></div>
+        <div class="spec-row"><span class="spec-key">Return shipping</span><span class="spec-val">Free</span></div>
+        <div class="spec-row"><span class="spec-key">Refund method</span><span class="spec-val">Original payment method</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RELATED PRODUCTS -->
+<section id="related-products" class="section gray">
+  <div class="sec-header">
+    <div>
+      <p class="sec-eyebrow">More like this</p>
+      <h2 class="sec-title">You may also like</h2>
+    </div>
+  </div>
+  <div id="related-grid" class="product-grid"></div>
+</section>
+
+<!-- TRUST BAR -->
+<div class="trust">
+  <div class="trust-item">
+    <p class="trust-title">Free shipping over $75</p>
+    <p class="trust-desc">Fast delivery on qualifying orders. Easy, free returns on everything.</p>
+  </div>
+  <div class="trust-item">
+    <p class="trust-title">30-day returns</p>
+    <p class="trust-desc">Not the right fit? Return or exchange within 30 days, no questions asked.</p>
+  </div>
+  <div class="trust-item">
+    <p class="trust-title">Expert advice</p>
+    <p class="trust-desc">Talk to real athletes and gear specialists &mdash; 7 days a week, no bots.</p>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-col-title">Shop</p>
+      <a href="index.html" class="footer-link">Men's gear</a>
+      <a href="index.html" class="footer-link">Women's gear</a>
+      <a href="index.html" class="footer-link">Kids' gear</a>
+      <a href="index.html" class="footer-link">Equipment</a>
+      <a href="index.html" class="footer-link">Sale</a>
+    </div>
+    <div>
+      <p class="footer-col-title">Support</p>
+      <a href="#" class="footer-link">Order status</a>
+      <a href="#" class="footer-link">Returns &amp; exchanges</a>
+      <a href="#" class="footer-link">Sizing guide</a>
+      <a href="#" class="footer-link">Contact us</a>
+      <a href="#" class="footer-link">FAQ</a>
+    </div>
+    <div>
+      <p class="footer-col-title">Company</p>
+      <a href="#" class="footer-link">About</a>
+      <a href="#" class="footer-link">Careers</a>
+      <a href="#" class="footer-link">Rewards</a>
+      <a href="#" class="footer-link">Gift cards</a>
+      <a href="#" class="footer-link">Press</a>
+    </div>
+    <div>
+      <p class="footer-col-title">Stay connected</p>
+      <a href="#" class="footer-link">Instagram</a>
+      <a href="#" class="footer-link">X / Twitter</a>
+      <a href="#" class="footer-link">YouTube</a>
+      <a href="#" class="footer-link">Newsletter</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-copy">Copyright &copy; 2026 Sports Equip Inc.</p>
+    <div class="footer-legal">
+      <span>Privacy policy</span>
+      <span>Terms of use</span>
+      <span>Accessibility</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/api.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/product.js"></script>
+</body>
+</html>

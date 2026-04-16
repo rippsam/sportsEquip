@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sports Equip — Performance Gear for Every Athlete</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a class="nav-logo" href="index.html">Sports Equip</a>
+  <ul id="nav-dept-links" class="nav-links"></ul>
+  <div class="nav-right">
+    <button class="nav-icon-btn" aria-label="Search">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <circle cx="6.5" cy="6.5" r="4.5" stroke="currentColor" stroke-width="1.2"/>
+        <line x1="10.2" y1="10.2" x2="14" y2="14" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+      </svg>
+    </button>
+    <button class="nav-icon-btn" aria-label="Account">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <circle cx="8" cy="5" r="3" stroke="currentColor" stroke-width="1.2"/>
+        <path d="M2 14c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+      </svg>
+    </button>
+    <button class="nav-icon-btn" aria-label="Cart">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M2 3h12l-1.5 8H3.5L2 3z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>
+        <circle cx="5.5" cy="13" r="1" fill="currentColor"/>
+        <circle cx="10.5" cy="13" r="1" fill="currentColor"/>
+      </svg>
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <img
+    class="hero-img"
+    src="MultiSport.jpg"
+    alt="Athletes from multiple sports — hockey, soccer, boxing, volleyball, and football"
+  />
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">Spring / Summer 2026</p>
+    <h1 class="hero-headline">Move without<br>limits.</h1>
+    <p class="hero-sub">Performance gear engineered for every athlete.<br>From first step to finish line.</p>
+    <div class="hero-ctas">
+      <button class="cta-white" onclick="document.getElementById('products-section').scrollIntoView({behavior:'smooth'})">Shop now</button>
+      <button class="cta-outline" onclick="document.getElementById('category-strip').scrollIntoView({behavior:'smooth'})">Explore collections</button>
+    </div>
+  </div>
+</section>
+
+<!-- CATEGORY STRIP -->
+<nav id="category-strip" class="cats-row" aria-label="Sport categories">
+  <!-- Populated by home.js -->
+</nav>
+
+<!-- PRODUCTS -->
+<section class="section" id="products-section">
+  <div class="sec-header">
+    <div>
+      <p class="sec-eyebrow">Featured</p>
+      <h2 class="sec-title">New arrivals</h2>
+    </div>
+  </div>
+  <div id="product-grid" class="product-grid"></div>
+  <div class="load-more-wrap">
+    <button id="btn-load-more" class="btn-load-more" disabled>Loading&hellip;</button>
+  </div>
+</section>
+
+<!-- PROMO SPLIT -->
+<section class="section gray">
+  <div class="split">
+    <div class="split-card dark">
+      <p class="split-eyebrow">Just dropped</p>
+      <h3 class="split-title">New Balance<br>Fresh Foam X</h3>
+      <p class="split-desc">Maximum cushion. Zero compromise. Built for the long run.</p>
+      <a href="#" class="split-link">Shop the drop &rarr;</a>
+    </div>
+    <div class="split-card dark2">
+      <p class="split-eyebrow">Limited time</p>
+      <h3 class="split-title">Up to 40% off<br>top brands</h3>
+      <p class="split-desc">Nike, Adidas, Under Armour &mdash; all on sale for a limited time.</p>
+      <a href="#" class="split-link">Shop the sale &rarr;</a>
+    </div>
+  </div>
+</section>
+
+<!-- TOP BRANDS -->
+<section class="section">
+  <div class="sec-header">
+    <div>
+      <p class="sec-eyebrow">Browse</p>
+      <h2 class="sec-title">Top brands</h2>
+    </div>
+    <a href="#" class="see-all">All brands &rarr;</a>
+  </div>
+  <div class="brands-row">
+    <span class="brand-chip">Nike</span>
+    <span class="brand-chip">Adidas</span>
+    <span class="brand-chip">Under Armour</span>
+    <span class="brand-chip">New Balance</span>
+    <span class="brand-chip">The North Face</span>
+    <span class="brand-chip">Garmin</span>
+    <span class="brand-chip">Wilson</span>
+    <span class="brand-chip">Callaway</span>
+    <span class="brand-chip">Patagonia</span>
+    <span class="brand-chip">Brooks</span>
+  </div>
+</section>
+
+<!-- TRUST BAR -->
+<div class="trust">
+  <div class="trust-item">
+    <p class="trust-title">Free shipping over $75</p>
+    <p class="trust-desc">Fast delivery on qualifying orders. Easy, free returns on everything.</p>
+  </div>
+  <div class="trust-item">
+    <p class="trust-title">30-day returns</p>
+    <p class="trust-desc">Not the right fit? Return or exchange within 30 days, no questions asked.</p>
+  </div>
+  <div class="trust-item">
+    <p class="trust-title">Expert advice</p>
+    <p class="trust-desc">Talk to real athletes and gear specialists &mdash; 7 days a week, no bots.</p>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-col-title">Shop</p>
+      <a href="#" class="footer-link">Men's gear</a>
+      <a href="#" class="footer-link">Women's gear</a>
+      <a href="#" class="footer-link">Kids' gear</a>
+      <a href="#" class="footer-link">Equipment</a>
+      <a href="#" class="footer-link">Sale</a>
+    </div>
+    <div>
+      <p class="footer-col-title">Support</p>
+      <a href="#" class="footer-link">Order status</a>
+      <a href="#" class="footer-link">Returns &amp; exchanges</a>
+      <a href="#" class="footer-link">Sizing guide</a>
+      <a href="#" class="footer-link">Contact us</a>
+      <a href="#" class="footer-link">FAQ</a>
+    </div>
+    <div>
+      <p class="footer-col-title">Company</p>
+      <a href="#" class="footer-link">About</a>
+      <a href="#" class="footer-link">Careers</a>
+      <a href="#" class="footer-link">Rewards</a>
+      <a href="#" class="footer-link">Gift cards</a>
+      <a href="#" class="footer-link">Press</a>
+    </div>
+    <div>
+      <p class="footer-col-title">Stay connected</p>
+      <a href="#" class="footer-link">Instagram</a>
+      <a href="#" class="footer-link">X / Twitter</a>
+      <a href="#" class="footer-link">YouTube</a>
+      <a href="#" class="footer-link">Newsletter</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-copy">Copyright &copy; 2026 Sports Equip Inc.</p>
+    <div class="footer-legal">
+      <span>Privacy policy</span>
+      <span>Terms of use</span>
+      <span>Accessibility</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/api.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/home.js"></script>
+</body>
+</html>
