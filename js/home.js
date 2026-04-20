@@ -97,6 +97,14 @@ function renderProductCard(p) {
   article.appendChild(imgWrap);
   article.appendChild(body);
 
+  var cartBtn = body.querySelector('.add-to-cart-icon');
+  cartBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    Cart.addItem(p);
+    cartBtn.textContent = '\u2713';
+    setTimeout(function() { cartBtn.textContent = '+'; }, 800);
+  });
+
   article.addEventListener('click', function(e) {
     if (e.target.classList.contains('add-to-cart-icon')) return;
     location.href = 'product.html?id=' + p.product_id;

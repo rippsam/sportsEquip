@@ -83,10 +83,20 @@ function renderProduct(product, categoryName) {
     '<p class="pdp-price">' + escHtml(price) + '</p>' +
     '<p class="pdp-stock">In stock \u2014 ships in 1\u20132 days</p>' +
     '<div class="pdp-ctas">' +
-      '<button class="btn-black">Add to cart</button>' +
+      '<button class="btn-black" id="pdp-add-to-cart">Add to cart</button>' +
       '<button class="btn-ghost">Add to wishlist</button>' +
     '</div>' +
     '<div id="pdp-features"></div>';
+
+  /* Add to cart handler */
+  var addBtn = document.getElementById('pdp-add-to-cart');
+  if (addBtn) {
+    addBtn.addEventListener('click', function() {
+      Cart.addItem(product);
+      addBtn.textContent = 'Added!';
+      setTimeout(function() { addBtn.textContent = 'Add to cart'; }, 1000);
+    });
+  }
 
   /* Features from description snippets */
   var features = document.getElementById('pdp-features');
@@ -182,6 +192,14 @@ function renderRelated(products) {
 
     article.appendChild(imgWrap);
     article.appendChild(body);
+
+    var cartBtn = body.querySelector('.add-to-cart-icon');
+    cartBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      Cart.addItem(p);
+      cartBtn.textContent = '\u2713';
+      setTimeout(function() { cartBtn.textContent = '+'; }, 800);
+    });
 
     article.addEventListener('click', function(e) {
       if (e.target.classList.contains('add-to-cart-icon')) return;

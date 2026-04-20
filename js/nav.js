@@ -1,4 +1,26 @@
+function updateCartBadge() {
+  var badge = document.getElementById('cart-badge');
+  if (!badge) return;
+  var count = Cart.getTotalCount();
+  if (count > 0) {
+    badge.textContent = count > 99 ? '99+' : count;
+    badge.style.display = 'inline-flex';
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
+  updateCartBadge();
+  document.addEventListener('cartUpdated', updateCartBadge);
+
+  var cartBtn = document.getElementById('nav-cart-btn');
+  if (cartBtn) {
+    cartBtn.addEventListener('click', function() {
+      location.href = 'cart.html';
+    });
+  }
+
   var list = document.getElementById('nav-dept-links');
   if (!list) return;
 
