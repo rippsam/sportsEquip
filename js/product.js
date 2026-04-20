@@ -46,6 +46,100 @@ function showInfoSkeleton() {
     '<div class="skeleton" style="height:48px;border-radius:30px;"></div>';
 }
 
+/* ── Review generator ── */
+var REVIEW_NAMES = [
+  'Jordan M.', 'Sarah K.', 'Marcus T.', 'Alyssa R.', 'Devon P.',
+  'Brianna L.', 'Tyler H.', 'Keisha W.', 'Nate F.', 'Vanessa C.',
+  'Chris B.', 'Monique J.', 'Ryan S.', 'Priya N.', 'Jake O.',
+  'Courtney E.', 'Luis V.', 'Hannah D.', 'Drew A.', 'Simone G.',
+  'Brandon Q.', 'Tori Z.', 'Elijah X.', 'Natalie I.', 'Darius U.'
+];
+
+var REVIEW_BODIES = [
+  'Exactly what I was looking for. Great quality and arrived fast. Would definitely buy again.',
+  'Really impressed with the build quality. Feels premium and holds up well after heavy use.',
+  'Good value for the price. Does everything it promises. My whole team uses this now.',
+  'I was skeptical at first but this exceeded my expectations. Highly recommend.',
+  'Fits perfectly and feels comfortable right out of the box. No break-in period needed.',
+  'Bought this as a gift and the recipient absolutely loves it. Great choice.',
+  'Performance is top notch. I noticed an improvement in my game right away.',
+  'Solid product. Nothing flashy but it does the job really well and lasts.',
+  'I have tried a few brands and this is by far the best I have used at this price point.',
+  'Lightweight but durable. Exactly the balance I was looking for.',
+  'Customer service was helpful when I had a question about sizing. Product itself is great.',
+  'I play three times a week and this has held up perfectly. Very satisfied.',
+  'The quality is noticeably better than cheaper alternatives. Worth every dollar.',
+  'Easy to set up and use. I had it ready to go within minutes of opening the box.',
+  'I have owned this for about six months now and it still looks and performs like new.',
+  'Great for both beginners and experienced athletes. Versatile and reliable.',
+  'My coach recommended this brand and I can see why. Professional-grade quality.',
+  'Excellent grip, great support, and very comfortable. Could not ask for more.',
+  'This replaced my old one which lasted five years. So far this one seems even better.',
+  'Fast shipping, well packaged, and the product was exactly as described. Five stars.',
+  'I was hesitant about the price but after using it I understand why it costs more.',
+  'The material is high quality and the stitching is solid. No complaints at all.',
+  'Perfect for my training sessions. Gives me the confidence I need to perform.',
+  'I bought the wrong size initially and the return process was smooth. Got the right one and love it.',
+  'Been using this brand for years. Consistent quality every time.',
+  'Better than the competitor version I tried. The fit and finish is noticeably superior.',
+  'Great for everyday use and competitions alike. A true all-rounder.',
+  'A bit of an adjustment period but once I got used to it, I would not go back.',
+  'My whole family uses this. Holds up for kids and adults equally well.',
+  'Solid construction. I put this through its paces and it did not disappoint.',
+  'The color options are great and the performance matches the looks.',
+  'I read a lot of reviews before buying and they were all right. This is the one to get.',
+  'Works perfectly for what I need. No gimmicks, just solid performance.',
+  'Bought a second one as a backup — that is how much I trust this product.'
+];
+
+/* Weighted star ratings — skewed realistic (mostly 4-5 stars) */
+var STAR_POOL = [5, 5, 5, 5, 5, 5, 4, 4, 4, 4, 3, 3, 2];
+
+function seededRand(seed) {
+  /* Simple LCG — returns function that yields 0..1 */
+  var s = seed;
+  return function() {
+    s = (s * 1664525 + 1013904223) & 0xffffffff;
+    return (s >>> 0) / 0xffffffff;
+  };
+}
+
+function starHtml(n) {
+  var s = '';
+  for (var i = 1; i <= 5; i++) s += (i <= n ? '\u2605' : '\u2606');
+  return s;
+}
+
+function generateReviews(productId) {
+  var rand  = seededRand(productId * 7 + 31);
+  var count = 2 + Math.floor(rand() * 5); /* 2–6 reviews */
+  var usedNames   = {};
+  var usedBodies  = {};
+  var html = '';
+
+  for (var i = 0; i < count; i++) {
+    /* Pick unique name */
+    var nameIdx;
+    do { nameIdx = Math.floor(rand() * REVIEW_NAMES.length); } while (usedNames[nameIdx] && Object.keys(usedNames).length < REVIEW_NAMES.length);
+    usedNames[nameIdx] = true;
+
+    /* Pick unique body */
+    var bodyIdx;
+    do { bodyIdx = Math.floor(rand() * REVIEW_BODIES.length); } while (usedBodies[bodyIdx] && Object.keys(usedBodies).length < REVIEW_BODIES.length);
+    usedBodies[bodyIdx] = true;
+
+    var stars = STAR_POOL[Math.floor(rand() * STAR_POOL.length)];
+
+    html +=
+      '<div class="review-card">' +
+        '<p class="review-name">' + escHtml(REVIEW_NAMES[nameIdx]) + '</p>' +
+        '<p class="review-stars">' + starHtml(stars) + '</p>' +
+        '<p class="review-body">' + escHtml(REVIEW_BODIES[bodyIdx]) + '</p>' +
+      '</div>';
+  }
+  return html;
+}
+
 /* ── Render product ── */
 function renderProduct(product, categoryName) {
   var brand = parseBrand(product.product_name);
@@ -125,25 +219,9 @@ function renderProduct(product, categoryName) {
       '<div id="tab-reviews-inline"></div>' +
     '</div>';
 
-  /* Static reviews in details tab */
+  /* Dynamic reviews — seeded by product_id so each product is consistent */
   var reviewsInline = document.getElementById('tab-reviews-inline');
-  reviewsInline.innerHTML =
-    '<p class="reviews-title">Customer Reviews</p>' +
-    '<div class="review-card">' +
-      '<p class="review-name">Jordan M.</p>' +
-      '<p class="review-stars">\u2605\u2605\u2605\u2605\u2605</p>' +
-      '<p class="review-body">Excellent product \u2014 exactly as described. Great quality and fast shipping. Would definitely buy again!</p>' +
-    '</div>' +
-    '<div class="review-card">' +
-      '<p class="review-name">Sarah K.</p>' +
-      '<p class="review-stars">\u2605\u2605\u2605\u2605\u2606</p>' +
-      '<p class="review-body">Really happy with this purchase. Good value for the price. Fits well and feels durable.</p>' +
-    '</div>' +
-    '<div class="review-card">' +
-      '<p class="review-name">Marcus T.</p>' +
-      '<p class="review-stars">\u2605\u2605\u2605\u2605\u2605</p>' +
-      '<p class="review-body">Best in its category. I have been using it for a few weeks and it still looks and performs like new.</p>' +
-    '</div>';
+  reviewsInline.innerHTML = '<p class="reviews-title">Customer Reviews</p>' + generateReviews(product.product_id);
 }
 
 /* ── Related products ── */
