@@ -1,12 +1,3 @@
-/* ── Known brands for parsing ── */
-const KNOWN_BRANDS = [
-  'Nike', 'Adidas', 'Under', 'New', 'The', 'Garmin', 'Wilson', 'Callaway',
-  'Patagonia', 'Brooks', 'Puma', 'Reebok', 'Asics', 'Mizuno', 'Salomon',
-  'Columbia', 'Titleist', 'TaylorMade', 'Ping', 'Rawlings', 'Easton',
-  'Bauer', 'CCM', 'Warrior', 'Saucony', 'Hoka', 'On', 'Yonex', 'Head',
-  'Babolat', 'Prince', 'Dunlop', 'Penn', 'Spalding', 'Molten', 'Baden'
-];
-
 const MULTI_WORD_BRANDS = ['Under Armour', 'New Balance', 'The North Face'];
 
 function parseBrand(name) {

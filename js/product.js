@@ -329,7 +329,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }, 5000);
 
   function loadRelated(categoryId) {
-    Api.getProducts(categoryId, 4, 0)
+    Api.getProducts(categoryId, 5, 0)
       .then(function(res) {
         renderRelated(res.data.filter(function(p) { return p.product_id !== parseInt(productId); }).slice(0, 4));
       })
