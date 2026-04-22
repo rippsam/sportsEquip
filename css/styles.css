@@ -42,11 +42,14 @@ button { font-family: inherit; }
   z-index: 100;
 }
 .nav-logo {
-  font-size: 17px;
-  font-weight: 600;
-  color: var(--black);
-  letter-spacing: -0.5px;
+  display: flex;
+  align-items: center;
   cursor: pointer;
+}
+.nav-logo-img {
+  height: 36px;
+  width: auto;
+  display: block;
 }
 .nav-links {
   display: flex;
