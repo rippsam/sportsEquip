@@ -171,13 +171,14 @@ function loadProducts() {
     promise = Api.getProducts(state.activeCategoryId, state.limit, state.offset)
       .then(function(res) { return res.data; });
   } else {
-    const cats = state.visibleCategories.slice(0, 4);
+    /* Use up to state.limit categories as a pool so sparse categories don't produce fewer than 8 */
+    const cats = state.visibleCategories.slice(0, state.limit);
     if (cats.length === 0) {
       state.loading = false;
       setLoadMoreState('done');
       return;
     }
-    const perCat = Math.max(2, Math.ceil(state.limit / cats.length));
+    const perCat = Math.max(1, Math.ceil(state.limit / cats.length));
     promise = Promise.allSettled(
       cats.map(function(c) {
         const off = state.samplerOffsets[c.category_id] || 0;
@@ -191,7 +192,7 @@ function loadProducts() {
         .filter(function(r) { return r.status === 'fulfilled'; })
         .map(function(r) { return r.value; });
       if (!fulfilled.some(function(v) { return v.length >= perCat; })) state.hasMore = false;
-      return fulfilled.flat();
+      return fulfilled.flat().slice(0, state.limit);
     });
   }
 
