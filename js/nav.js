@@ -49,4 +49,136 @@ document.addEventListener('DOMContentLoaded', function() {
     li.appendChild(a);
     parent.appendChild(li);
   }
+
+  /* ── Search ── */
+  const searchBtn = document.querySelector('.nav-icon-btn[aria-label="Search"]');
+  if (!searchBtn) return;
+
+  let searchCache  = null;
+  let searchTimer  = null;
+  let isOpen       = false;
+
+  /* Build search UI */
+  const wrap = document.createElement('div');
+  wrap.className = 'nav-search-wrap';
+
+  const input = document.createElement('input');
+  input.type        = 'search';
+  input.className   = 'nav-search-input';
+  input.placeholder = 'Search products…';
+  input.setAttribute('aria-label', 'Search products');
+  input.setAttribute('autocomplete', 'off');
+
+  const dropdown = document.createElement('div');
+  dropdown.className = 'search-dropdown';
+
+  /* Insert wrap in place of the search button, move button inside */
+  searchBtn.parentNode.insertBefore(wrap, searchBtn);
+  wrap.appendChild(input);
+  wrap.appendChild(searchBtn);
+
+  /* Append dropdown to nav so it overflows below it */
+  const nav = document.querySelector('.nav');
+  if (nav) nav.appendChild(dropdown);
+
+  function openSearch() {
+    isOpen = true;
+    wrap.classList.add('open');
+    input.focus();
+  }
+
+  function closeSearch() {
+    isOpen = false;
+    wrap.classList.remove('open');
+    input.value = '';
+    dropdown.innerHTML = '';
+    dropdown.classList.remove('visible');
+  }
+
+  searchBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    if (isOpen) { closeSearch(); } else { openSearch(); }
+  });
+
+  input.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeSearch();
+  });
+
+  document.addEventListener('click', function(e) {
+    if (isOpen && !wrap.contains(e.target) && !dropdown.contains(e.target)) closeSearch();
+  });
+
+  input.addEventListener('input', function() {
+    clearTimeout(searchTimer);
+    const query = input.value.trim();
+    if (!query) {
+      dropdown.innerHTML = '';
+      dropdown.classList.remove('visible');
+      return;
+    }
+    searchTimer = setTimeout(function() { runSearch(query); }, 300);
+  });
+
+  function runSearch(query) {
+    if (searchCache) {
+      renderResults(filterProducts(searchCache, query));
+      return;
+    }
+    Api.getAllProducts(200)
+      .then(function(res) {
+        searchCache = res.data || [];
+        renderResults(filterProducts(searchCache, query));
+      })
+      .catch(function() {
+        dropdown.innerHTML = '<p class="search-no-results">Could not load products.</p>';
+        dropdown.classList.add('visible');
+      });
+  }
+
+  function filterProducts(products, query) {
+    const q = query.toLowerCase();
+    return products
+      .filter(function(p) { return p.product_name && p.product_name.toLowerCase().includes(q); })
+      .slice(0, 8);
+  }
+
+  function escHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function renderResults(results) {
+    dropdown.innerHTML = '';
+    if (!results.length) {
+      dropdown.innerHTML = '<p class="search-no-results">No products found.</p>';
+      dropdown.classList.add('visible');
+      return;
+    }
+    results.forEach(function(p) {
+      const a   = document.createElement('a');
+      a.className = 'search-result';
+      a.href      = `product.html?id=${p.product_id}`;
+
+      const imgWrap = document.createElement('div');
+      imgWrap.className = 'search-result-img';
+      if (p.product_image) {
+        const img = document.createElement('img');
+        img.src   = p.product_image;
+        img.alt   = p.product_name;
+        img.onerror = function() { imgWrap.innerHTML = ''; };
+        imgWrap.appendChild(img);
+      }
+
+      const info = document.createElement('div');
+      info.className = 'search-result-info';
+      info.innerHTML = `
+        <p class="search-result-name">${escHtml(p.product_name)}</p>
+        <p class="search-result-price">$${parseFloat(p.product_price).toFixed(2)}</p>`;
+
+      a.append(imgWrap, info);
+      dropdown.appendChild(a);
+    });
+    dropdown.classList.add('visible');
+  }
 });
