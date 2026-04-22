@@ -268,6 +268,21 @@ function loadFeaturedProduct(categories) {
     .catch(function() {}); /* keep static fallback on error */
 }
 
+/* ── Section header ── */
+function updateSectionHeader(deptId) {
+  const eyebrow = document.getElementById('products-eyebrow');
+  const title   = document.getElementById('products-title');
+  if (!title) return;
+  if (!deptId) {
+    if (eyebrow) eyebrow.textContent = 'Featured';
+    title.textContent = 'New arrivals';
+    return;
+  }
+  const dept = state.allDepartments.find(function(d) { return String(d.department_id) === String(deptId); });
+  if (eyebrow) eyebrow.textContent = dept ? dept.department_name : 'Featured';
+  title.textContent = dept ? `${dept.department_name} products` : 'New arrivals';
+}
+
 /* ── Dept filter ── */
 function filterByDept(deptId) {
   state.activeDeptId = deptId;
@@ -275,6 +290,7 @@ function filterByDept(deptId) {
   state.visibleCategories = deptId
     ? state.allCategories.filter(function(c) { return String(c.category_department_id) === String(deptId); })
     : state.allCategories;
+  updateSectionHeader(deptId);
   setActiveCategory(null);
 }
 
@@ -299,6 +315,7 @@ document.addEventListener('DOMContentLoaded', function() {
         state.visibleCategories = res.categories;
       }
 
+      if (deptParam) updateSectionHeader(deptParam);
       loadFeaturedProduct(res.categories);
       loadProducts();
     })
