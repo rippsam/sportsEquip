@@ -417,6 +417,8 @@ button { font-family: inherit; }
   color: #444;
   cursor: pointer;
   transition: border-color 0.15s, color 0.15s;
+  text-decoration: none;
+  display: inline-block;
 }
 .brand-chip:hover { border-color: #999; color: var(--black); }
 
