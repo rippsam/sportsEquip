@@ -226,6 +226,33 @@ function loadProducts() {
   });
 }
 
+/* ── Top categories (monthly rotation) ── */
+function pickUnique(arr, count, rand) {
+  const pool   = arr.slice();
+  const picked = [];
+  while (picked.length < count && pool.length > 0) {
+    const idx = Math.floor(rand() * pool.length);
+    picked.push(pool.splice(idx, 1)[0]);
+  }
+  return picked;
+}
+
+function renderTopCategories(categories) {
+  const row = document.getElementById('top-categories-row');
+  if (!row) return;
+  const now       = new Date();
+  const monthSeed = now.getFullYear() * 12 + now.getMonth();
+  const rand      = seededRand(monthSeed * 37 + 17);
+  const picked    = pickUnique(categories, Math.min(8, categories.length), rand);
+  picked.forEach(function(cat) {
+    const a     = document.createElement('a');
+    a.className = 'brand-chip';
+    a.href      = `index.html?dept=${cat.category_department_id}`;
+    a.textContent = cat.category_name;
+    row.appendChild(a);
+  });
+}
+
 /* ── Featured product (weekly rotation) ── */
 function seededRand(seed) {
   let s = seed;
@@ -316,6 +343,7 @@ document.addEventListener('DOMContentLoaded', function() {
       }
 
       if (deptParam) updateSectionHeader(deptParam);
+      renderTopCategories(res.categories);
       loadFeaturedProduct(res.categories);
       loadProducts();
     })

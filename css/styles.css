@@ -425,6 +425,9 @@ button { font-family: inherit; }
 }
 .brand-chip:hover { border-color: #999; color: var(--black); }
 
+.cat-group { margin-bottom: 40px; }
+.cat-group-title { font-size: 18px; font-weight: 600; margin-bottom: 16px; color: var(--black); }
+
 /* ════════════════════════════════════════
    TRUST BAR
 ════════════════════════════════════════ */
