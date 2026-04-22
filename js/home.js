@@ -171,28 +171,31 @@ function loadProducts() {
     promise = Api.getProducts(state.activeCategoryId, state.limit, state.offset)
       .then(function(res) { return res.data; });
   } else {
-    /* Use up to state.limit categories as a pool so sparse categories don't produce fewer than 8 */
-    const cats = state.visibleCategories.slice(0, state.limit);
-    if (cats.length === 0) {
+    /* Fetch 1 item from every visible category so any empty/sparse categories
+       don't prevent filling a full batch of 8 */
+    if (state.visibleCategories.length === 0) {
       state.loading = false;
       setLoadMoreState('done');
       return;
     }
-    const perCat = Math.max(1, Math.ceil(state.limit / cats.length));
     promise = Promise.allSettled(
-      cats.map(function(c) {
+      state.visibleCategories.map(function(c) {
         const off = state.samplerOffsets[c.category_id] || 0;
-        return Api.getProducts(c.category_id, perCat, off).then(function(res) {
-          state.samplerOffsets[c.category_id] = off + res.data.length;
-          return res.data;
-        });
+        return Api.getProducts(c.category_id, 1, off)
+          .then(function(res) {
+            return res.data.length ? { cat: c, item: res.data[0] } : null;
+          });
       })
     ).then(function(results) {
-      const fulfilled = results
-        .filter(function(r) { return r.status === 'fulfilled'; })
+      const available = results
+        .filter(function(r) { return r.status === 'fulfilled' && r.value; })
         .map(function(r) { return r.value; });
-      if (!fulfilled.some(function(v) { return v.length >= perCat; })) state.hasMore = false;
-      return fulfilled.flat().slice(0, state.limit);
+      const batch = available.slice(0, state.limit);
+      batch.forEach(function(v) {
+        state.samplerOffsets[v.cat.category_id] = (state.samplerOffsets[v.cat.category_id] || 0) + 1;
+      });
+      state.hasMore = available.length >= state.limit;
+      return batch.map(function(v) { return v.item; });
     });
   }
 
