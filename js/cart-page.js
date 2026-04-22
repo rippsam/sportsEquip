@@ -8,21 +8,21 @@ function escHtml(str) {
     .replace(/"/g, '&quot;');
 }
 
-var SHIPPING_THRESHOLD = 75;
-var SHIPPING_COST      = 8.99;
+const SHIPPING_THRESHOLD = 75;
+const SHIPPING_COST      = 8.99;
 
 function renderCart() {
-  var items    = Cart.getItems();
-  var subtotal = Cart.getSubtotal();
-  var shipping = subtotal >= SHIPPING_THRESHOLD ? 0 : SHIPPING_COST;
-  var total    = subtotal + shipping;
+  const items      = Cart.getItems();
+  const subtotal   = Cart.getSubtotal();
+  const shipping   = subtotal >= SHIPPING_THRESHOLD ? 0 : SHIPPING_COST;
+  const total      = subtotal + shipping;
 
-  var container = document.getElementById('cart-container');
+  const container = document.getElementById('cart-container');
   if (!container) return;
 
   /* Update heading count */
-  var heading = document.getElementById('cart-heading');
-  var totalCount = Cart.getTotalCount();
+  const heading    = document.getElementById('cart-heading');
+  const totalCount = Cart.getTotalCount();
   if (heading) heading.textContent = 'Your cart (' + totalCount + ' item' + (totalCount !== 1 ? 's' : '') + ')';
 
   if (items.length === 0) {
@@ -35,9 +35,9 @@ function renderCart() {
   }
 
   /* Items list */
-  var itemsHtml = '<div class="cart-items">';
+  let itemsHtml = '<div class="cart-items">';
   items.forEach(function(item) {
-    var lineTotal = (parseFloat(item.product_price) * item.quantity).toFixed(2);
+    const lineTotal = (parseFloat(item.product_price) * item.quantity).toFixed(2);
     itemsHtml +=
       '<div class="cart-item" data-id="' + item.product_id + '">' +
         '<div class="cart-item-img">' +
@@ -61,11 +61,11 @@ function renderCart() {
   itemsHtml += '</div>';
 
   /* Summary */
-  var shippingText = shipping === 0
+  const shippingText = shipping === 0
     ? '<span style="color:green">Free</span>'
     : '$' + shipping.toFixed(2);
 
-  var summaryHtml =
+  const summaryHtml =
     '<div class="cart-summary">' +
       '<p class="cart-summary-title">Order summary</p>' +
       '<div class="cart-summary-row"><span>Subtotal</span><span>$' + subtotal.toFixed(2) + '</span></div>' +
@@ -86,18 +86,18 @@ function renderCart() {
   /* Event listeners */
   container.querySelectorAll('.qty-dec').forEach(function(btn) {
     btn.addEventListener('click', function() {
-      var id  = parseInt(btn.dataset.id);
-      var items = Cart.getItems();
-      var item = items.find(function(i) { return i.product_id === id; });
+      const id   = parseInt(btn.dataset.id);
+      const items = Cart.getItems();
+      const item  = items.find(function(i) { return i.product_id === id; });
       if (item) Cart.updateQty(id, item.quantity - 1);
     });
   });
 
   container.querySelectorAll('.qty-inc').forEach(function(btn) {
     btn.addEventListener('click', function() {
-      var id  = parseInt(btn.dataset.id);
-      var items = Cart.getItems();
-      var item = items.find(function(i) { return i.product_id === id; });
+      const id   = parseInt(btn.dataset.id);
+      const items = Cart.getItems();
+      const item  = items.find(function(i) { return i.product_id === id; });
       if (item) Cart.updateQty(id, item.quantity + 1);
     });
   });

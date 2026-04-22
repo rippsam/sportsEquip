@@ -1,7 +1,7 @@
 function updateCartBadge() {
-  var badge = document.getElementById('cart-badge');
+  const badge = document.getElementById('cart-badge');
   if (!badge) return;
-  var count = Cart.getTotalCount();
+  const count = Cart.getTotalCount();
   if (count > 0) {
     badge.textContent = count > 99 ? '99+' : count;
     badge.style.display = 'inline-flex';
@@ -14,25 +14,25 @@ document.addEventListener('DOMContentLoaded', function() {
   updateCartBadge();
   document.addEventListener('cartUpdated', updateCartBadge);
 
-  var cartBtn = document.getElementById('nav-cart-btn');
+  const cartBtn = document.getElementById('nav-cart-btn');
   if (cartBtn) {
     cartBtn.addEventListener('click', function() {
       location.href = 'cart.html';
     });
   }
 
-  var list = document.getElementById('nav-dept-links');
+  const list = document.getElementById('nav-dept-links');
   if (!list) return;
 
-  var params   = new URLSearchParams(location.search);
-  var activeDept = params.get('dept');
+  const params     = new URLSearchParams(location.search);
+  const activeDept = params.get('dept');
 
   Api.getDepartments().then(function(res) {
-    var depts = res.data;
+    const depts = res.data;
 
     depts.forEach(function(d) {
-      var li = document.createElement('li');
-      var a  = document.createElement('a');
+      const li = document.createElement('li');
+      const a  = document.createElement('a');
       a.href        = 'index.html?dept=' + d.department_id;
       a.textContent = d.department_name;
       if (String(d.department_id) === activeDept) {
@@ -55,8 +55,8 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   function appendSaleLink(list) {
-    var li = document.createElement('li');
-    var a  = document.createElement('a');
+    const li = document.createElement('li');
+    const a  = document.createElement('a');
     a.href        = 'index.html';
     a.textContent = 'Sale';
     a.className   = 'sale';

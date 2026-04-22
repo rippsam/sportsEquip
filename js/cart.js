@@ -4,7 +4,7 @@
 ─────────────────────────────────────────────────────────────────────────── */
 
 window.Cart = (function() {
-  var KEY = 'sports_equip_cart';
+  const KEY = 'sports_equip_cart';
 
   function load() {
     try { return JSON.parse(localStorage.getItem(KEY)) || []; }
@@ -22,9 +22,9 @@ window.Cart = (function() {
     },
 
     addItem: function(product) {
-      var items = load();
-      var existing = null;
-      for (var i = 0; i < items.length; i++) {
+      const items = load();
+      let existing = null;
+      for (let i = 0; i < items.length; i++) {
         if (items[i].product_id === product.product_id) { existing = items[i]; break; }
       }
       if (existing) {
@@ -42,14 +42,14 @@ window.Cart = (function() {
     },
 
     removeItem: function(productId) {
-      var items = load().filter(function(i) { return i.product_id !== productId; });
+      const items = load().filter(function(i) { return i.product_id !== productId; });
       save(items);
     },
 
     updateQty: function(productId, qty) {
       if (qty <= 0) { this.removeItem(productId); return; }
-      var items = load();
-      for (var i = 0; i < items.length; i++) {
+      const items = load();
+      for (let i = 0; i < items.length; i++) {
         if (items[i].product_id === productId) { items[i].quantity = qty; break; }
       }
       save(items);

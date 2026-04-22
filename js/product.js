@@ -1,15 +1,15 @@
 /* ── Known brands for parsing ── */
-var KNOWN_BRANDS = [
+const KNOWN_BRANDS = [
   'Nike', 'Adidas', 'Under Armour', 'New Balance', 'The North Face', 'Garmin',
   'Wilson', 'Callaway', 'Patagonia', 'Brooks', 'Puma', 'Reebok', 'Asics',
   'Mizuno', 'Salomon', 'Columbia', 'Titleist', 'TaylorMade', 'Ping',
   'Rawlings', 'Easton', 'Bauer', 'CCM', 'Warrior', 'Saucony', 'Hoka',
   'Yonex', 'Head', 'Babolat', 'Prince'
 ];
-var MULTI_WORD_BRANDS = ['Under Armour', 'New Balance', 'The North Face'];
+const MULTI_WORD_BRANDS = ['Under Armour', 'New Balance', 'The North Face'];
 
 function parseBrand(name) {
-  for (var i = 0; i < MULTI_WORD_BRANDS.length; i++) {
+  for (let i = 0; i < MULTI_WORD_BRANDS.length; i++) {
     if (name.indexOf(MULTI_WORD_BRANDS[i]) === 0) return MULTI_WORD_BRANDS[i];
   }
   return name.split(' ')[0] || 'Brand';
@@ -25,7 +25,7 @@ function escHtml(str) {
 
 /* ── Skeleton ── */
 function showGallerySkeleton() {
-  var gallery = document.getElementById('pdp-gallery');
+  const gallery = document.getElementById('pdp-gallery');
   gallery.innerHTML =
     '<div class="pdp-main-img skeleton" style="max-width:340px;height:300px;width:100%;background:none;"></div>' +
     '<div style="display:flex;gap:10px;margin-top:16px;">' +
@@ -36,7 +36,7 @@ function showGallerySkeleton() {
 }
 
 function showInfoSkeleton() {
-  var info = document.getElementById('pdp-info');
+  const info = document.getElementById('pdp-info');
   info.innerHTML =
     '<div class="skeleton skeleton-line short" style="width:80px;height:12px;margin-bottom:12px;"></div>' +
     '<div class="skeleton skeleton-line" style="width:90%;height:28px;margin-bottom:8px;"></div>' +
@@ -47,7 +47,7 @@ function showInfoSkeleton() {
 }
 
 /* ── Review generator ── */
-var REVIEW_NAMES = [
+const REVIEW_NAMES = [
   'Jordan M.', 'Sarah K.', 'Marcus T.', 'Alyssa R.', 'Devon P.',
   'Brianna L.', 'Tyler H.', 'Keisha W.', 'Nate F.', 'Vanessa C.',
   'Chris B.', 'Monique J.', 'Ryan S.', 'Priya N.', 'Jake O.',
@@ -55,7 +55,7 @@ var REVIEW_NAMES = [
   'Brandon Q.', 'Tori Z.', 'Elijah X.', 'Natalie I.', 'Darius U.'
 ];
 
-var REVIEW_BODIES = [
+const REVIEW_BODIES = [
   'Exactly what I was looking for. Great quality and arrived fast. Would definitely buy again.',
   'Really impressed with the build quality. Feels premium and holds up well after heavy use.',
   'Good value for the price. Does everything it promises. My whole team uses this now.',
@@ -93,11 +93,11 @@ var REVIEW_BODIES = [
 ];
 
 /* Weighted star ratings — skewed realistic (mostly 4-5 stars) */
-var STAR_POOL = [5, 5, 5, 5, 5, 5, 4, 4, 4, 4, 3, 3, 2];
+const STAR_POOL = [5, 5, 5, 5, 5, 5, 4, 4, 4, 4, 3, 3, 2];
 
 function seededRand(seed) {
   /* Simple LCG — returns function that yields 0..1 */
-  var s = seed;
+  let s = seed;
   return function() {
     s = (s * 1664525 + 1013904223) & 0xffffffff;
     return (s >>> 0) / 0xffffffff;
@@ -105,30 +105,30 @@ function seededRand(seed) {
 }
 
 function starHtml(n) {
-  var s = '';
-  for (var i = 1; i <= 5; i++) s += (i <= n ? '\u2605' : '\u2606');
+  let s = '';
+  for (let i = 1; i <= 5; i++) s += (i <= n ? '\u2605' : '\u2606');
   return s;
 }
 
 function generateReviews(productId) {
-  var rand  = seededRand(productId * 7 + 31);
-  var count = 2 + Math.floor(rand() * 5); /* 2–6 reviews */
-  var usedNames   = {};
-  var usedBodies  = {};
-  var html = '';
+  const rand  = seededRand(productId * 7 + 31);
+  const count = 2 + Math.floor(rand() * 5); /* 2–6 reviews */
+  const usedNames  = {};
+  const usedBodies = {};
+  let html = '';
 
-  for (var i = 0; i < count; i++) {
+  for (let i = 0; i < count; i++) {
     /* Pick unique name */
-    var nameIdx;
+    let nameIdx;
     do { nameIdx = Math.floor(rand() * REVIEW_NAMES.length); } while (usedNames[nameIdx] && Object.keys(usedNames).length < REVIEW_NAMES.length);
     usedNames[nameIdx] = true;
 
     /* Pick unique body */
-    var bodyIdx;
+    let bodyIdx;
     do { bodyIdx = Math.floor(rand() * REVIEW_BODIES.length); } while (usedBodies[bodyIdx] && Object.keys(usedBodies).length < REVIEW_BODIES.length);
     usedBodies[bodyIdx] = true;
 
-    var stars = STAR_POOL[Math.floor(rand() * STAR_POOL.length)];
+    const stars = STAR_POOL[Math.floor(rand() * STAR_POOL.length)];
 
     html +=
       '<div class="review-card">' +
@@ -142,20 +142,20 @@ function generateReviews(productId) {
 
 /* ── Render product ── */
 function renderProduct(product, categoryName) {
-  var brand = parseBrand(product.product_name);
-  var price = '$' + parseFloat(product.product_price).toFixed(2);
+  const brand = parseBrand(product.product_name);
+  const price = '$' + parseFloat(product.product_price).toFixed(2);
 
   /* Update page title */
   document.title = product.product_name + ' \u2014 Sports Equip';
 
   /* Breadcrumb */
-  var bc = document.getElementById('pdp-breadcrumb');
-  var catPart = categoryName ? ('<a href="index.html">\u2190 Back</a> / ' + escHtml(categoryName) + ' / ') : '<a href="index.html">\u2190 Back</a> / ';
-  bc.innerHTML = catPart + escHtml(product.product_name);
+  const bc      = document.getElementById('pdp-breadcrumb');
+  const catPart = categoryName ? ('<a href="index.html">\u2190 Back</a> / ' + escHtml(categoryName) + ' / ') : '<a href="index.html">\u2190 Back</a> / ';
+  bc.innerHTML  = catPart + escHtml(product.product_name);
 
   /* Gallery */
-  var gallery = document.getElementById('pdp-gallery');
-  var imgHtml = '';
+  const gallery = document.getElementById('pdp-gallery');
+  let imgHtml   = '';
   if (product.product_image) {
     imgHtml = '<img id="pdp-main-img-el" src="' + escHtml(product.product_image) + '" alt="' + escHtml(product.product_name) + '" onerror="this.style.display=\'none\'">';
   }
@@ -168,7 +168,7 @@ function renderProduct(product, categoryName) {
     '</div>';
 
   /* Info panel */
-  var info = document.getElementById('pdp-info');
+  const info = document.getElementById('pdp-info');
   info.innerHTML =
     '<p class="pdp-brand">' + escHtml(brand) + '</p>' +
     '<h1 class="pdp-name">' + escHtml(product.product_name) + '</h1>' +
@@ -183,7 +183,7 @@ function renderProduct(product, categoryName) {
     '<div id="pdp-features"></div>';
 
   /* Add to cart handler */
-  var addBtn = document.getElementById('pdp-add-to-cart');
+  const addBtn = document.getElementById('pdp-add-to-cart');
   if (addBtn) {
     addBtn.addEventListener('click', function() {
       Cart.addItem(product);
@@ -193,11 +193,11 @@ function renderProduct(product, categoryName) {
   }
 
   /* Features from description snippets */
-  var features = document.getElementById('pdp-features');
+  const features = document.getElementById('pdp-features');
   if (product.product_description) {
-    var sentences = product.product_description.split(/[.!?]+/).filter(function(s) { return s.trim().length > 10; }).slice(0, 3);
+    const sentences = product.product_description.split(/[.!?]+/).filter(function(s) { return s.trim().length > 10; }).slice(0, 3);
     sentences.forEach(function(s) {
-      var row = document.createElement('div');
+      const row = document.createElement('div');
       row.className = 'feature-row';
       row.innerHTML =
         '<div class="feature-check">' +
@@ -209,7 +209,7 @@ function renderProduct(product, categoryName) {
   }
 
   /* Details tab content */
-  var detailsPanel = document.getElementById('tab-details');
+  const detailsPanel = document.getElementById('tab-details');
   detailsPanel.innerHTML =
     '<div class="tab-panel-inner">' +
       '<div>' +
@@ -220,13 +220,13 @@ function renderProduct(product, categoryName) {
     '</div>';
 
   /* Dynamic reviews — seeded by product_id so each product is consistent */
-  var reviewsInline = document.getElementById('tab-reviews-inline');
+  const reviewsInline = document.getElementById('tab-reviews-inline');
   reviewsInline.innerHTML = '<p class="reviews-title">Customer Reviews</p>' + generateReviews(product.product_id);
 }
 
 /* ── Related products ── */
 function renderRelated(products) {
-  var grid = document.getElementById('related-grid');
+  const grid = document.getElementById('related-grid');
   if (!grid) return;
   grid.innerHTML = '';
 
@@ -236,17 +236,17 @@ function renderRelated(products) {
   }
 
   products.forEach(function(p) {
-    var brand = parseBrand(p.product_name);
-    var price = '$' + parseFloat(p.product_price).toFixed(2);
+    const brand = parseBrand(p.product_name);
+    const price = '$' + parseFloat(p.product_price).toFixed(2);
 
-    var article = document.createElement('article');
+    const article = document.createElement('article');
     article.className = 'pcard';
 
-    var imgWrap = document.createElement('div');
+    const imgWrap = document.createElement('div');
     imgWrap.className = 'pcard-img';
 
     if (p.product_image) {
-      var img = document.createElement('img');
+      const img = document.createElement('img');
       img.src = p.product_image;
       img.alt = p.product_name;
       img.loading = 'lazy';
@@ -258,7 +258,7 @@ function renderRelated(products) {
       imgWrap.innerHTML = '<div class="pcard-img-placeholder">No image</div>';
     }
 
-    var body = document.createElement('div');
+    const body = document.createElement('div');
     body.className = 'pcard-body';
     body.innerHTML =
       '<p class="pcard-brand">' + escHtml(brand) + '</p>' +
@@ -271,7 +271,7 @@ function renderRelated(products) {
     article.appendChild(imgWrap);
     article.appendChild(body);
 
-    var cartBtn = body.querySelector('.add-to-cart-icon');
+    const cartBtn = body.querySelector('.add-to-cart-icon');
     cartBtn.addEventListener('click', function(e) {
       e.stopPropagation();
       Cart.addItem(p);
@@ -290,23 +290,23 @@ function renderRelated(products) {
 
 /* ── Tab switching ── */
 function initTabs() {
-  var tabsEl = document.querySelector('.pdp-tabs');
+  const tabsEl = document.querySelector('.pdp-tabs');
   if (!tabsEl) return;
 
-  var panels = document.querySelectorAll('.tab-panel');
+  const panels = document.querySelectorAll('.tab-panel');
 
   /* Show first panel */
   if (panels.length > 0) panels[0].classList.add('active');
 
   tabsEl.addEventListener('click', function(e) {
-    var btn = e.target.closest('.pdp-tab');
+    const btn = e.target.closest('.pdp-tab');
     if (!btn) return;
 
-    var tabs = tabsEl.querySelectorAll('.pdp-tab');
+    const tabs = tabsEl.querySelectorAll('.pdp-tab');
     tabs.forEach(function(t) { t.classList.remove('active'); });
     btn.classList.add('active');
 
-    var idx = Array.prototype.indexOf.call(tabs, btn);
+    const idx = Array.prototype.indexOf.call(tabs, btn);
     panels.forEach(function(p, i) {
       p.classList.toggle('active', i === idx);
     });
@@ -315,28 +315,28 @@ function initTabs() {
 
 /* ── Error state ── */
 function showPageError(message) {
-  var pdp = document.querySelector('.pdp');
+  const pdp  = document.querySelector('.pdp');
   if (pdp) pdp.style.display = 'none';
-  var tabs = document.querySelector('.pdp-tabs');
+  const tabs = document.querySelector('.pdp-tabs');
   if (tabs) tabs.style.display = 'none';
-  var tc = document.querySelector('.tab-content');
+  const tc   = document.querySelector('.tab-content');
   if (tc) tc.style.display = 'none';
-  var rel = document.getElementById('related-products');
+  const rel  = document.getElementById('related-products');
   if (rel) rel.style.display = 'none';
 
-  var bc = document.getElementById('pdp-breadcrumb');
+  const bc = document.getElementById('pdp-breadcrumb');
   if (bc) {
     bc.innerHTML = '<a href="index.html">\u2190 Back to shop</a>';
   }
 
-  var errDiv = document.createElement('div');
+  const errDiv = document.createElement('div');
   errDiv.className = 'pdp-error';
   errDiv.innerHTML =
     '<strong style="font-size:20px;display:block;margin-bottom:12px;">' + escHtml(message || 'Product not found') + '</strong>' +
     '<p>The product you are looking for could not be loaded.</p>' +
     '<a href="index.html">Return to shop</a>';
 
-  var main = document.querySelector('main') || document.body;
+  const main = document.querySelector('main') || document.body;
   if (bc) {
     bc.insertAdjacentElement('afterend', errDiv);
   } else {
@@ -346,8 +346,8 @@ function showPageError(message) {
 
 /* ── Init ── */
 document.addEventListener('DOMContentLoaded', function() {
-  var params = new URLSearchParams(location.search);
-  var productId = params.get('id');
+  const params     = new URLSearchParams(location.search);
+  const productId  = params.get('id');
 
   if (!productId) {
     location.href = 'index.html';
@@ -359,10 +359,10 @@ document.addEventListener('DOMContentLoaded', function() {
   showInfoSkeleton();
 
   /* Slow notice */
-  var slowTimer = setTimeout(function() {
-    var info = document.getElementById('pdp-info');
+  let slowTimer = setTimeout(function() {
+    const info = document.getElementById('pdp-info');
     if (info) {
-      var notice = document.createElement('p');
+      const notice = document.createElement('p');
       notice.style.cssText = 'text-align:center;font-size:13px;color:#888;margin-top:12px;';
       notice.textContent = 'Waking up the server\u2026 this may take a moment.';
       info.appendChild(notice);
@@ -371,26 +371,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
   Api.getProduct(productId).then(function(res) {
     clearTimeout(slowTimer);
-    var product = res.data;
+    const product = res.data;
     if (!product) throw new Error('No product data returned');
 
     /* Fetch categories to get category name */
     Api.getAllCategories().then(function(catRes) {
-      var category = catRes.categories.find(function(c) {
+      const category     = catRes.categories.find(function(c) {
         return c.category_id === product.product_category_id;
       });
-      var categoryName = category ? category.category_name : null;
+      const categoryName = category ? category.category_name : null;
 
       renderProduct(product, categoryName);
 
       /* Load related products from same category */
       Api.getProducts(product.product_category_id, 4, 0).then(function(relRes) {
-        var related = relRes.data.filter(function(p) {
+        const related = relRes.data.filter(function(p) {
           return p.product_id !== product.product_id;
         }).slice(0, 4);
         renderRelated(related);
       }).catch(function() {
-        var rel = document.getElementById('related-products');
+        const rel = document.getElementById('related-products');
         if (rel) rel.style.display = 'none';
       });
     }).catch(function() {
@@ -398,12 +398,12 @@ document.addEventListener('DOMContentLoaded', function() {
       renderProduct(product, null);
 
       Api.getProducts(product.product_category_id, 4, 0).then(function(relRes) {
-        var related = relRes.data.filter(function(p) {
+        const related = relRes.data.filter(function(p) {
           return p.product_id !== product.product_id;
         }).slice(0, 4);
         renderRelated(related);
       }).catch(function() {
-        var rel = document.getElementById('related-products');
+        const rel = document.getElementById('related-products');
         if (rel) rel.style.display = 'none';
       });
     });

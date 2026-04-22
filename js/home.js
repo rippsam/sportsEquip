@@ -1,5 +1,5 @@
 /* ── Known brands for parsing ── */
-var KNOWN_BRANDS = [
+const KNOWN_BRANDS = [
   'Nike', 'Adidas', 'Under', 'New', 'The', 'Garmin', 'Wilson', 'Callaway',
   'Patagonia', 'Brooks', 'Puma', 'Reebok', 'Asics', 'Mizuno', 'Salomon',
   'Columbia', 'Titleist', 'TaylorMade', 'Ping', 'Rawlings', 'Easton',
@@ -8,18 +8,18 @@ var KNOWN_BRANDS = [
 ];
 
 /* Multi-word brand prefixes */
-var MULTI_WORD_BRANDS = ['Under Armour', 'New Balance', 'The North Face'];
+const MULTI_WORD_BRANDS = ['Under Armour', 'New Balance', 'The North Face'];
 
 function parseBrand(name) {
-  for (var i = 0; i < MULTI_WORD_BRANDS.length; i++) {
+  for (let i = 0; i < MULTI_WORD_BRANDS.length; i++) {
     if (name.indexOf(MULTI_WORD_BRANDS[i]) === 0) return MULTI_WORD_BRANDS[i];
   }
-  var first = name.split(' ')[0];
+  const first = name.split(' ')[0];
   return first || 'Brand';
 }
 
 /* ── State ── */
-var state = {
+const state = {
   allCategories:     [],
   allDepartments:    [],
   visibleCategories: [],
@@ -34,17 +34,17 @@ var state = {
   firstLoad:         true
 };
 
-var slowTimer = null;
+let slowTimer = null;
 
 /* ── DOM refs ── */
-var productGrid = document.getElementById('product-grid');
-var loadMoreBtn = document.getElementById('btn-load-more');
+const productGrid = document.getElementById('product-grid');
+const loadMoreBtn = document.getElementById('btn-load-more');
 
 /* ── Skeletons ── */
 function showSkeletonCards(n) {
   productGrid.innerHTML = '';
-  for (var i = 0; i < n; i++) {
-    var s = document.createElement('div');
+  for (let i = 0; i < n; i++) {
+    const s = document.createElement('div');
     s.className = 'skeleton skeleton-card';
     productGrid.appendChild(s);
   }
@@ -62,17 +62,17 @@ function setActiveCategory(catId) {
 
 /* ── Product card ── */
 function renderProductCard(p) {
-  var brand = parseBrand(p.product_name);
-  var price = '$' + parseFloat(p.product_price).toFixed(2);
+  const brand = parseBrand(p.product_name);
+  const price = '$' + parseFloat(p.product_price).toFixed(2);
 
-  var article = document.createElement('article');
+  const article = document.createElement('article');
   article.className = 'pcard';
 
-  var imgWrap = document.createElement('div');
+  const imgWrap = document.createElement('div');
   imgWrap.className = 'pcard-img';
 
   if (p.product_image) {
-    var img = document.createElement('img');
+    const img = document.createElement('img');
     img.src = p.product_image;
     img.alt = p.product_name;
     img.loading = 'lazy';
@@ -84,7 +84,7 @@ function renderProductCard(p) {
     imgWrap.innerHTML = '<div class="pcard-img-placeholder">No image</div>';
   }
 
-  var body = document.createElement('div');
+  const body = document.createElement('div');
   body.className = 'pcard-body';
   body.innerHTML =
     '<p class="pcard-brand">' + escHtml(brand) + '</p>' +
@@ -97,7 +97,7 @@ function renderProductCard(p) {
   article.appendChild(imgWrap);
   article.appendChild(body);
 
-  var cartBtn = body.querySelector('.add-to-cart-icon');
+  const cartBtn = body.querySelector('.add-to-cart-icon');
   cartBtn.addEventListener('click', function(e) {
     e.stopPropagation();
     Cart.addItem(p);
@@ -132,7 +132,7 @@ function setLoadMoreState(s) {
 
 /* ── Error state ── */
 function showProductError() {
-  var errDiv = document.createElement('div');
+  const errDiv = document.createElement('div');
   errDiv.className = 'error-state';
   errDiv.innerHTML =
     '<strong>Could not load products</strong>' +
@@ -157,7 +157,7 @@ function loadProducts() {
   /* Start slow-API notice after 5 seconds on first load */
   if (state.firstLoad) {
     slowTimer = setTimeout(function() {
-      var notice = document.createElement('div');
+      const notice = document.createElement('div');
       notice.className = 'slow-notice';
       notice.id = 'slow-notice';
       notice.textContent = 'Waking up the server\u2026 this may take a moment.';
@@ -165,7 +165,7 @@ function loadProducts() {
     }, 5000);
   }
 
-  var promise;
+  let promise;
   if (state.activeCategoryId !== null) {
     promise = Api.getProducts(state.activeCategoryId, state.limit, state.offset)
       .then(function(res) {
@@ -173,25 +173,25 @@ function loadProducts() {
       });
   } else {
     /* Sampler: pick up to 4 categories, fetch 2 each */
-    var cats = state.visibleCategories.slice(0, 4);
+    const cats   = state.visibleCategories.slice(0, 4);
     if (cats.length === 0) {
       state.loading = false;
       setLoadMoreState('done');
       return;
     }
-    var perCat = Math.max(2, Math.ceil(state.limit / cats.length));
+    const perCat = Math.max(2, Math.ceil(state.limit / cats.length));
     promise = Promise.allSettled(
       cats.map(function(c) {
-        var off = state.samplerOffsets[c.category_id] || 0;
+        const off = state.samplerOffsets[c.category_id] || 0;
         return Api.getProducts(c.category_id, perCat, off).then(function(res) {
           state.samplerOffsets[c.category_id] = off + res.data.length;
           return res.data;
         });
       })
     ).then(function(results) {
-      var merged = [];
-      var anyMore = false;
-      results.forEach(function(r, i) {
+      let merged  = [];
+      let anyMore = false;
+      results.forEach(function(r) {
         if (r.status === 'fulfilled') {
           merged = merged.concat(r.value);
           if (r.value.length >= perCat) anyMore = true;
@@ -206,7 +206,7 @@ function loadProducts() {
   promise.then(function(products) {
     /* Clear slow notice */
     clearTimeout(slowTimer);
-    var notice = document.getElementById('slow-notice');
+    const notice = document.getElementById('slow-notice');
     if (notice) notice.remove();
 
     if (state.firstLoad) {
@@ -238,7 +238,7 @@ function loadProducts() {
   }).catch(function(err) {
     console.error('loadProducts error:', err);
     clearTimeout(slowTimer);
-    var notice = document.getElementById('slow-notice');
+    const notice = document.getElementById('slow-notice');
     if (notice) notice.remove();
 
     if (state.firstLoad) productGrid.innerHTML = '';
@@ -269,8 +269,8 @@ function filterByDept(deptId) {
 
 /* ── Init ── */
 document.addEventListener('DOMContentLoaded', function() {
-  var params     = new URLSearchParams(location.search);
-  var deptParam  = params.get('dept');
+  const params    = new URLSearchParams(location.search);
+  const deptParam = params.get('dept');
 
   showSkeletonCards(8);
   setLoadMoreState('loading');
