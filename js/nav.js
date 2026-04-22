@@ -2,65 +2,51 @@ function updateCartBadge() {
   const badge = document.getElementById('cart-badge');
   if (!badge) return;
   const count = Cart.getTotalCount();
-  if (count > 0) {
-    badge.textContent = count > 99 ? '99+' : count;
-    badge.style.display = 'inline-flex';
-  } else {
-    badge.style.display = 'none';
-  }
+  badge.textContent   = count > 99 ? '99+' : count;
+  badge.style.display = count > 0 ? 'inline-flex' : 'none';
 }
 
 document.addEventListener('DOMContentLoaded', function() {
   updateCartBadge();
   document.addEventListener('cartUpdated', updateCartBadge);
 
-  const cartBtn = document.getElementById('nav-cart-btn');
-  if (cartBtn) {
-    cartBtn.addEventListener('click', function() {
-      location.href = 'cart.html';
-    });
-  }
+  document.getElementById('nav-cart-btn')?.addEventListener('click', function() {
+    location.href = 'cart.html';
+  });
 
   const list = document.getElementById('nav-dept-links');
   if (!list) return;
 
-  const params     = new URLSearchParams(location.search);
-  const activeDept = params.get('dept');
+  const activeDept = new URLSearchParams(location.search).get('dept');
 
-  Api.getDepartments().then(function(res) {
-    const depts = res.data;
-
-    depts.forEach(function(d) {
-      const li = document.createElement('li');
-      const a  = document.createElement('a');
-      a.href        = 'index.html?dept=' + d.department_id;
-      a.textContent = d.department_name;
-      if (String(d.department_id) === activeDept) {
-        a.classList.add('active');
+  Api.getDepartments()
+    .then(function(res) {
+      res.data.forEach(function(d) {
+        const li = document.createElement('li');
+        const a  = document.createElement('a');
+        a.href        = `index.html?dept=${d.department_id}`;
+        a.textContent = d.department_name;
+        if (String(d.department_id) === activeDept) a.classList.add('active');
+        li.appendChild(a);
+        list.appendChild(li);
+      });
+      appendSaleLink(list);
+      if (activeDept) {
+        document.dispatchEvent(new CustomEvent('deptSelected', { detail: { deptId: activeDept } }));
       }
-      li.appendChild(a);
-      list.appendChild(li);
+    })
+    .catch(function(err) {
+      console.error('Nav: failed to load departments', err);
+      appendSaleLink(list);
     });
 
-    appendSaleLink(list);
-
-    if (activeDept) {
-      document.dispatchEvent(new CustomEvent('deptSelected', {
-        detail: { deptId: activeDept }
-      }));
-    }
-  }).catch(function(err) {
-    console.error('Nav: failed to load departments', err);
-    appendSaleLink(list);
-  });
-
-  function appendSaleLink(list) {
+  function appendSaleLink(parent) {
     const li = document.createElement('li');
     const a  = document.createElement('a');
     a.href        = 'index.html';
     a.textContent = 'Sale';
     a.className   = 'sale';
     li.appendChild(a);
-    list.appendChild(li);
+    parent.appendChild(li);
   }
 });

@@ -7,8 +7,8 @@ window.Cart = (function() {
   const KEY = 'sports_equip_cart';
 
   function load() {
-    try { return JSON.parse(localStorage.getItem(KEY)) || []; }
-    catch (e) { return []; }
+    try { return JSON.parse(localStorage.getItem(KEY)) ?? []; }
+    catch { return []; }
   }
 
   function save(items) {
@@ -17,16 +17,11 @@ window.Cart = (function() {
   }
 
   return {
-    getItems: function() {
-      return load();
-    },
+    getItems() { return load(); },
 
-    addItem: function(product) {
-      const items = load();
-      let existing = null;
-      for (let i = 0; i < items.length; i++) {
-        if (items[i].product_id === product.product_id) { existing = items[i]; break; }
-      }
+    addItem(product) {
+      const items    = load();
+      const existing = items.find(function(i) { return i.product_id === product.product_id; });
       if (existing) {
         existing.quantity += 1;
       } else {
@@ -34,37 +29,33 @@ window.Cart = (function() {
           product_id:    product.product_id,
           product_name:  product.product_name,
           product_price: product.product_price,
-          product_image: product.product_image || '',
+          product_image: product.product_image ?? '',
           quantity:      1
         });
       }
       save(items);
     },
 
-    removeItem: function(productId) {
-      const items = load().filter(function(i) { return i.product_id !== productId; });
-      save(items);
+    removeItem(productId) {
+      save(load().filter(function(i) { return i.product_id !== productId; }));
     },
 
-    updateQty: function(productId, qty) {
+    updateQty(productId, qty) {
       if (qty <= 0) { this.removeItem(productId); return; }
       const items = load();
-      for (let i = 0; i < items.length; i++) {
-        if (items[i].product_id === productId) { items[i].quantity = qty; break; }
-      }
+      const item  = items.find(function(i) { return i.product_id === productId; });
+      if (item) item.quantity = qty;
       save(items);
     },
 
-    getTotalCount: function() {
+    getTotalCount() {
       return load().reduce(function(sum, i) { return sum + i.quantity; }, 0);
     },
 
-    getSubtotal: function() {
-      return load().reduce(function(sum, i) { return sum + (parseFloat(i.product_price) * i.quantity); }, 0);
+    getSubtotal() {
+      return load().reduce(function(sum, i) { return sum + parseFloat(i.product_price) * i.quantity; }, 0);
     },
 
-    clear: function() {
-      save([]);
-    }
+    clear() { save([]); }
   };
 })();

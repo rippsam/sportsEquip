@@ -7,15 +7,10 @@ const KNOWN_BRANDS = [
   'Babolat', 'Prince', 'Dunlop', 'Penn', 'Spalding', 'Molten', 'Baden'
 ];
 
-/* Multi-word brand prefixes */
 const MULTI_WORD_BRANDS = ['Under Armour', 'New Balance', 'The North Face'];
 
 function parseBrand(name) {
-  for (let i = 0; i < MULTI_WORD_BRANDS.length; i++) {
-    if (name.indexOf(MULTI_WORD_BRANDS[i]) === 0) return MULTI_WORD_BRANDS[i];
-  }
-  const first = name.split(' ')[0];
-  return first || 'Brand';
+  return MULTI_WORD_BRANDS.find(function(b) { return name.startsWith(b); }) || name.split(' ')[0] || 'Brand';
 }
 
 /* ── State ── */
@@ -25,7 +20,7 @@ const state = {
   visibleCategories: [],
   activeCategoryId:  null,
   activeDeptId:      null,
-  samplerOffsets:    {},   /* { catId: offset } for "All" sampler mode */
+  samplerOffsets:    {},
   products:          [],
   offset:            0,
   limit:             8,
@@ -43,28 +38,36 @@ const loadMoreBtn = document.getElementById('btn-load-more');
 /* ── Skeletons ── */
 function showSkeletonCards(n) {
   productGrid.innerHTML = '';
-  for (let i = 0; i < n; i++) {
+  Array.from({ length: n }).forEach(function() {
     const s = document.createElement('div');
     s.className = 'skeleton skeleton-card';
     productGrid.appendChild(s);
-  }
+  });
 }
 
 function setActiveCategory(catId) {
   state.activeCategoryId = catId;
-  state.products   = [];
-  state.offset     = 0;
-  state.samplerOffsets = {};
-  state.hasMore    = true;
-  productGrid.innerHTML = '';
+  state.products         = [];
+  state.offset           = 0;
+  state.samplerOffsets   = {};
+  state.hasMore          = true;
+  productGrid.innerHTML  = '';
   loadProducts();
+}
+
+/* ── Helpers ── */
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
 }
 
 /* ── Product card ── */
 function renderProductCard(p) {
-  const brand = parseBrand(p.product_name);
-  const price = '$' + parseFloat(p.product_price).toFixed(2);
-
+  const brand   = parseBrand(p.product_name);
+  const price   = `$${parseFloat(p.product_price).toFixed(2)}`;
   const article = document.createElement('article');
   article.className = 'pcard';
 
@@ -72,13 +75,11 @@ function renderProductCard(p) {
   imgWrap.className = 'pcard-img';
 
   if (p.product_image) {
-    const img = document.createElement('img');
-    img.src = p.product_image;
-    img.alt = p.product_name;
+    const img   = document.createElement('img');
+    img.src     = p.product_image;
+    img.alt     = p.product_name;
     img.loading = 'lazy';
-    img.onerror = function() {
-      imgWrap.innerHTML = '<div class="pcard-img-placeholder">No image</div>';
-    };
+    img.onerror = function() { imgWrap.innerHTML = '<div class="pcard-img-placeholder">No image</div>'; };
     imgWrap.appendChild(img);
   } else {
     imgWrap.innerHTML = '<div class="pcard-img-placeholder">No image</div>';
@@ -86,16 +87,15 @@ function renderProductCard(p) {
 
   const body = document.createElement('div');
   body.className = 'pcard-body';
-  body.innerHTML =
-    '<p class="pcard-brand">' + escHtml(brand) + '</p>' +
-    '<p class="pcard-name">'  + escHtml(p.product_name) + '</p>' +
-    '<div class="pcard-bottom">' +
-      '<span class="pcard-price">' + escHtml(price) + '</span>' +
-      '<button class="add-to-cart-icon" aria-label="Add to cart">+</button>' +
-    '</div>';
+  body.innerHTML = `
+    <p class="pcard-brand">${escHtml(brand)}</p>
+    <p class="pcard-name">${escHtml(p.product_name)}</p>
+    <div class="pcard-bottom">
+      <span class="pcard-price">${escHtml(price)}</span>
+      <button class="add-to-cart-icon" aria-label="Add to cart">+</button>
+    </div>`;
 
-  article.appendChild(imgWrap);
-  article.appendChild(body);
+  article.append(imgWrap, body);
 
   const cartBtn = body.querySelector('.add-to-cart-icon');
   cartBtn.addEventListener('click', function(e) {
@@ -106,28 +106,25 @@ function renderProductCard(p) {
   });
 
   article.addEventListener('click', function(e) {
-    if (e.target.classList.contains('add-to-cart-icon')) return;
-    location.href = 'product.html?id=' + p.product_id;
+    if (!e.target.classList.contains('add-to-cart-icon')) {
+      location.href = `product.html?id=${p.product_id}`;
+    }
   });
 
   return article;
 }
 
-function escHtml(str) {
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
-}
-
 /* ── Load More button states ── */
 function setLoadMoreState(s) {
   if (!loadMoreBtn) return;
-  if (s === 'loading') { loadMoreBtn.textContent = 'Loading\u2026'; loadMoreBtn.disabled = true; }
-  if (s === 'ready')   { loadMoreBtn.textContent = 'Load more';     loadMoreBtn.disabled = false; }
-  if (s === 'done')    { loadMoreBtn.textContent = 'All items loaded'; loadMoreBtn.disabled = true; }
-  if (s === 'error')   { loadMoreBtn.textContent = 'Retry';          loadMoreBtn.disabled = false; }
+  const states = {
+    loading: ['Loading\u2026',    true],
+    ready:   ['Load more',        false],
+    done:    ['All items loaded', true],
+    error:   ['Retry',            false]
+  };
+  const entry = states[s];
+  if (entry) { loadMoreBtn.textContent = entry[0]; loadMoreBtn.disabled = entry[1]; }
 }
 
 /* ── Error state ── */
@@ -154,26 +151,27 @@ function loadProducts() {
   state.loading = true;
   setLoadMoreState('loading');
 
-  /* Start slow-API notice after 5 seconds on first load */
   if (state.firstLoad) {
     slowTimer = setTimeout(function() {
       const notice = document.createElement('div');
-      notice.className = 'slow-notice';
-      notice.id = 'slow-notice';
+      notice.className   = 'slow-notice';
+      notice.id          = 'slow-notice';
       notice.textContent = 'Waking up the server\u2026 this may take a moment.';
       productGrid.appendChild(notice);
     }, 5000);
   }
 
+  function clearSlowNotice() {
+    clearTimeout(slowTimer);
+    document.getElementById('slow-notice')?.remove();
+  }
+
   let promise;
   if (state.activeCategoryId !== null) {
     promise = Api.getProducts(state.activeCategoryId, state.limit, state.offset)
-      .then(function(res) {
-        return res.data;
-      });
+      .then(function(res) { return res.data; });
   } else {
-    /* Sampler: pick up to 4 categories, fetch 2 each */
-    const cats   = state.visibleCategories.slice(0, 4);
+    const cats = state.visibleCategories.slice(0, 4);
     if (cats.length === 0) {
       state.loading = false;
       setLoadMoreState('done');
@@ -189,28 +187,18 @@ function loadProducts() {
         });
       })
     ).then(function(results) {
-      let merged  = [];
-      let anyMore = false;
-      results.forEach(function(r) {
-        if (r.status === 'fulfilled') {
-          merged = merged.concat(r.value);
-          if (r.value.length >= perCat) anyMore = true;
-        }
-      });
-      /* flag if we actually got a full page worth */
-      if (!anyMore) state.hasMore = false;
-      return merged;
+      const fulfilled = results
+        .filter(function(r) { return r.status === 'fulfilled'; })
+        .map(function(r) { return r.value; });
+      if (!fulfilled.some(function(v) { return v.length >= perCat; })) state.hasMore = false;
+      return fulfilled.flat();
     });
   }
 
   promise.then(function(products) {
-    /* Clear slow notice */
-    clearTimeout(slowTimer);
-    const notice = document.getElementById('slow-notice');
-    if (notice) notice.remove();
+    clearSlowNotice();
 
     if (state.firstLoad) {
-      /* Clear skeleton cards */
       productGrid.innerHTML = '';
       state.firstLoad = false;
     }
@@ -222,10 +210,7 @@ function loadProducts() {
       return;
     }
 
-    products.forEach(function(p) {
-      productGrid.appendChild(renderProductCard(p));
-    });
-
+    products.forEach(function(p) { productGrid.appendChild(renderProductCard(p)); });
     state.products = state.products.concat(products);
 
     if (state.activeCategoryId !== null) {
@@ -237,13 +222,9 @@ function loadProducts() {
     state.loading = false;
   }).catch(function(err) {
     console.error('loadProducts error:', err);
-    clearTimeout(slowTimer);
-    const notice = document.getElementById('slow-notice');
-    if (notice) notice.remove();
-
+    clearSlowNotice();
     if (state.firstLoad) productGrid.innerHTML = '';
     state.firstLoad = false;
-
     showProductError();
     setLoadMoreState('error');
     state.loading = false;
@@ -253,58 +234,47 @@ function loadProducts() {
 /* ── Dept filter ── */
 function filterByDept(deptId) {
   state.activeDeptId = deptId;
-  /* If categories haven't loaded yet, just store the dept id.
-     getAllCategories().then() will apply the filter when it resolves. */
   if (state.allCategories.length === 0) return;
-
-  if (deptId) {
-    state.visibleCategories = state.allCategories.filter(function(c) {
-      return String(c.category_department_id) === String(deptId);
-    });
-  } else {
-    state.visibleCategories = state.allCategories;
-  }
+  state.visibleCategories = deptId
+    ? state.allCategories.filter(function(c) { return String(c.category_department_id) === String(deptId); })
+    : state.allCategories;
   setActiveCategory(null);
 }
 
 /* ── Init ── */
 document.addEventListener('DOMContentLoaded', function() {
-  const params    = new URLSearchParams(location.search);
-  const deptParam = params.get('dept');
+  const deptParam = new URLSearchParams(location.search).get('dept');
 
   showSkeletonCards(8);
   setLoadMoreState('loading');
 
-  Api.getAllCategories().then(function(res) {
-    state.allDepartments = res.departments;
-    state.allCategories  = res.categories;
+  Api.getAllCategories()
+    .then(function(res) {
+      state.allDepartments = res.departments;
+      state.allCategories  = res.categories;
 
-    if (deptParam) {
-      state.activeDeptId = deptParam;
-      state.visibleCategories = state.allCategories.filter(function(c) {
-        return String(c.category_department_id) === String(deptParam);
-      });
-    } else {
-      state.visibleCategories = state.allCategories;
-    }
+      if (deptParam) {
+        state.activeDeptId      = deptParam;
+        state.visibleCategories = res.categories.filter(function(c) {
+          return String(c.category_department_id) === String(deptParam);
+        });
+      } else {
+        state.visibleCategories = res.categories;
+      }
 
-    loadProducts();
-  }).catch(function(err) {
-    console.error('getAllCategories error:', err);
-    if (state.visibleCategories.length === 0) {
-      productGrid.innerHTML = '<div class="error-state"><strong>Could not load categories</strong>Please refresh the page.</div>';
-      setLoadMoreState('done');
-    }
-  });
-
-  /* Listen for dept nav selection (fired by nav.js) */
-  document.addEventListener('deptSelected', function(e) {
-    filterByDept(e.detail.deptId);
-  });
-
-  if (loadMoreBtn) {
-    loadMoreBtn.addEventListener('click', function() {
-      if (!state.loading && state.hasMore) loadProducts();
+      loadProducts();
+    })
+    .catch(function(err) {
+      console.error('getAllCategories error:', err);
+      if (state.visibleCategories.length === 0) {
+        productGrid.innerHTML = '<div class="error-state"><strong>Could not load categories</strong>Please refresh the page.</div>';
+        setLoadMoreState('done');
+      }
     });
-  }
+
+  document.addEventListener('deptSelected', function(e) { filterByDept(e.detail.deptId); });
+
+  loadMoreBtn?.addEventListener('click', function() {
+    if (!state.loading && state.hasMore) loadProducts();
+  });
 });

@@ -12,83 +12,75 @@ const SHIPPING_THRESHOLD = 75;
 const SHIPPING_COST      = 8.99;
 
 function renderCart() {
+  const container = document.getElementById('cart-container');
+  if (!container) return;
+
   const items      = Cart.getItems();
   const subtotal   = Cart.getSubtotal();
   const shipping   = subtotal >= SHIPPING_THRESHOLD ? 0 : SHIPPING_COST;
   const total      = subtotal + shipping;
-
-  const container = document.getElementById('cart-container');
-  if (!container) return;
-
-  /* Update heading count */
-  const heading    = document.getElementById('cart-heading');
   const totalCount = Cart.getTotalCount();
-  if (heading) heading.textContent = 'Your cart (' + totalCount + ' item' + (totalCount !== 1 ? 's' : '') + ')';
+
+  const heading = document.getElementById('cart-heading');
+  if (heading) heading.textContent = `Your cart (${totalCount} item${totalCount !== 1 ? 's' : ''})`;
 
   if (items.length === 0) {
-    container.innerHTML =
-      '<div class="cart-empty">' +
-        '<p class="cart-empty-msg">Your cart is empty.</p>' +
-        '<a href="index.html" class="btn-black" style="display:inline-block;padding:14px 32px;text-decoration:none;border-radius:30px;">Continue shopping</a>' +
-      '</div>';
+    container.innerHTML = `
+      <div class="cart-empty">
+        <p class="cart-empty-msg">Your cart is empty.</p>
+        <a href="index.html" class="btn-black" style="display:inline-block;padding:14px 32px;text-decoration:none;border-radius:30px;">Continue shopping</a>
+      </div>`;
     return;
   }
 
-  /* Items list */
-  let itemsHtml = '<div class="cart-items">';
-  items.forEach(function(item) {
-    const lineTotal = (parseFloat(item.product_price) * item.quantity).toFixed(2);
-    itemsHtml +=
-      '<div class="cart-item" data-id="' + item.product_id + '">' +
-        '<div class="cart-item-img">' +
-          (item.product_image
-            ? '<img src="' + escHtml(item.product_image) + '" alt="' + escHtml(item.product_name) + '" onerror="this.style.display=\'none\'">'
-            : '<div class="pcard-img-placeholder" style="width:80px;height:80px;font-size:11px;">No image</div>') +
-        '</div>' +
-        '<div class="cart-item-info">' +
-          '<p class="cart-item-name">' + escHtml(item.product_name) + '</p>' +
-          '<p class="cart-item-price">$' + parseFloat(item.product_price).toFixed(2) + ' each</p>' +
-        '</div>' +
-        '<div class="qty-control">' +
-          '<button class="qty-btn qty-dec" data-id="' + item.product_id + '" aria-label="Decrease">−</button>' +
-          '<span class="qty-val">' + item.quantity + '</span>' +
-          '<button class="qty-btn qty-inc" data-id="' + item.product_id + '" aria-label="Increase">+</button>' +
-        '</div>' +
-        '<p class="cart-item-line-total">$' + lineTotal + '</p>' +
-        '<button class="cart-item-remove" data-id="' + item.product_id + '" aria-label="Remove item">&times;</button>' +
-      '</div>';
-  });
-  itemsHtml += '</div>';
+  const itemsHtml = `
+    <div class="cart-items">
+      ${items.map(function(item) {
+        const lineTotal = (parseFloat(item.product_price) * item.quantity).toFixed(2);
+        const imgHtml   = item.product_image
+          ? `<img src="${escHtml(item.product_image)}" alt="${escHtml(item.product_name)}" onerror="this.style.display='none'">`
+          : `<div class="pcard-img-placeholder" style="width:80px;height:80px;font-size:11px;">No image</div>`;
+        return `
+          <div class="cart-item" data-id="${item.product_id}">
+            <div class="cart-item-img">${imgHtml}</div>
+            <div class="cart-item-info">
+              <p class="cart-item-name">${escHtml(item.product_name)}</p>
+              <p class="cart-item-price">$${parseFloat(item.product_price).toFixed(2)} each</p>
+            </div>
+            <div class="qty-control">
+              <button class="qty-btn qty-dec" data-id="${item.product_id}" aria-label="Decrease">−</button>
+              <span class="qty-val">${item.quantity}</span>
+              <button class="qty-btn qty-inc" data-id="${item.product_id}" aria-label="Increase">+</button>
+            </div>
+            <p class="cart-item-line-total">$${lineTotal}</p>
+            <button class="cart-item-remove" data-id="${item.product_id}" aria-label="Remove item">&times;</button>
+          </div>`;
+      }).join('')}
+    </div>`;
 
-  /* Summary */
-  const shippingText = shipping === 0
-    ? '<span style="color:green">Free</span>'
-    : '$' + shipping.toFixed(2);
+  const shippingText     = shipping === 0 ? '<span style="color:green">Free</span>' : `$${shipping.toFixed(2)}`;
+  const freeShippingHint = shipping > 0
+    ? `<p class="cart-free-shipping-hint">Add $${(SHIPPING_THRESHOLD - subtotal).toFixed(2)} more for free shipping</p>`
+    : '';
 
-  const summaryHtml =
-    '<div class="cart-summary">' +
-      '<p class="cart-summary-title">Order summary</p>' +
-      '<div class="cart-summary-row"><span>Subtotal</span><span>$' + subtotal.toFixed(2) + '</span></div>' +
-      '<div class="cart-summary-row"><span>Shipping</span><span>' + shippingText + '</span></div>' +
-      (shipping > 0 ? '<p class="cart-free-shipping-hint">Add $' + (SHIPPING_THRESHOLD - subtotal).toFixed(2) + ' more for free shipping</p>' : '') +
-      '<div class="cart-summary-divider"></div>' +
-      '<div class="cart-summary-row cart-summary-total"><span>Total</span><span>$' + total.toFixed(2) + '</span></div>' +
-      '<button class="btn-black" style="width:100%;margin-top:20px;" onclick="alert(\'Checkout coming soon!\')">Checkout</button>' +
-      '<a href="index.html" class="cart-continue-link">Continue shopping</a>' +
-    '</div>';
+  const summaryHtml = `
+    <div class="cart-summary">
+      <p class="cart-summary-title">Order summary</p>
+      <div class="cart-summary-row"><span>Subtotal</span><span>$${subtotal.toFixed(2)}</span></div>
+      <div class="cart-summary-row"><span>Shipping</span><span>${shippingText}</span></div>
+      ${freeShippingHint}
+      <div class="cart-summary-divider"></div>
+      <div class="cart-summary-row cart-summary-total"><span>Total</span><span>$${total.toFixed(2)}</span></div>
+      <button class="btn-black" style="width:100%;margin-top:20px;" onclick="alert('Checkout coming soon!')">Checkout</button>
+      <a href="index.html" class="cart-continue-link">Continue shopping</a>
+    </div>`;
 
-  container.innerHTML =
-    '<div class="cart-layout">' +
-      itemsHtml +
-      summaryHtml +
-    '</div>';
+  container.innerHTML = `<div class="cart-layout">${itemsHtml}${summaryHtml}</div>`;
 
-  /* Event listeners */
   container.querySelectorAll('.qty-dec').forEach(function(btn) {
     btn.addEventListener('click', function() {
       const id   = parseInt(btn.dataset.id);
-      const items = Cart.getItems();
-      const item  = items.find(function(i) { return i.product_id === id; });
+      const item = Cart.getItems().find(function(i) { return i.product_id === id; });
       if (item) Cart.updateQty(id, item.quantity - 1);
     });
   });
@@ -96,8 +88,7 @@ function renderCart() {
   container.querySelectorAll('.qty-inc').forEach(function(btn) {
     btn.addEventListener('click', function() {
       const id   = parseInt(btn.dataset.id);
-      const items = Cart.getItems();
-      const item  = items.find(function(i) { return i.product_id === id; });
+      const item = Cart.getItems().find(function(i) { return i.product_id === id; });
       if (item) Cart.updateQty(id, item.quantity + 1);
     });
   });

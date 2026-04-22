@@ -8,13 +8,6 @@ const KNOWN_BRANDS = [
 ];
 const MULTI_WORD_BRANDS = ['Under Armour', 'New Balance', 'The North Face'];
 
-function parseBrand(name) {
-  for (let i = 0; i < MULTI_WORD_BRANDS.length; i++) {
-    if (name.indexOf(MULTI_WORD_BRANDS[i]) === 0) return MULTI_WORD_BRANDS[i];
-  }
-  return name.split(' ')[0] || 'Brand';
-}
-
 function escHtml(str) {
   return String(str)
     .replace(/&/g, '&amp;')
@@ -23,27 +16,29 @@ function escHtml(str) {
     .replace(/"/g, '&quot;');
 }
 
-/* ── Skeleton ── */
+function parseBrand(name) {
+  return MULTI_WORD_BRANDS.find(function(b) { return name.startsWith(b); }) || name.split(' ')[0] || 'Brand';
+}
+
+/* ── Skeletons ── */
 function showGallerySkeleton() {
-  const gallery = document.getElementById('pdp-gallery');
-  gallery.innerHTML =
-    '<div class="pdp-main-img skeleton" style="max-width:340px;height:300px;width:100%;background:none;"></div>' +
-    '<div style="display:flex;gap:10px;margin-top:16px;">' +
-      '<div class="skeleton" style="width:60px;height:60px;border-radius:8px;"></div>' +
-      '<div class="skeleton" style="width:60px;height:60px;border-radius:8px;"></div>' +
-      '<div class="skeleton" style="width:60px;height:60px;border-radius:8px;"></div>' +
-    '</div>';
+  document.getElementById('pdp-gallery').innerHTML = `
+    <div class="pdp-main-img skeleton" style="max-width:340px;height:300px;width:100%;background:none;"></div>
+    <div style="display:flex;gap:10px;margin-top:16px;">
+      <div class="skeleton" style="width:60px;height:60px;border-radius:8px;"></div>
+      <div class="skeleton" style="width:60px;height:60px;border-radius:8px;"></div>
+      <div class="skeleton" style="width:60px;height:60px;border-radius:8px;"></div>
+    </div>`;
 }
 
 function showInfoSkeleton() {
-  const info = document.getElementById('pdp-info');
-  info.innerHTML =
-    '<div class="skeleton skeleton-line short" style="width:80px;height:12px;margin-bottom:12px;"></div>' +
-    '<div class="skeleton skeleton-line" style="width:90%;height:28px;margin-bottom:8px;"></div>' +
-    '<div class="skeleton skeleton-line short" style="width:60%;height:14px;margin-bottom:20px;"></div>' +
-    '<div class="skeleton skeleton-line short" style="width:40%;height:28px;margin-bottom:16px;"></div>' +
-    '<div class="skeleton" style="height:48px;border-radius:30px;margin-bottom:10px;"></div>' +
-    '<div class="skeleton" style="height:48px;border-radius:30px;"></div>';
+  document.getElementById('pdp-info').innerHTML = `
+    <div class="skeleton skeleton-line short" style="width:80px;height:12px;margin-bottom:12px;"></div>
+    <div class="skeleton skeleton-line" style="width:90%;height:28px;margin-bottom:8px;"></div>
+    <div class="skeleton skeleton-line short" style="width:60%;height:14px;margin-bottom:20px;"></div>
+    <div class="skeleton skeleton-line short" style="width:40%;height:28px;margin-bottom:16px;"></div>
+    <div class="skeleton" style="height:48px;border-radius:30px;margin-bottom:10px;"></div>
+    <div class="skeleton" style="height:48px;border-radius:30px;"></div>`;
 }
 
 /* ── Review generator ── */
@@ -92,11 +87,9 @@ const REVIEW_BODIES = [
   'Bought a second one as a backup — that is how much I trust this product.'
 ];
 
-/* Weighted star ratings — skewed realistic (mostly 4-5 stars) */
 const STAR_POOL = [5, 5, 5, 5, 5, 5, 4, 4, 4, 4, 3, 3, 2];
 
 function seededRand(seed) {
-  /* Simple LCG — returns function that yields 0..1 */
   let s = seed;
   return function() {
     s = (s * 1664525 + 1013904223) & 0xffffffff;
@@ -105,187 +98,173 @@ function seededRand(seed) {
 }
 
 function starHtml(n) {
-  let s = '';
-  for (let i = 1; i <= 5; i++) s += (i <= n ? '\u2605' : '\u2606');
-  return s;
+  return Array.from({ length: 5 }, function(_, i) { return i < n ? '\u2605' : '\u2606'; }).join('');
 }
 
 function generateReviews(productId) {
-  const rand  = seededRand(productId * 7 + 31);
-  const count = 2 + Math.floor(rand() * 5); /* 2–6 reviews */
+  const rand      = seededRand(productId * 7 + 31);
+  const count     = 2 + Math.floor(rand() * 5);
   const usedNames  = {};
   const usedBodies = {};
-  let html = '';
 
-  for (let i = 0; i < count; i++) {
-    /* Pick unique name */
+  return Array.from({ length: count }, function() {
+    /* do-while needed: uniqueness-sampling requires retry-on-collision */
     let nameIdx;
-    do { nameIdx = Math.floor(rand() * REVIEW_NAMES.length); } while (usedNames[nameIdx] && Object.keys(usedNames).length < REVIEW_NAMES.length);
+    do { nameIdx = Math.floor(rand() * REVIEW_NAMES.length); }
+    while (usedNames[nameIdx] && Object.keys(usedNames).length < REVIEW_NAMES.length);
     usedNames[nameIdx] = true;
 
-    /* Pick unique body */
     let bodyIdx;
-    do { bodyIdx = Math.floor(rand() * REVIEW_BODIES.length); } while (usedBodies[bodyIdx] && Object.keys(usedBodies).length < REVIEW_BODIES.length);
+    do { bodyIdx = Math.floor(rand() * REVIEW_BODIES.length); }
+    while (usedBodies[bodyIdx] && Object.keys(usedBodies).length < REVIEW_BODIES.length);
     usedBodies[bodyIdx] = true;
 
     const stars = STAR_POOL[Math.floor(rand() * STAR_POOL.length)];
-
-    html +=
-      '<div class="review-card">' +
-        '<p class="review-name">' + escHtml(REVIEW_NAMES[nameIdx]) + '</p>' +
-        '<p class="review-stars">' + starHtml(stars) + '</p>' +
-        '<p class="review-body">' + escHtml(REVIEW_BODIES[bodyIdx]) + '</p>' +
-      '</div>';
-  }
-  return html;
+    return `
+      <div class="review-card">
+        <p class="review-name">${escHtml(REVIEW_NAMES[nameIdx])}</p>
+        <p class="review-stars">${starHtml(stars)}</p>
+        <p class="review-body">${escHtml(REVIEW_BODIES[bodyIdx])}</p>
+      </div>`;
+  }).join('');
 }
 
 /* ── Render product ── */
 function renderProduct(product, categoryName) {
   const brand = parseBrand(product.product_name);
-  const price = '$' + parseFloat(product.product_price).toFixed(2);
+  const price = `$${parseFloat(product.product_price).toFixed(2)}`;
 
-  /* Update page title */
-  document.title = product.product_name + ' \u2014 Sports Equip';
+  document.title = `${product.product_name} \u2014 Sports Equip`;
 
   /* Breadcrumb */
-  const bc      = document.getElementById('pdp-breadcrumb');
-  const catPart = categoryName ? ('<a href="index.html">\u2190 Back</a> / ' + escHtml(categoryName) + ' / ') : '<a href="index.html">\u2190 Back</a> / ';
-  bc.innerHTML  = catPart + escHtml(product.product_name);
+  const bc = document.getElementById('pdp-breadcrumb');
+  bc.innerHTML = categoryName
+    ? `<a href="index.html">\u2190 Back</a> / ${escHtml(categoryName)} / ${escHtml(product.product_name)}`
+    : `<a href="index.html">\u2190 Back</a> / ${escHtml(product.product_name)}`;
 
   /* Gallery */
-  const gallery = document.getElementById('pdp-gallery');
-  let imgHtml   = '';
-  if (product.product_image) {
-    imgHtml = '<img id="pdp-main-img-el" src="' + escHtml(product.product_image) + '" alt="' + escHtml(product.product_name) + '" onerror="this.style.display=\'none\'">';
-  }
-  gallery.innerHTML =
-    '<div class="pdp-main-img">' + imgHtml + '</div>' +
-    '<div class="pdp-thumbs">' +
-      '<div class="pdp-thumb active">' +
-        (product.product_image ? '<img src="' + escHtml(product.product_image) + '" alt="' + escHtml(product.product_name) + '" onerror="this.style.display=\'none\'">' : '') +
-      '</div>' +
-    '</div>';
+  const thumbImg = product.product_image
+    ? `<img src="${escHtml(product.product_image)}" alt="${escHtml(product.product_name)}" onerror="this.style.display='none'">`
+    : '';
+  document.getElementById('pdp-gallery').innerHTML = `
+    <div class="pdp-main-img">
+      ${product.product_image ? `<img id="pdp-main-img-el" src="${escHtml(product.product_image)}" alt="${escHtml(product.product_name)}" onerror="this.style.display='none'">` : ''}
+    </div>
+    <div class="pdp-thumbs">
+      <div class="pdp-thumb active">${thumbImg}</div>
+    </div>`;
 
   /* Info panel */
-  const info = document.getElementById('pdp-info');
-  info.innerHTML =
-    '<p class="pdp-brand">' + escHtml(brand) + '</p>' +
-    '<h1 class="pdp-name">' + escHtml(product.product_name) + '</h1>' +
-    '<p class="pdp-subtitle">' + escHtml(categoryName || 'Sports Equipment') + '</p>' +
-    '<div class="hr"></div>' +
-    '<p class="pdp-price">' + escHtml(price) + '</p>' +
-    '<p class="pdp-stock">In stock \u2014 ships in 1\u20132 days</p>' +
-    '<div class="pdp-ctas">' +
-      '<button class="btn-black" id="pdp-add-to-cart">Add to cart</button>' +
-      '<button class="btn-ghost">Add to wishlist</button>' +
-    '</div>' +
-    '<div id="pdp-features"></div>';
+  document.getElementById('pdp-info').innerHTML = `
+    <p class="pdp-brand">${escHtml(brand)}</p>
+    <h1 class="pdp-name">${escHtml(product.product_name)}</h1>
+    <p class="pdp-subtitle">${escHtml(categoryName ?? 'Sports Equipment')}</p>
+    <div class="hr"></div>
+    <p class="pdp-price">${escHtml(price)}</p>
+    <p class="pdp-stock">In stock \u2014 ships in 1\u20132 days</p>
+    <div class="pdp-ctas">
+      <button class="btn-black" id="pdp-add-to-cart">Add to cart</button>
+      <button class="btn-ghost">Add to wishlist</button>
+    </div>
+    <div id="pdp-features"></div>`;
 
-  /* Add to cart handler */
-  const addBtn = document.getElementById('pdp-add-to-cart');
-  if (addBtn) {
-    addBtn.addEventListener('click', function() {
-      Cart.addItem(product);
-      addBtn.textContent = 'Added!';
-      setTimeout(function() { addBtn.textContent = 'Add to cart'; }, 1000);
-    });
-  }
+  document.getElementById('pdp-add-to-cart')?.addEventListener('click', function() {
+    Cart.addItem(product);
+    this.textContent = 'Added!';
+    setTimeout(function() { this.textContent = 'Add to cart'; }.bind(this), 1000);
+  });
 
   /* Features from description snippets */
-  const features = document.getElementById('pdp-features');
   if (product.product_description) {
-    const sentences = product.product_description.split(/[.!?]+/).filter(function(s) { return s.trim().length > 10; }).slice(0, 3);
-    sentences.forEach(function(s) {
-      const row = document.createElement('div');
-      row.className = 'feature-row';
-      row.innerHTML =
-        '<div class="feature-check">' +
-          '<svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#111" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
-        '</div>' +
-        '<p class="feature-txt">' + escHtml(s.trim()) + '</p>';
-      features.appendChild(row);
-    });
+    document.getElementById('pdp-features').innerHTML = product.product_description
+      .split(/[.!?]+/)
+      .filter(function(s) { return s.trim().length > 10; })
+      .slice(0, 3)
+      .map(function(s) {
+        return `
+          <div class="feature-row">
+            <div class="feature-check">
+              <svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#111" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <p class="feature-txt">${escHtml(s.trim())}</p>
+          </div>`;
+      })
+      .join('');
   }
 
-  /* Details tab content */
-  const detailsPanel = document.getElementById('tab-details');
-  detailsPanel.innerHTML =
-    '<div class="tab-panel-inner">' +
-      '<div>' +
-        '<p class="specs-title">Product Description</p>' +
-        '<p style="font-size:14px;color:#444;line-height:1.7;">' + escHtml(product.product_description || 'No description available.') + '</p>' +
-      '</div>' +
-      '<div id="tab-reviews-inline"></div>' +
-    '</div>';
+  /* Details tab */
+  document.getElementById('tab-details').innerHTML = `
+    <div class="tab-panel-inner">
+      <div>
+        <p class="specs-title">Product Description</p>
+        <p style="font-size:14px;color:#444;line-height:1.7;">${escHtml(product.product_description ?? 'No description available.')}</p>
+      </div>
+      <div id="tab-reviews-inline"></div>
+    </div>`;
 
-  /* Dynamic reviews — seeded by product_id so each product is consistent */
-  const reviewsInline = document.getElementById('tab-reviews-inline');
-  reviewsInline.innerHTML = '<p class="reviews-title">Customer Reviews</p>' + generateReviews(product.product_id);
+  document.getElementById('tab-reviews-inline').innerHTML =
+    `<p class="reviews-title">Customer Reviews</p>${generateReviews(product.product_id)}`;
 }
 
 /* ── Related products ── */
+function buildProductCard(p) {
+  const article = document.createElement('article');
+  article.className = 'pcard';
+
+  const imgWrap = document.createElement('div');
+  imgWrap.className = 'pcard-img';
+
+  if (p.product_image) {
+    const img   = document.createElement('img');
+    img.src     = p.product_image;
+    img.alt     = p.product_name;
+    img.loading = 'lazy';
+    img.onerror = function() { imgWrap.innerHTML = '<div class="pcard-img-placeholder">No image</div>'; };
+    imgWrap.appendChild(img);
+  } else {
+    imgWrap.innerHTML = '<div class="pcard-img-placeholder">No image</div>';
+  }
+
+  const body = document.createElement('div');
+  body.className = 'pcard-body';
+  body.innerHTML = `
+    <p class="pcard-brand">${escHtml(parseBrand(p.product_name))}</p>
+    <p class="pcard-name">${escHtml(p.product_name)}</p>
+    <div class="pcard-bottom">
+      <span class="pcard-price">$${parseFloat(p.product_price).toFixed(2)}</span>
+      <button class="add-to-cart-icon" aria-label="Add to cart">+</button>
+    </div>`;
+
+  article.append(imgWrap, body);
+
+  const cartBtn = body.querySelector('.add-to-cart-icon');
+  cartBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    Cart.addItem(p);
+    cartBtn.textContent = '\u2713';
+    setTimeout(function() { cartBtn.textContent = '+'; }, 800);
+  });
+
+  article.addEventListener('click', function(e) {
+    if (!e.target.classList.contains('add-to-cart-icon')) {
+      location.href = `product.html?id=${p.product_id}`;
+    }
+  });
+
+  return article;
+}
+
 function renderRelated(products) {
   const grid = document.getElementById('related-grid');
   if (!grid) return;
-  grid.innerHTML = '';
 
-  if (!products || products.length === 0) {
+  if (!products?.length) {
     document.getElementById('related-products').style.display = 'none';
     return;
   }
 
-  products.forEach(function(p) {
-    const brand = parseBrand(p.product_name);
-    const price = '$' + parseFloat(p.product_price).toFixed(2);
-
-    const article = document.createElement('article');
-    article.className = 'pcard';
-
-    const imgWrap = document.createElement('div');
-    imgWrap.className = 'pcard-img';
-
-    if (p.product_image) {
-      const img = document.createElement('img');
-      img.src = p.product_image;
-      img.alt = p.product_name;
-      img.loading = 'lazy';
-      img.onerror = function() {
-        imgWrap.innerHTML = '<div class="pcard-img-placeholder">No image</div>';
-      };
-      imgWrap.appendChild(img);
-    } else {
-      imgWrap.innerHTML = '<div class="pcard-img-placeholder">No image</div>';
-    }
-
-    const body = document.createElement('div');
-    body.className = 'pcard-body';
-    body.innerHTML =
-      '<p class="pcard-brand">' + escHtml(brand) + '</p>' +
-      '<p class="pcard-name">'  + escHtml(p.product_name) + '</p>' +
-      '<div class="pcard-bottom">' +
-        '<span class="pcard-price">' + escHtml(price) + '</span>' +
-        '<button class="add-to-cart-icon" aria-label="Add to cart">+</button>' +
-      '</div>';
-
-    article.appendChild(imgWrap);
-    article.appendChild(body);
-
-    const cartBtn = body.querySelector('.add-to-cart-icon');
-    cartBtn.addEventListener('click', function(e) {
-      e.stopPropagation();
-      Cart.addItem(p);
-      cartBtn.textContent = '\u2713';
-      setTimeout(function() { cartBtn.textContent = '+'; }, 800);
-    });
-
-    article.addEventListener('click', function(e) {
-      if (e.target.classList.contains('add-to-cart-icon')) return;
-      location.href = 'product.html?id=' + p.product_id;
-    });
-
-    grid.appendChild(article);
-  });
+  grid.innerHTML = '';
+  products.forEach(function(p) { grid.appendChild(buildProductCard(p)); });
 }
 
 /* ── Tab switching ── */
@@ -294,9 +273,7 @@ function initTabs() {
   if (!tabsEl) return;
 
   const panels = document.querySelectorAll('.tab-panel');
-
-  /* Show first panel */
-  if (panels.length > 0) panels[0].classList.add('active');
+  panels[0]?.classList.add('active');
 
   tabsEl.addEventListener('click', function(e) {
     const btn = e.target.closest('.pdp-tab');
@@ -306,59 +283,41 @@ function initTabs() {
     tabs.forEach(function(t) { t.classList.remove('active'); });
     btn.classList.add('active');
 
-    const idx = Array.prototype.indexOf.call(tabs, btn);
-    panels.forEach(function(p, i) {
-      p.classList.toggle('active', i === idx);
-    });
+    const idx = Array.from(tabs).indexOf(btn);
+    panels.forEach(function(p, i) { p.classList.toggle('active', i === idx); });
   });
 }
 
 /* ── Error state ── */
 function showPageError(message) {
-  const pdp  = document.querySelector('.pdp');
-  if (pdp) pdp.style.display = 'none';
-  const tabs = document.querySelector('.pdp-tabs');
-  if (tabs) tabs.style.display = 'none';
-  const tc   = document.querySelector('.tab-content');
-  if (tc) tc.style.display = 'none';
-  const rel  = document.getElementById('related-products');
-  if (rel) rel.style.display = 'none';
+  ['.pdp', '.pdp-tabs', '.tab-content'].forEach(function(sel) {
+    document.querySelector(sel)?.style.setProperty('display', 'none');
+  });
+  document.getElementById('related-products')?.style.setProperty('display', 'none');
 
   const bc = document.getElementById('pdp-breadcrumb');
-  if (bc) {
-    bc.innerHTML = '<a href="index.html">\u2190 Back to shop</a>';
-  }
+  if (bc) bc.innerHTML = '<a href="index.html">\u2190 Back to shop</a>';
 
   const errDiv = document.createElement('div');
   errDiv.className = 'pdp-error';
-  errDiv.innerHTML =
-    '<strong style="font-size:20px;display:block;margin-bottom:12px;">' + escHtml(message || 'Product not found') + '</strong>' +
-    '<p>The product you are looking for could not be loaded.</p>' +
-    '<a href="index.html">Return to shop</a>';
+  errDiv.innerHTML = `
+    <strong style="font-size:20px;display:block;margin-bottom:12px;">${escHtml(message ?? 'Product not found')}</strong>
+    <p>The product you are looking for could not be loaded.</p>
+    <a href="index.html">Return to shop</a>`;
 
-  const main = document.querySelector('main') || document.body;
-  if (bc) {
-    bc.insertAdjacentElement('afterend', errDiv);
-  } else {
-    main.prepend(errDiv);
-  }
+  if (bc) bc.insertAdjacentElement('afterend', errDiv);
+  else (document.querySelector('main') ?? document.body).prepend(errDiv);
 }
 
 /* ── Init ── */
 document.addEventListener('DOMContentLoaded', function() {
-  const params     = new URLSearchParams(location.search);
-  const productId  = params.get('id');
-
-  if (!productId) {
-    location.href = 'index.html';
-    return;
-  }
+  const productId = new URLSearchParams(location.search).get('id');
+  if (!productId) { location.href = 'index.html'; return; }
 
   initTabs();
   showGallerySkeleton();
   showInfoSkeleton();
 
-  /* Slow notice */
   let slowTimer = setTimeout(function() {
     const info = document.getElementById('pdp-info');
     if (info) {
@@ -369,47 +328,38 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }, 5000);
 
-  Api.getProduct(productId).then(function(res) {
-    clearTimeout(slowTimer);
-    const product = res.data;
-    if (!product) throw new Error('No product data returned');
-
-    /* Fetch categories to get category name */
-    Api.getAllCategories().then(function(catRes) {
-      const category     = catRes.categories.find(function(c) {
-        return c.category_id === product.product_category_id;
+  function loadRelated(categoryId) {
+    Api.getProducts(categoryId, 4, 0)
+      .then(function(res) {
+        renderRelated(res.data.filter(function(p) { return p.product_id !== parseInt(productId); }).slice(0, 4));
+      })
+      .catch(function() {
+        document.getElementById('related-products')?.style.setProperty('display', 'none');
       });
-      const categoryName = category ? category.category_name : null;
+  }
 
-      renderProduct(product, categoryName);
+  Api.getProduct(productId)
+    .then(function(res) {
+      clearTimeout(slowTimer);
+      const product = res.data;
+      if (!product) throw new Error('No product data returned');
 
-      /* Load related products from same category */
-      Api.getProducts(product.product_category_id, 4, 0).then(function(relRes) {
-        const related = relRes.data.filter(function(p) {
-          return p.product_id !== product.product_id;
-        }).slice(0, 4);
-        renderRelated(related);
-      }).catch(function() {
-        const rel = document.getElementById('related-products');
-        if (rel) rel.style.display = 'none';
-      });
-    }).catch(function() {
-      /* Categories failed — render without category name */
-      renderProduct(product, null);
-
-      Api.getProducts(product.product_category_id, 4, 0).then(function(relRes) {
-        const related = relRes.data.filter(function(p) {
-          return p.product_id !== product.product_id;
-        }).slice(0, 4);
-        renderRelated(related);
-      }).catch(function() {
-        const rel = document.getElementById('related-products');
-        if (rel) rel.style.display = 'none';
-      });
+      Api.getAllCategories()
+        .then(function(catRes) {
+          const category = catRes.categories.find(function(c) {
+            return c.category_id === product.product_category_id;
+          });
+          renderProduct(product, category?.category_name ?? null);
+          loadRelated(product.product_category_id);
+        })
+        .catch(function() {
+          renderProduct(product, null);
+          loadRelated(product.product_category_id);
+        });
+    })
+    .catch(function(err) {
+      clearTimeout(slowTimer);
+      console.error('getProduct error:', err);
+      showPageError('Could not load product');
     });
-  }).catch(function(err) {
-    clearTimeout(slowTimer);
-    console.error('getProduct error:', err);
-    showPageError('Could not load product');
-  });
 });
