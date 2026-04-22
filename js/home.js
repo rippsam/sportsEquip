@@ -267,10 +267,10 @@ function loadFeaturedProduct(categories) {
   Api.getProducts(cat.category_id, 1, offset)
     .then(function(res) {
       const item = res.data.length ? res.data[0] : null;
-      if (item) return Api.getProduct(item.product_id);
+      if (item) return Api.getProduct(item.product_id).then(function(r) { return r.data; });
       return Api.getProducts(cat.category_id, 1, 0)
         .then(function(res2) {
-          return res2.data.length ? Api.getProduct(res2.data[0].product_id) : null;
+          return res2.data.length ? Api.getProduct(res2.data[0].product_id).then(function(r) { return r.data; }) : null;
         });
     })
     .then(function(product) { renderFeatured(product); })
