@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', function() {
   Api.getAllCategories()
     .then(function(res) {
       const categories = res.categories;
-      const picked     = pickUnique(categories, 10, rand);
+      const picked     = pickUnique(categories, 9, rand);
 
       return Promise.allSettled(
         picked.map(function(cat) {

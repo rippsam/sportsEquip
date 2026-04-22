@@ -246,25 +246,30 @@ function loadFeaturedProduct(categories) {
   const cat     = categories[Math.floor(rand() * categories.length)];
   const offset  = Math.floor(rand() * 6);
 
-  function renderFeatured(product, catName) {
+  function renderFeatured(product) {
     const card = document.getElementById('promo-featured');
     if (!card || !product) return;
-    const brand = parseBrand(product.product_name);
-    const model = product.product_name.slice(brand.length).trim().split(' ').slice(0, 3).join(' ');
-    const price = `$${parseFloat(product.product_price).toFixed(2)}`;
+    const brand  = parseBrand(product.product_name);
+    const model  = product.product_name.slice(brand.length).trim().split(' ').slice(0, 3).join(' ');
+    const rawDesc = product.product_description ?? '';
+    const desc   = rawDesc.length > 75 ? `${rawDesc.slice(0, 75)}\u2026` : rawDesc;
     card.innerHTML = `
       <p class="split-eyebrow">Just dropped</p>
       <h3 class="split-title">${escHtml(brand)}<br>${escHtml(model)}</h3>
-      <p class="split-desc">${escHtml(catName)} &mdash; ${escHtml(price)}</p>
-      <a href="product.html?id=${product.product_id}" class="split-link">Shop now &rarr;</a>`;
+      <p class="split-desc">${escHtml(desc)}</p>
+      <a href="product.html?id=${product.product_id}" class="split-link">Shop the drop &rarr;</a>`;
   }
 
   Api.getProducts(cat.category_id, 1, offset)
     .then(function(res) {
-      if (res.data.length) { renderFeatured(res.data[0], cat.category_name); return; }
+      const item = res.data.length ? res.data[0] : null;
+      if (item) return Api.getProduct(item.product_id);
       return Api.getProducts(cat.category_id, 1, 0)
-        .then(function(res2) { renderFeatured(res2.data[0] || null, cat.category_name); });
+        .then(function(res2) {
+          return res2.data.length ? Api.getProduct(res2.data[0].product_id) : null;
+        });
     })
+    .then(function(product) { renderFeatured(product); })
     .catch(function() {}); /* keep static fallback on error */
 }
 
