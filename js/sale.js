@@ -1,4 +1,4 @@
-/* ── Sale page — 10 items at 40% off, rotated weekly ── */
+/* ── Sale page — 8 items at 40% off, rotated weekly ── */
 
 const SALE_DISCOUNT = 0.40;
 
@@ -116,7 +116,8 @@ document.addEventListener('DOMContentLoaded', function() {
   Api.getAllCategories()
     .then(function(res) {
       const categories = res.categories;
-      const picked     = pickUnique(categories, 9, rand);
+      /* Pick extra categories as a buffer to guarantee 8 after filtering empty ones */
+      const picked = pickUnique(categories, Math.min(categories.length, 14), rand);
 
       return Promise.allSettled(
         picked.map(function(cat) {
@@ -133,7 +134,8 @@ document.addEventListener('DOMContentLoaded', function() {
     .then(function(results) {
       const products = results
         .filter(function(r) { return r.status === 'fulfilled' && r.value; })
-        .map(function(r) { return r.value; });
+        .map(function(r) { return r.value; })
+        .slice(0, 8);
       renderSaleProducts(products);
     })
     .catch(function(err) {
