@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', function() {
   function appendSaleLink(parent) {
     const li = document.createElement('li');
     const a  = document.createElement('a');
-    a.href        = 'index.html';
+    a.href        = 'sale.html';
     a.textContent = 'Sale';
     a.className   = 'sale';
     li.appendChild(a);

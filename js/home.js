@@ -231,6 +231,43 @@ function loadProducts() {
   });
 }
 
+/* ── Featured product (weekly rotation) ── */
+function seededRand(seed) {
+  let s = seed;
+  return function() {
+    s = (s * 1664525 + 1013904223) & 0xffffffff;
+    return (s >>> 0) / 0xffffffff;
+  };
+}
+
+function loadFeaturedProduct(categories) {
+  const weekNum = Math.floor(Date.now() / (1000 * 60 * 60 * 24 * 7));
+  const rand    = seededRand(weekNum * 17 + 3);
+  const cat     = categories[Math.floor(rand() * categories.length)];
+  const offset  = Math.floor(rand() * 6);
+
+  function renderFeatured(product, catName) {
+    const card = document.getElementById('promo-featured');
+    if (!card || !product) return;
+    const brand = parseBrand(product.product_name);
+    const model = product.product_name.slice(brand.length).trim().split(' ').slice(0, 3).join(' ');
+    const price = `$${parseFloat(product.product_price).toFixed(2)}`;
+    card.innerHTML = `
+      <p class="split-eyebrow">Just dropped</p>
+      <h3 class="split-title">${escHtml(brand)}<br>${escHtml(model)}</h3>
+      <p class="split-desc">${escHtml(catName)} &mdash; ${escHtml(price)}</p>
+      <a href="product.html?id=${product.product_id}" class="split-link">Shop now &rarr;</a>`;
+  }
+
+  Api.getProducts(cat.category_id, 1, offset)
+    .then(function(res) {
+      if (res.data.length) { renderFeatured(res.data[0], cat.category_name); return; }
+      return Api.getProducts(cat.category_id, 1, 0)
+        .then(function(res2) { renderFeatured(res2.data[0] || null, cat.category_name); });
+    })
+    .catch(function() {}); /* keep static fallback on error */
+}
+
 /* ── Dept filter ── */
 function filterByDept(deptId) {
   state.activeDeptId = deptId;
@@ -262,6 +299,7 @@ document.addEventListener('DOMContentLoaded', function() {
         state.visibleCategories = res.categories;
       }
 
+      loadFeaturedProduct(res.categories);
       loadProducts();
     })
     .catch(function(err) {
