@@ -23,7 +23,7 @@ function parseBrand(name) {
 /* ── Skeletons ── */
 function showGallerySkeleton() {
   document.getElementById('pdp-gallery').innerHTML = `
-    <div class="pdp-main-img skeleton" style="max-width:340px;height:300px;width:100%;background:none;"></div>
+    <div class="pdp-main-img skeleton" style="width:100%;background:none;"></div>
     <div style="display:flex;gap:10px;margin-top:16px;">
       <div class="skeleton" style="width:60px;height:60px;border-radius:8px;"></div>
       <div class="skeleton" style="width:60px;height:60px;border-radius:8px;"></div>
@@ -153,6 +153,11 @@ function renderProduct(product, categoryName) {
     <div class="pdp-thumbs">
       <div class="pdp-thumb active">${thumbImg}</div>
     </div>`;
+
+  const thumbsEl = document.querySelector('.pdp-thumbs');
+  if (thumbsEl && thumbsEl.querySelectorAll('.pdp-thumb').length <= 1) {
+    thumbsEl.style.display = 'none';
+  }
 
   /* Info panel */
   document.getElementById('pdp-info').innerHTML = `

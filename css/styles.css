@@ -620,8 +620,8 @@ button { font-family: inherit; }
 }
 .pdp-main-img {
   width: 100%;
-  max-width: 340px;
-  height: 300px;
+  flex: 1;
+  min-height: 0;
   background: #ebebed;
   border-radius: var(--radius-lg);
   display: flex;
