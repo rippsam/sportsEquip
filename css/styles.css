@@ -609,7 +609,7 @@ button { font-family: inherit; }
 
 /* Gallery */
 .pdp-gallery {
-  background: var(--gray-bg);
+  background: #fff;
   padding: 32px 48px;
   display: flex;
   flex-direction: column;
@@ -618,15 +618,15 @@ button { font-family: inherit; }
 }
 .pdp-main-img {
   width: 100%;
+  height: 440px;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 .pdp-main-img img {
-  max-width: 100%;
-  max-height: 440px;
-  width: auto;
-  height: auto;
+  width: 100%;
+  height: 100%;
   display: block;
   object-fit: contain;
 }
@@ -639,9 +639,10 @@ button { font-family: inherit; }
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 22px;
+  font-size: 30px;
+  height: 30px;
+  line-height: 30px;
   color: #888;
-  line-height: 1;
   padding: 0 2px;
   transition: color 0.15s;
 }
