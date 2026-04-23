@@ -23,8 +23,8 @@ const state = {
 let slowTimer = null;
 
 /* ── DOM refs ── */
-const productGrid = document.getElementById('product-grid');
-const loadMoreBtn = document.getElementById('btn-load-more');
+const productGrid   = document.getElementById('product-grid');
+const allProductsBtn = document.getElementById('btn-all-products');
 
 /* ── Skeletons ── */
 function showSkeletonCards(n) {
@@ -105,19 +105,6 @@ function renderProductCard(p) {
   return article;
 }
 
-/* ── Load More button states ── */
-function setLoadMoreState(s) {
-  if (!loadMoreBtn) return;
-  const states = {
-    loading: ['Loading\u2026',    true],
-    ready:   ['Load more',        false],
-    done:    ['All items loaded', true],
-    error:   ['Retry',            false]
-  };
-  const entry = states[s];
-  if (entry) { loadMoreBtn.textContent = entry[0]; loadMoreBtn.disabled = entry[1]; }
-}
-
 /* ── Error state ── */
 function showProductError() {
   const errDiv = document.createElement('div');
@@ -140,7 +127,6 @@ function showProductError() {
 function loadProducts() {
   if (state.loading || !state.hasMore) return;
   state.loading = true;
-  setLoadMoreState('loading');
 
   if (state.firstLoad) {
     slowTimer = setTimeout(function() {
@@ -166,7 +152,6 @@ function loadProducts() {
        don't prevent filling a full batch of 8 */
     if (state.visibleCategories.length === 0) {
       state.loading = false;
-      setLoadMoreState('done');
       return;
     }
     promise = Promise.allSettled(
@@ -200,7 +185,6 @@ function loadProducts() {
 
     if (products.length === 0 && state.products.length === 0) {
       productGrid.innerHTML = '<div class="error-state"><strong>No products found</strong>Try selecting a different category.</div>';
-      setLoadMoreState('done');
       state.loading = false;
       return;
     }
@@ -213,7 +197,7 @@ function loadProducts() {
       if (products.length < state.limit) state.hasMore = false;
     }
 
-    setLoadMoreState(state.hasMore ? 'ready' : 'done');
+    if (allProductsBtn) allProductsBtn.style.display = 'inline-block';
     state.loading = false;
   }).catch(function(err) {
     console.error('loadProducts error:', err);
@@ -221,7 +205,6 @@ function loadProducts() {
     if (state.firstLoad) productGrid.innerHTML = '';
     state.firstLoad = false;
     showProductError();
-    setLoadMoreState('error');
     state.loading = false;
   });
 }
@@ -333,7 +316,6 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   showSkeletonCards(8);
-  setLoadMoreState('loading');
 
   Api.getAllCategories()
     .then(function(res) {
@@ -358,13 +340,9 @@ document.addEventListener('DOMContentLoaded', function() {
       console.error('getAllCategories error:', err);
       if (state.visibleCategories.length === 0) {
         productGrid.innerHTML = '<div class="error-state"><strong>Could not load categories</strong>Please refresh the page.</div>';
-        setLoadMoreState('done');
       }
     });
 
   document.addEventListener('deptSelected', function(e) { filterByDept(e.detail.deptId); });
 
-  loadMoreBtn?.addEventListener('click', function() {
-    if (!state.loading && state.hasMore) loadProducts();
-  });
 });

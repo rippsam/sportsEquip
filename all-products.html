@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sports Equip — Performance Gear for Every Athlete</title>
+  <title>All Products &mdash; Sports Equip</title>
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
@@ -36,84 +36,17 @@
   </div>
 </nav>
 
-<!-- HERO -->
-<section class="hero">
-  <img
-    class="hero-img"
-    src="BannerSportsEquip.png"
-    alt="Athletes from multiple sports — hockey, soccer, boxing, volleyball, and football"
-  />
-  <div class="hero-overlay"></div>
-  <div class="hero-content">
-    <p class="hero-eyebrow">Spring / Summer 2026</p>
-    <h1 class="hero-headline">Move without<br>limits.</h1>
-    <p class="hero-sub">Performance gear engineered for every athlete.<br>From first step to finish line.</p>
-    <div class="hero-ctas">
-      <button class="cta-white" onclick="document.getElementById('products-section').scrollIntoView({behavior:'smooth'})">Shop now</button>
-      <button class="cta-outline" onclick="document.getElementById('products-section').scrollIntoView({behavior:'smooth'})">Explore collections</button>
-    </div>
-  </div>
+<!-- HEADER -->
+<section class="section gray">
+  <p class="sec-eyebrow">Shop</p>
+  <h1 class="sec-title">All Products</h1>
 </section>
 
 <!-- PRODUCTS -->
-<section class="section" id="products-section">
-  <div class="sec-header">
-    <div>
-      <p class="sec-eyebrow" id="products-eyebrow">Featured</p>
-      <h2 class="sec-title" id="products-title">New arrivals</h2>
-    </div>
-  </div>
-  <div id="product-grid" class="product-grid"></div>
-  <div class="load-more-wrap">
-    <a href="all-products.html" id="btn-all-products" class="btn-load-more" style="display:none;text-decoration:none;">All Products</a>
-  </div>
-</section>
-
-<!-- PROMO SPLIT -->
-<section class="section gray">
-  <div class="split">
-    <div class="split-card dark" id="promo-featured">
-      <p class="split-eyebrow">Just dropped</p>
-      <h3 class="split-title">New arrivals</h3>
-      <p class="split-desc">Loading this week&rsquo;s featured product&hellip;</p>
-      <a href="index.html" class="split-link">Shop now &rarr;</a>
-    </div>
-    <div class="split-card dark2">
-      <p class="split-eyebrow">Limited time</p>
-      <h3 class="split-title">Up to 40% off<br>top brands</h3>
-      <p class="split-desc">Nike, Adidas, Under Armour &mdash; all on sale for a limited time.</p>
-      <a href="sale.html" class="split-link">Shop the sale &rarr;</a>
-    </div>
-  </div>
-</section>
-
-<!-- TOP CATEGORIES -->
 <section class="section">
-  <div class="sec-header">
-    <div>
-      <p class="sec-eyebrow">Browse</p>
-      <h2 class="sec-title">Top categories</h2>
-    </div>
-    <a href="categories.html" class="see-all">All categories &rarr;</a>
-  </div>
-  <div id="top-categories-row" class="brands-row"></div>
+  <div id="product-grid" class="product-grid"></div>
+  <div id="scroll-sentinel" style="height:1px;"></div>
 </section>
-
-<!-- TRUST BAR -->
-<div class="trust">
-  <div class="trust-item">
-    <p class="trust-title">Free shipping over $75</p>
-    <p class="trust-desc">Fast delivery on qualifying orders. Easy, free returns on everything.</p>
-  </div>
-  <div class="trust-item">
-    <p class="trust-title">30-day returns</p>
-    <p class="trust-desc">Not the right fit? Return or exchange within 30 days, no questions asked.</p>
-  </div>
-  <div class="trust-item">
-    <p class="trust-title">Expert advice</p>
-    <p class="trust-desc">Talk to real athletes and gear specialists &mdash; 7 days a week, no bots.</p>
-  </div>
-</div>
 
 <!-- FOOTER -->
 <footer class="footer">
@@ -163,6 +96,6 @@
 <script src="js/api.js"></script>
 <script src="js/cart.js"></script>
 <script src="js/nav.js"></script>
-<script src="js/home.js"></script>
+<script src="js/all-products.js"></script>
 </body>
 </html>

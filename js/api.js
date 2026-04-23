@@ -37,8 +37,10 @@ window.Api = {
     return apiFetch('/products/' + id);
   },
 
-  getAllProducts: function(limit) {
-    return apiFetch('/products?limit=' + (limit !== undefined ? limit : 200));
+  getAllProducts: function(limit, offset) {
+    let url = '/products?limit=' + (limit !== undefined ? limit : 200);
+    if (offset) url += '&offset=' + offset;
+    return apiFetch(url);
   },
 
   getProductImages: function(id) {
