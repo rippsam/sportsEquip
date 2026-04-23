@@ -23,7 +23,7 @@ function parseBrand(name) {
 /* ── Skeletons ── */
 function showGallerySkeleton() {
   document.getElementById('pdp-gallery').innerHTML = `
-    <div class="pdp-main-img skeleton" style="width:100%;background:none;"></div>
+    <div class="pdp-main-img skeleton" style="width:100%;height:360px;background:none;"></div>
     <div style="display:flex;gap:10px;margin-top:16px;">
       <div class="skeleton" style="width:60px;height:60px;border-radius:8px;"></div>
       <div class="skeleton" style="width:60px;height:60px;border-radius:8px;"></div>
