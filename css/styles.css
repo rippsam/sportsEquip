@@ -89,17 +89,20 @@ button { font-family: inherit; }
   align-items: center;
 }
 .nav-search-input {
+  position: absolute;
+  right: 100%;
+  top: 50%;
+  transform: translateY(-50%);
   width: 0;
   opacity: 0;
   padding: 0;
   border: none;
   border-bottom: 1.5px solid transparent;
-  background: transparent;
+  background: #fff;
   font-size: 14px;
   color: var(--black);
   outline: none;
   transition: width 0.25s ease, opacity 0.25s ease, padding 0.25s ease;
-  order: -1;
 }
 .nav-search-wrap.open .nav-search-input {
   width: 220px;
