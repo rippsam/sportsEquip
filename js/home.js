@@ -311,10 +311,16 @@ document.addEventListener('DOMContentLoaded', function() {
   const deptParam = new URLSearchParams(location.search).get('dept');
 
   if (deptParam) {
-    const titleEl  = document.getElementById('products-title');
+    const titleEl   = document.getElementById('products-title');
     const eyebrowEl = document.getElementById('products-eyebrow');
     if (titleEl) titleEl.textContent = '';
     if (eyebrowEl) eyebrowEl.textContent = '';
+    ['promo-section', 'top-categories-section'].forEach(function(id) {
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    });
+    document.querySelector('.hero')?.style.setProperty('display', 'none');
+    document.querySelector('.trust')?.style.setProperty('display', 'none');
   }
 
   showSkeletonCards(8);
