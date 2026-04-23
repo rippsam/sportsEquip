@@ -201,6 +201,14 @@ function loadProducts() {
       allProductsBtn.style.display = 'inline-block';
     }
     state.loading = false;
+
+    /* If sentinel is still in view after loading (short page), keep going */
+    if (state.hasMore && (state.activeDeptId || state.activeCategoryId)) {
+      setTimeout(function() {
+        const s = document.getElementById('scroll-sentinel');
+        if (s && s.getBoundingClientRect().top < window.innerHeight + 200) loadProducts();
+      }, 0);
+    }
   }).catch(function(err) {
     console.error('loadProducts error:', err);
     clearSlowNotice();
