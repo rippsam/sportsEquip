@@ -325,6 +325,13 @@ function filterByDept(deptId) {
 document.addEventListener('DOMContentLoaded', function() {
   const deptParam = new URLSearchParams(location.search).get('dept');
 
+  if (deptParam) {
+    const titleEl  = document.getElementById('products-title');
+    const eyebrowEl = document.getElementById('products-eyebrow');
+    if (titleEl) titleEl.textContent = '';
+    if (eyebrowEl) eyebrowEl.textContent = '';
+  }
+
   showSkeletonCards(8);
   setLoadMoreState('loading');
 
