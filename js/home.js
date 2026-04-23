@@ -109,10 +109,7 @@ function renderProductCard(p) {
 function showProductError() {
   const errDiv = document.createElement('div');
   errDiv.className = 'error-state';
-  errDiv.innerHTML =
-    '<strong>Could not load products</strong>' +
-    'There was a problem reaching the server. Check your connection and try again.' +
-    '<br><button class="error-retry">Retry</button>';
+  errDiv.innerHTML = `<strong>Could not load products</strong>There was a problem reaching the server. Check your connection and try again.<br><button class="error-retry">Retry</button>`;
   errDiv.querySelector('.error-retry').addEventListener('click', function() {
     productGrid.innerHTML = '';
     state.products = [];

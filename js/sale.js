@@ -11,8 +11,8 @@ function escHtml(str) {
 }
 
 function parseBrand(name) {
-  const multiWord = ['Under Armour', 'New Balance', 'The North Face'];
-  return multiWord.find(function(b) { return name.startsWith(b); }) || name.split(' ')[0] || 'Brand';
+  const MULTI_WORD_BRANDS = ['Under Armour', 'New Balance', 'The North Face'];
+  return MULTI_WORD_BRANDS.find(function(b) { return name.startsWith(b); }) || name.split(' ')[0] || 'Brand';
 }
 
 function seededRand(seed) {
