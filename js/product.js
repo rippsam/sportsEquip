@@ -152,19 +152,34 @@ function renderProduct(product, images, categoryName) {
     <div class="pdp-main-img">
       ${mainSrc ? `<img id="pdp-main-img-el" src="${escHtml(mainSrc)}" alt="${escHtml(product.product_name)}" onerror="this.style.display='none'">` : ''}
     </div>
-    <div class="pdp-thumbs">${thumbsHtml}</div>`;
+    <div class="pdp-gallery-nav">
+      <button class="pdp-arrow" id="pdp-arrow-prev">&#8249;</button>
+      <div class="pdp-thumbs">${thumbsHtml}</div>
+      <button class="pdp-arrow" id="pdp-arrow-next">&#8250;</button>
+    </div>`;
 
   const thumbsEl = document.querySelector('.pdp-thumbs');
+  const navEl    = document.querySelector('.pdp-gallery-nav');
+
   if (images.length <= 1) {
-    thumbsEl.style.display = 'none';
+    navEl.style.display = 'none';
   } else {
-    thumbsEl.querySelectorAll('.pdp-thumb').forEach(function(thumb) {
-      thumb.addEventListener('click', function() {
-        document.getElementById('pdp-main-img-el').src = thumb.dataset.src;
-        thumbsEl.querySelectorAll('.pdp-thumb').forEach(function(t) { t.classList.remove('active'); });
-        thumb.classList.add('active');
+    let currentIdx = 0;
+
+    function goToIndex(idx) {
+      currentIdx = (idx + images.length) % images.length;
+      document.getElementById('pdp-main-img-el').src = images[currentIdx];
+      thumbsEl.querySelectorAll('.pdp-thumb').forEach(function(t, i) {
+        t.classList.toggle('active', i === currentIdx);
       });
+    }
+
+    thumbsEl.querySelectorAll('.pdp-thumb').forEach(function(thumb, i) {
+      thumb.addEventListener('click', function() { goToIndex(i); });
     });
+
+    document.getElementById('pdp-arrow-prev').addEventListener('click', function() { goToIndex(currentIdx - 1); });
+    document.getElementById('pdp-arrow-next').addEventListener('click', function() { goToIndex(currentIdx + 1); });
   }
 
   /* Info panel */
