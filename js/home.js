@@ -197,7 +197,9 @@ function loadProducts() {
       if (products.length < state.limit) state.hasMore = false;
     }
 
-    if (allProductsBtn) allProductsBtn.style.display = 'inline-block';
+    if (allProductsBtn && !state.activeDeptId && !state.activeCategoryId) {
+      allProductsBtn.style.display = 'inline-block';
+    }
     state.loading = false;
   }).catch(function(err) {
     console.error('loadProducts error:', err);
@@ -345,4 +347,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
   document.addEventListener('deptSelected', function(e) { filterByDept(e.detail.deptId); });
 
+  const sentinel = document.getElementById('scroll-sentinel');
+  if (sentinel) {
+    const observer = new IntersectionObserver(function(entries) {
+      if (entries[0].isIntersecting && (state.activeDeptId || state.activeCategoryId)) {
+        loadProducts();
+      }
+    }, { rootMargin: '200px' });
+    observer.observe(sentinel);
+  }
 });
