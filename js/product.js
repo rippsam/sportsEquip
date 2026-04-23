@@ -130,7 +130,7 @@ function generateReviews(productId) {
 }
 
 /* ── Render product ── */
-function renderProduct(product, categoryName) {
+function renderProduct(product, images, categoryName) {
   const brand = parseBrand(product.product_name);
   const price = `$${parseFloat(product.product_price).toFixed(2)}`;
 
@@ -143,20 +143,28 @@ function renderProduct(product, categoryName) {
     : `<a href="index.html">\u2190 Back</a> / ${escHtml(product.product_name)}`;
 
   /* Gallery */
-  const thumbImg = product.product_image
-    ? `<img src="${escHtml(product.product_image)}" alt="${escHtml(product.product_name)}" onerror="this.style.display='none'">`
-    : '';
+  const mainSrc = images[0] ?? '';
+  const thumbsHtml = images.map(function(url, i) {
+    return `<div class="pdp-thumb${i === 0 ? ' active' : ''}" data-src="${escHtml(url)}"><img src="${escHtml(url)}" alt="" onerror="this.style.display='none'"></div>`;
+  }).join('');
+
   document.getElementById('pdp-gallery').innerHTML = `
     <div class="pdp-main-img">
-      ${product.product_image ? `<img id="pdp-main-img-el" src="${escHtml(product.product_image)}" alt="${escHtml(product.product_name)}" onerror="this.style.display='none'">` : ''}
+      ${mainSrc ? `<img id="pdp-main-img-el" src="${escHtml(mainSrc)}" alt="${escHtml(product.product_name)}" onerror="this.style.display='none'">` : ''}
     </div>
-    <div class="pdp-thumbs">
-      <div class="pdp-thumb active">${thumbImg}</div>
-    </div>`;
+    <div class="pdp-thumbs">${thumbsHtml}</div>`;
 
   const thumbsEl = document.querySelector('.pdp-thumbs');
-  if (thumbsEl && thumbsEl.querySelectorAll('.pdp-thumb').length <= 1) {
+  if (images.length <= 1) {
     thumbsEl.style.display = 'none';
+  } else {
+    thumbsEl.querySelectorAll('.pdp-thumb').forEach(function(thumb) {
+      thumb.addEventListener('click', function() {
+        document.getElementById('pdp-main-img-el').src = thumb.dataset.src;
+        thumbsEl.querySelectorAll('.pdp-thumb').forEach(function(t) { t.classList.remove('active'); });
+        thumb.classList.add('active');
+      });
+    });
   }
 
   /* Info panel */
@@ -343,10 +351,11 @@ document.addEventListener('DOMContentLoaded', function() {
       });
   }
 
-  Api.getProduct(productId)
-    .then(function(res) {
+  Promise.all([Api.getProduct(productId), Api.getProductImages(productId)])
+    .then(function(results) {
       clearTimeout(slowTimer);
-      const product = res.data;
+      const product = results[0].data;
+      const images  = results[1].data.length ? results[1].data : (product.product_image ? [product.product_image] : []);
       if (!product) throw new Error('No product data returned');
 
       Api.getAllCategories()
@@ -354,11 +363,11 @@ document.addEventListener('DOMContentLoaded', function() {
           const category = catRes.categories.find(function(c) {
             return c.category_id === product.product_category_id;
           });
-          renderProduct(product, category?.category_name ?? null);
+          renderProduct(product, images, category?.category_name ?? null);
           loadRelated(product.product_category_id);
         })
         .catch(function() {
-          renderProduct(product, null);
+          renderProduct(product, images, null);
           loadRelated(product.product_category_id);
         });
     })
