@@ -3,6 +3,10 @@
 ## Commits
 - Never add `Co-Authored-By: Claude` or any AI attribution to commit messages.
 
+## Assets
+- Product images are served from the API (`storeapi-60py.onrender.com/images/`). Do not store product images in this repo.
+- Only site-level assets belong here: `logo.png`, `BannerSportsEquip.png`.
+
 ## JavaScript style
 - Use `const` by default; use `let` when the variable is reassigned. Never use `var`.
 - Do not use arrow functions. Use `function` declarations for named functions and `function()` expressions for callbacks.
