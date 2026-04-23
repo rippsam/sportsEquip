@@ -21,6 +21,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
   Api.getDepartments()
     .then(function(res) {
+      const allLi = document.createElement('li');
+      const allA  = document.createElement('a');
+      allA.href        = 'all-products.html';
+      allA.textContent = 'All Products';
+      if (location.pathname.endsWith('all-products.html')) allA.classList.add('active');
+      allLi.appendChild(allA);
+      list.appendChild(allLi);
+
       res.data.forEach(function(d) {
         const li = document.createElement('li');
         const a  = document.createElement('a');
