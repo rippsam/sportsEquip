@@ -165,8 +165,8 @@ function renderProduct(product, images, categoryName) {
   lightbox.id = 'pdp-lightbox';
   lightbox.className = 'pdp-lightbox';
   lightbox.innerHTML = `
-    <button class="pdp-lightbox-close" id="pdp-lightbox-close">&#x2715;</button>
     <div class="pdp-lightbox-main">
+      <button class="pdp-lightbox-close" id="pdp-lightbox-close">&#x2715;</button>
       ${mainSrc ? `<img id="pdp-lightbox-img" src="${escHtml(mainSrc)}" alt="${escHtml(product.product_name)}" onerror="this.style.display='none'">` : ''}
     </div>
     <div class="pdp-lightbox-nav">
@@ -219,7 +219,11 @@ function renderProduct(product, images, categoryName) {
   document.getElementById('pdp-lightbox-close').addEventListener('click', closeLightbox);
 
   lightbox.addEventListener('click', function(e) {
-    if (e.target === lightbox) closeLightbox();
+    const lightboxImg = document.getElementById('pdp-lightbox-img');
+    const lightboxNav = lightbox.querySelector('.pdp-lightbox-nav');
+    if (lightboxImg && lightboxImg.contains(e.target)) return;
+    if (lightboxNav && lightboxNav.contains(e.target)) return;
+    closeLightbox();
   });
 
   if (images.length > 1) {
