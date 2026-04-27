@@ -60,6 +60,7 @@
       align-self: flex-end;
     }
     .login-register:hover { text-decoration: underline; }
+    .login-logo { width: 72px; height: 72px; object-fit: contain; display: block; }
   </style>
 </head>
 <body>
@@ -94,14 +95,15 @@
 
 <main class="login-page">
   <div class="login-card">
+    <img src="SportEquipNoWordslogo.png" alt="Sports Equip" class="login-logo">
     <h2>Sign in</h2>
     <div class="login-field">
       <label for="login-username">Username</label>
-      <input type="text" id="login-username" placeholder="Enter username" autocomplete="username">
+      <input type="text" id="login-username" placeholder="Enter username" autocomplete="username" maxlength="20">
     </div>
     <div class="login-field">
       <label for="login-password">Password</label>
-      <input type="password" id="login-password" placeholder="Enter password" autocomplete="current-password">
+      <input type="password" id="login-password" placeholder="Enter password" autocomplete="current-password" maxlength="20">
     </div>
     <button class="btn-black login-submit" id="login-btn">Login</button>
     <button class="login-register" onclick="location.href='register.html'">Register →</button>
