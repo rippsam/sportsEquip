@@ -147,6 +147,9 @@ function renderProduct(product, images, categoryName) {
   const thumbsHtml = images.map(function(url, i) {
     return `<div class="pdp-thumb${i === 0 ? ' active' : ''}" data-src="${escHtml(url)}"><img src="${escHtml(url)}" alt="" onerror="this.style.display='none'"></div>`;
   }).join('');
+  const lightboxThumbsHtml = images.map(function(url, i) {
+    return `<div class="pdp-lightbox-thumb${i === 0 ? ' active' : ''}" data-src="${escHtml(url)}"><img src="${escHtml(url)}" alt="" onerror="this.style.display='none'"></div>`;
+  }).join('');
 
   document.getElementById('pdp-gallery').innerHTML = `
     <div class="pdp-main-img">
@@ -158,29 +161,87 @@ function renderProduct(product, images, categoryName) {
       <button class="pdp-arrow" id="pdp-arrow-next">&#8250;</button>
     </div>`;
 
-  const thumbsEl = document.querySelector('.pdp-thumbs');
-  const navEl    = document.querySelector('.pdp-gallery-nav');
+  const lightbox = document.createElement('div');
+  lightbox.id = 'pdp-lightbox';
+  lightbox.className = 'pdp-lightbox';
+  lightbox.innerHTML = `
+    <button class="pdp-lightbox-close" id="pdp-lightbox-close">&#x2715;</button>
+    <div class="pdp-lightbox-main">
+      ${mainSrc ? `<img id="pdp-lightbox-img" src="${escHtml(mainSrc)}" alt="${escHtml(product.product_name)}" onerror="this.style.display='none'">` : ''}
+    </div>
+    <div class="pdp-lightbox-nav">
+      <button class="pdp-arrow pdp-lightbox-arrow" id="pdp-lightbox-prev">&#8249;</button>
+      <div class="pdp-lightbox-thumbs">${lightboxThumbsHtml}</div>
+      <button class="pdp-arrow pdp-lightbox-arrow" id="pdp-lightbox-next">&#8250;</button>
+    </div>`;
+  document.body.appendChild(lightbox);
+
+  const thumbsEl         = document.querySelector('.pdp-thumbs');
+  const navEl            = document.querySelector('.pdp-gallery-nav');
+  const lightboxThumbsEl = lightbox.querySelector('.pdp-lightbox-thumbs');
+  const lightboxNavEl    = lightbox.querySelector('.pdp-lightbox-nav');
 
   if (images.length <= 1) {
     navEl.style.display = 'none';
-  } else {
-    let currentIdx = 0;
+    lightboxNavEl.style.display = 'none';
+  }
 
-    function goToIndex(idx) {
-      currentIdx = (idx + images.length) % images.length;
-      document.getElementById('pdp-main-img-el').src = images[currentIdx];
-      thumbsEl.querySelectorAll('.pdp-thumb').forEach(function(t, i) {
-        t.classList.toggle('active', i === currentIdx);
-      });
-    }
+  let currentIdx = 0;
 
+  function goToIndex(idx) {
+    currentIdx = (idx + images.length) % images.length;
+    const mainImgEl     = document.getElementById('pdp-main-img-el');
+    const lightboxImgEl = document.getElementById('pdp-lightbox-img');
+    if (mainImgEl)     mainImgEl.src     = images[currentIdx];
+    if (lightboxImgEl) lightboxImgEl.src = images[currentIdx];
+    thumbsEl.querySelectorAll('.pdp-thumb').forEach(function(t, i) {
+      t.classList.toggle('active', i === currentIdx);
+    });
+    lightboxThumbsEl.querySelectorAll('.pdp-lightbox-thumb').forEach(function(t, i) {
+      t.classList.toggle('active', i === currentIdx);
+    });
+  }
+
+  function openLightbox() {
+    lightbox.classList.add('pdp-lightbox-open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLightbox() {
+    lightbox.classList.remove('pdp-lightbox-open');
+    document.body.style.overflow = '';
+  }
+
+  if (mainSrc) {
+    document.querySelector('.pdp-main-img').addEventListener('click', openLightbox);
+  }
+
+  document.getElementById('pdp-lightbox-close').addEventListener('click', closeLightbox);
+
+  lightbox.addEventListener('click', function(e) {
+    if (e.target === lightbox) closeLightbox();
+  });
+
+  if (images.length > 1) {
     thumbsEl.querySelectorAll('.pdp-thumb').forEach(function(thumb, i) {
       thumb.addEventListener('click', function() { goToIndex(i); });
     });
-
     document.getElementById('pdp-arrow-prev').addEventListener('click', function() { goToIndex(currentIdx - 1); });
     document.getElementById('pdp-arrow-next').addEventListener('click', function() { goToIndex(currentIdx + 1); });
+
+    lightboxThumbsEl.querySelectorAll('.pdp-lightbox-thumb').forEach(function(thumb, i) {
+      thumb.addEventListener('click', function() { goToIndex(i); });
+    });
+    document.getElementById('pdp-lightbox-prev').addEventListener('click', function() { goToIndex(currentIdx - 1); });
+    document.getElementById('pdp-lightbox-next').addEventListener('click', function() { goToIndex(currentIdx + 1); });
   }
+
+  document.addEventListener('keydown', function(e) {
+    if (!lightbox.classList.contains('pdp-lightbox-open')) return;
+    if (e.key === 'Escape') closeLightbox();
+    if (images.length > 1 && e.key === 'ArrowLeft')  goToIndex(currentIdx - 1);
+    if (images.length > 1 && e.key === 'ArrowRight') goToIndex(currentIdx + 1);
+  });
 
   /* Info panel */
   document.getElementById('pdp-info').innerHTML = `
