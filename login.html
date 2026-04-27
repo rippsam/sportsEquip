@@ -127,13 +127,12 @@
     if (e.key === 'Enter') document.getElementById('login-btn').click();
   });
 
-  window.addEventListener('pageshow', function() {
-    if (sessionStorage.getItem('clear_form')) {
-      sessionStorage.removeItem('clear_form');
-      document.getElementById('login-username').value = '';
-      document.getElementById('login-password').value = '';
-    }
-  });
+  function clearLoginForm() {
+    document.getElementById('login-username').value = '';
+    document.getElementById('login-password').value = '';
+  }
+  window.addEventListener('pageshow', clearLoginForm);
+  window.addEventListener('pagehide', clearLoginForm);
 </script>
 </body>
 </html>

@@ -128,14 +128,13 @@
     if (e.key === 'Enter') document.getElementById('reg-save-btn').click();
   });
 
-  window.addEventListener('pageshow', function() {
-    if (sessionStorage.getItem('clear_form')) {
-      sessionStorage.removeItem('clear_form');
-      document.getElementById('reg-username').value = '';
-      document.getElementById('reg-password').value = '';
-      document.getElementById('reg-confirm').value = '';
-    }
-  });
+  function clearRegisterForm() {
+    document.getElementById('reg-username').value = '';
+    document.getElementById('reg-password').value = '';
+    document.getElementById('reg-confirm').value = '';
+  }
+  window.addEventListener('pageshow', clearRegisterForm);
+  window.addEventListener('pagehide', clearRegisterForm);
 </script>
 </body>
 </html>
