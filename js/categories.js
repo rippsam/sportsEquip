@@ -1,44 +1,52 @@
 document.addEventListener('DOMContentLoaded', function() {
-  const container = document.getElementById('categories-container');
+  const main = document.getElementById('cats-main');
+
+  function escHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
 
   Api.getAllCategories()
     .then(function(res) {
-      const deptMap = {};
-      res.departments.forEach(function(d) {
-        deptMap[d.department_id] = d.department_name;
-      });
-
       const groups = {};
       res.categories.forEach(function(cat) {
-        const deptId = cat.category_department_id;
-        if (!groups[deptId]) groups[deptId] = [];
-        groups[deptId].push(cat);
+        const id = cat.category_department_id;
+        if (!groups[id]) groups[id] = [];
+        groups[id].push(cat);
       });
 
-      Object.keys(groups).forEach(function(deptId) {
-        const section  = document.createElement('div');
-        section.className = 'cat-group';
+      res.departments.forEach(function(dept) {
+        const deptId = dept.department_id;
+        const cats = groups[deptId];
+        if (!cats || !cats.length) return;
 
-        const heading  = document.createElement('h2');
-        heading.className = 'cat-group-title';
-        heading.textContent = deptMap[deptId] || 'Other';
+        const block = document.createElement('div');
+        block.className = 'dept-block';
 
-        const chips = document.createElement('div');
-        chips.className = 'brands-row';
+        const header = document.createElement('div');
+        header.className = 'dept-header';
+        header.innerHTML = `
+          <span class="dept-name">${escHtml(dept.department_name)}</span>
+          <span class="dept-count">${cats.length} ${cats.length === 1 ? 'category' : 'categories'}</span>
+          <div class="dept-divider"></div>`;
 
-        groups[deptId].forEach(function(cat) {
-          const a       = document.createElement('a');
-          a.className   = 'brand-chip';
-          a.href        = `index.html?dept=${deptId}`;
-          a.textContent = cat.category_name;
-          chips.appendChild(a);
+        const grid = document.createElement('div');
+        grid.className = 'cat-grid';
+
+        cats.forEach(function(cat) {
+          const a = document.createElement('a');
+          a.className = 'cat-card';
+          a.href = `index.html?dept=${deptId}`;
+          a.innerHTML = `<span class="cat-label">${escHtml(cat.category_name)}</span>`;
+          grid.appendChild(a);
         });
 
-        section.append(heading, chips);
-        container.appendChild(section);
+        block.append(header, grid);
+        main.appendChild(block);
       });
     })
     .catch(function() {
-      container.textContent = 'Could not load categories. Please refresh.';
+      main.textContent = 'Could not load categories. Please refresh.';
     });
 });
