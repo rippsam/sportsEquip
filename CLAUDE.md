@@ -1,5 +1,10 @@
 # Claude Instructions
 
+## Connected repos
+- This repo (`SportsEquip`) is the frontend — static HTML/CSS/JS site.
+- The backend API repo (`ClassSite`) lives at `/Users/samripplinger/Repos/ClassSite` and is tracked at `https://github.com/rippsam/storeAPI.git`.
+- Both repos can be edited from this Claude Code session. When making changes to the API or database, work in `/Users/samripplinger/Repos/ClassSite`; commit and push from there separately.
+
 ## Commits
 - Never add `Co-Authored-By: Claude` or any AI attribution to commit messages.
 
