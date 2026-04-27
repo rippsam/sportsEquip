@@ -5,7 +5,7 @@
 
 ## Assets
 - Product images are served from the API (`storeapi-60py.onrender.com/images/`). Do not store product images in this repo.
-- Only site-level assets belong here: `logo.png`, `BannerSportsEquip.png`.
+- Site-level assets live in `assets/images/`: `logo.png`, `BannerSportsEquip.png`, `SportEquipNoWordslogo.png`, `ThanksForMonster2.png`.
 
 ## Product images
 - `product.product_image` is the primary image used on product cards (list views).
