@@ -302,18 +302,39 @@ function renderProduct(product, images, categoryName) {
   reviewContainer.innerHTML = `<p class="reviews-title">Customer Reviews</p>${reviews.slice(0, REVIEW_INITIAL).join('')}`;
 
   if (reviews.length > REVIEW_INITIAL) {
-    const loadMoreBtn = document.createElement('button');
-    loadMoreBtn.className = 'btn-ghost reviews-load-more';
-    loadMoreBtn.textContent = `Load more (${reviews.length - REVIEW_INITIAL} more)`;
-    loadMoreBtn.addEventListener('click', function() {
-      reviews.slice(REVIEW_INITIAL).forEach(function(html) {
-        const tmp = document.createElement('div');
-        tmp.innerHTML = html;
-        reviewContainer.insertBefore(tmp.firstElementChild, loadMoreBtn);
+    const makeLoadMoreBtn = function() {
+      const btn = document.createElement('button');
+      btn.className = 'reviews-load-more';
+      btn.textContent = `Load more reviews →`;
+      btn.addEventListener('click', function() {
+        btn.remove();
+        reviews.slice(REVIEW_INITIAL).forEach(function(html) {
+          const tmp = document.createElement('div');
+          tmp.innerHTML = html.trim();
+          const card = tmp.firstElementChild;
+          card.classList.add('review-card-extra');
+          reviewContainer.appendChild(card);
+        });
+        reviewContainer.appendChild(makeShowLessBtn());
       });
-      loadMoreBtn.remove();
-    });
-    reviewContainer.appendChild(loadMoreBtn);
+      return btn;
+    };
+
+    const makeShowLessBtn = function() {
+      const btn = document.createElement('button');
+      btn.className = 'reviews-load-more';
+      btn.textContent = `← Show less`;
+      btn.addEventListener('click', function() {
+        reviewContainer.querySelectorAll('.review-card-extra').forEach(function(el) {
+          el.remove();
+        });
+        btn.remove();
+        reviewContainer.appendChild(makeLoadMoreBtn());
+      });
+      return btn;
+    };
+
+    reviewContainer.appendChild(makeLoadMoreBtn());
   }
 }
 
