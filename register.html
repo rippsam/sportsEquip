@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sign In — Sports Equip</title>
+  <title>Register — Sports Equip</title>
   <link rel="stylesheet" href="css/styles.css" />
   <style>
     .login-page {
@@ -49,17 +49,6 @@
     }
     .login-field input:focus { border-color: var(--black); }
     .login-submit { margin-top: 4px; }
-    .login-register {
-      background: none;
-      border: none;
-      padding: 0;
-      font-size: 13px;
-      font-family: inherit;
-      color: var(--blue-link);
-      cursor: pointer;
-      align-self: flex-end;
-    }
-    .login-register:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
@@ -94,17 +83,20 @@
 
 <main class="login-page">
   <div class="login-card">
-    <h2>Sign in</h2>
+    <h2>Create account</h2>
     <div class="login-field">
-      <label for="login-username">Username</label>
-      <input type="text" id="login-username" placeholder="Enter username" autocomplete="username">
+      <label for="reg-username">Username</label>
+      <input type="text" id="reg-username" placeholder="Choose a username" autocomplete="username">
     </div>
     <div class="login-field">
-      <label for="login-password">Password</label>
-      <input type="password" id="login-password" placeholder="Enter password" autocomplete="current-password">
+      <label for="reg-password">Password</label>
+      <input type="password" id="reg-password" placeholder="Choose a password" autocomplete="new-password">
     </div>
-    <button class="btn-black login-submit" id="login-btn">Login</button>
-    <button class="login-register" onclick="location.href='register.html'">Register →</button>
+    <div class="login-field">
+      <label for="reg-confirm">Retype Password</label>
+      <input type="password" id="reg-confirm" placeholder="Confirm password" autocomplete="new-password">
+    </div>
+    <button class="btn-black login-submit" id="reg-save-btn">Save</button>
   </div>
 </main>
 
@@ -112,16 +104,17 @@
 <script src="js/api.js"></script>
 <script src="js/nav.js"></script>
 <script>
-  document.getElementById('login-btn').addEventListener('click', function() {
-    const user = document.getElementById('login-username').value.trim();
-    const pass = document.getElementById('login-password').value.trim();
-    if (user && pass) {
+  document.getElementById('reg-save-btn').addEventListener('click', function() {
+    const user    = document.getElementById('reg-username').value.trim();
+    const pass    = document.getElementById('reg-password').value.trim();
+    const confirm = document.getElementById('reg-confirm').value.trim();
+    if (user && pass && confirm) {
       location.href = 'login-success.html';
     }
   });
 
-  document.getElementById('login-password').addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') document.getElementById('login-btn').click();
+  document.getElementById('reg-confirm').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') document.getElementById('reg-save-btn').click();
   });
 </script>
 </body>
