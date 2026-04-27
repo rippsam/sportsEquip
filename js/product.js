@@ -126,7 +126,7 @@ function generateReviews(productId) {
         <p class="review-stars">${starHtml(stars)}</p>
         <p class="review-body">${escHtml(REVIEW_BODIES[bodyIdx])}</p>
       </div>`;
-  }).join('');
+  });
 }
 
 /* ── Render product ── */
@@ -295,8 +295,26 @@ function renderProduct(product, images, categoryName) {
       <div id="tab-reviews-inline"></div>
     </div>`;
 
-  document.getElementById('tab-reviews-inline').innerHTML =
-    `<p class="reviews-title">Customer Reviews</p>${generateReviews(product.product_id)}`;
+  const reviews         = generateReviews(product.product_id);
+  const reviewContainer = document.getElementById('tab-reviews-inline');
+  const REVIEW_INITIAL  = 2;
+
+  reviewContainer.innerHTML = `<p class="reviews-title">Customer Reviews</p>${reviews.slice(0, REVIEW_INITIAL).join('')}`;
+
+  if (reviews.length > REVIEW_INITIAL) {
+    const loadMoreBtn = document.createElement('button');
+    loadMoreBtn.className = 'btn-ghost reviews-load-more';
+    loadMoreBtn.textContent = `Load more (${reviews.length - REVIEW_INITIAL} more)`;
+    loadMoreBtn.addEventListener('click', function() {
+      reviews.slice(REVIEW_INITIAL).forEach(function(html) {
+        const tmp = document.createElement('div');
+        tmp.innerHTML = html;
+        reviewContainer.insertBefore(tmp.firstElementChild, loadMoreBtn);
+      });
+      loadMoreBtn.remove();
+    });
+    reviewContainer.appendChild(loadMoreBtn);
+  }
 }
 
 /* ── Related products ── */
