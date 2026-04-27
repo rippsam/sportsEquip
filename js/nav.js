@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const accountLink = document.createElement('button');
     accountLink.className = 'account-dropdown-btn';
-    accountLink.textContent = 'Account';
+    accountLink.textContent = 'Sign In';
     accountLink.addEventListener('click', function() {
       location.href = 'login.html';
     });
