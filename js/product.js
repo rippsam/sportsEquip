@@ -165,8 +165,8 @@ function renderProduct(product, images, categoryName) {
   lightbox.id = 'pdp-lightbox';
   lightbox.className = 'pdp-lightbox';
   lightbox.innerHTML = `
+    <button class="pdp-lightbox-close" id="pdp-lightbox-close">&#x2715;</button>
     <div class="pdp-lightbox-main">
-      <button class="pdp-lightbox-close" id="pdp-lightbox-close">&#x2715;</button>
       ${mainSrc ? `<img id="pdp-lightbox-img" src="${escHtml(mainSrc)}" alt="${escHtml(product.product_name)}" onerror="this.style.display='none'">` : ''}
     </div>
     <div class="pdp-lightbox-nav">
