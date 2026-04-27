@@ -58,6 +58,32 @@ document.addEventListener('DOMContentLoaded', function() {
     parent.appendChild(li);
   }
 
+  /* ── Account ── */
+  const accountBtn = document.querySelector('.nav-icon-btn[aria-label="Account"]');
+  if (accountBtn) {
+    const accountWrap = document.createElement('div');
+    accountWrap.className = 'nav-account-wrap';
+
+    const accountDropdown = document.createElement('div');
+    accountDropdown.className = 'account-dropdown';
+
+    const accountInner = document.createElement('div');
+    accountInner.className = 'account-dropdown-inner';
+
+    const accountLink = document.createElement('button');
+    accountLink.className = 'account-dropdown-btn';
+    accountLink.textContent = 'Account';
+    accountLink.addEventListener('click', function() {
+      location.href = 'login.html';
+    });
+
+    accountInner.appendChild(accountLink);
+    accountDropdown.appendChild(accountInner);
+    accountBtn.parentNode.insertBefore(accountWrap, accountBtn);
+    accountWrap.appendChild(accountBtn);
+    accountWrap.appendChild(accountDropdown);
+  }
+
   /* ── Search ── */
   const searchBtn = document.querySelector('.nav-icon-btn[aria-label="Search"]');
   if (!searchBtn) return;
