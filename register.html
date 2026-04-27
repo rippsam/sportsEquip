@@ -50,6 +50,10 @@
     .login-field input:focus { border-color: var(--black); }
     .login-submit { margin-top: 4px; }
     .login-logo { width: 110px; height: 110px; object-fit: contain; display: block; align-self: center; }
+    .login-below-save { display: flex; align-items: center; justify-content: space-between; }
+    .login-have-account { font-size: 13px; color: var(--blue-link); }
+    .login-register { background: none; border: none; padding: 0; font-size: 13px; font-family: inherit; color: var(--blue-link); cursor: pointer; }
+    .login-register:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
@@ -99,6 +103,10 @@
       <input type="password" id="reg-confirm" placeholder="Confirm password" autocomplete="new-password" maxlength="20">
     </div>
     <button class="btn-black login-submit" id="reg-save-btn">Save</button>
+    <div class="login-below-save">
+      <span class="login-have-account">Have an account?</span>
+      <button class="login-register" onclick="location.href='login.html'">Sign in →</button>
+    </div>
   </div>
 </main>
 
