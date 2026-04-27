@@ -23,5 +23,15 @@
 </head>
 <body>
   <img src="assets/images/ThanksForMonster2.png" alt="">
+<script>
+  window.addEventListener('pageshow', function() {
+    if (!sessionStorage.getItem('auth_granted')) {
+      location.replace('login.html');
+      return;
+    }
+    sessionStorage.removeItem('auth_granted');
+    sessionStorage.setItem('clear_form', '1');
+  });
+</script>
 </body>
 </html>

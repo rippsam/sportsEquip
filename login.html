@@ -118,12 +118,21 @@
     const user = document.getElementById('login-username').value.trim();
     const pass = document.getElementById('login-password').value.trim();
     if (user && pass) {
+      sessionStorage.setItem('auth_granted', '1');
       location.href = 'login-success.html';
     }
   });
 
   document.getElementById('login-password').addEventListener('keydown', function(e) {
     if (e.key === 'Enter') document.getElementById('login-btn').click();
+  });
+
+  window.addEventListener('pageshow', function() {
+    if (sessionStorage.getItem('clear_form')) {
+      sessionStorage.removeItem('clear_form');
+      document.getElementById('login-username').value = '';
+      document.getElementById('login-password').value = '';
+    }
   });
 </script>
 </body>
