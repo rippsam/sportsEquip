@@ -1172,7 +1172,6 @@ button { font-family: inherit; }
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
   padding: 60px 40px 20px;
   box-sizing: border-box;
 }
