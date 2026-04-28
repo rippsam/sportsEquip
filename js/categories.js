@@ -26,10 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const header = document.createElement('div');
         header.className = 'dept-header';
-        header.innerHTML = `
-          <span class="dept-name">${escHtml(dept.department_name)}</span>
-          <span class="dept-count">${cats.length} ${cats.length === 1 ? 'category' : 'categories'}</span>
-          <div class="dept-divider"></div>`;
+        header.innerHTML = `<span class="dept-name">${escHtml(dept.department_name)}</span>`;
 
         const grid = document.createElement('div');
         grid.className = 'cat-grid';
