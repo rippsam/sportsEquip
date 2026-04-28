@@ -88,9 +88,8 @@ document.addEventListener('DOMContentLoaded', function() {
   const searchBtn = document.querySelector('.nav-icon-btn[aria-label="Search"]');
   if (!searchBtn) return;
 
-  let searchCache  = null;
-  let searchTimer  = null;
-  let isOpen       = false;
+  let searchCache = null;
+  let searchTimer = null;
 
   /* Build search UI */
   const wrap = document.createElement('div');
@@ -106,40 +105,26 @@ document.addEventListener('DOMContentLoaded', function() {
   const dropdown = document.createElement('div');
   dropdown.className = 'search-dropdown';
 
-  /* Insert wrap in place of the search button, move button inside */
+  /* Replace search button with always-visible input */
   searchBtn.parentNode.insertBefore(wrap, searchBtn);
+  searchBtn.remove();
   wrap.appendChild(input);
-  wrap.appendChild(searchBtn);
 
   /* Append dropdown to nav so it overflows below it */
   const nav = document.querySelector('.nav');
   if (nav) nav.appendChild(dropdown);
 
-  function openSearch() {
-    isOpen = true;
-    wrap.classList.add('open');
-    input.focus();
-  }
-
-  function closeSearch() {
-    isOpen = false;
-    wrap.classList.remove('open');
-    input.value = '';
+  function closeDropdown() {
     dropdown.innerHTML = '';
     dropdown.classList.remove('visible');
   }
 
-  searchBtn.addEventListener('click', function(e) {
-    e.stopPropagation();
-    if (isOpen) { closeSearch(); } else { openSearch(); }
-  });
-
   input.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') closeSearch();
+    if (e.key === 'Escape') closeDropdown();
   });
 
   document.addEventListener('click', function(e) {
-    if (isOpen && !wrap.contains(e.target) && !dropdown.contains(e.target)) closeSearch();
+    if (!wrap.contains(e.target) && !dropdown.contains(e.target)) closeDropdown();
   });
 
   input.addEventListener('input', function() {

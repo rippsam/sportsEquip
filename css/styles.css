@@ -100,26 +100,20 @@ button { font-family: inherit; }
   align-items: center;
 }
 .nav-search-input {
-  position: absolute;
-  right: 100%;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 0;
-  opacity: 0;
-  padding: 0;
-  border: none;
-  border-bottom: 1.5px solid transparent;
-  background: #fff;
-  font-size: 14px;
+  width: 200px;
+  padding: 5px 12px;
+  border: 1px solid #e5e5e5;
+  border-radius: 20px;
+  background: #f5f5f7;
+  font-size: 13px;
+  font-family: var(--font);
   color: var(--black);
   outline: none;
-  transition: width 0.25s ease, opacity 0.25s ease, padding 0.25s ease;
+  transition: border-color 0.15s, background 0.15s;
 }
-.nav-search-wrap.open .nav-search-input {
-  width: 220px;
-  opacity: 1;
-  padding: 4px 8px;
-  border-bottom-color: var(--black);
+.nav-search-input:focus {
+  border-color: #bbb;
+  background: #fff;
 }
 .search-dropdown {
   display: none;
