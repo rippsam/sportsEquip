@@ -4,98 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>All Categories &mdash; Sports Equip</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css" />
   <style>
-    :root {
-      --gray-50:  #f7f7f5;
-      --gray-100: #f0f0ec;
-      --gray-200: #e8e8e6;
-      --gray-300: #e5e5e5;
-      --gray-400: #cccccc;
-      --gray-500: #999999;
-      --gray-600: #666666;
-      --gray-700: #444444;
-      --font: 'DM Sans', system-ui, -apple-system, sans-serif;
-    }
-
-    body { font-family: var(--font); }
-
-    /* ── HERO ── */
-    .hero-strip {
-      background: var(--black);
-      padding: 52px 40px 48px;
-    }
-    .hero-eyebrow {
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: #888;
-      margin-bottom: 12px;
-    }
-    .hero-title {
-      font-size: 46px;
-      font-weight: 700;
-      color: var(--white);
-      letter-spacing: -2px;
-      line-height: 1.0;
-    }
-
     /* ── MAIN ── */
     .cats-page {
       padding: 44px 40px 72px;
       max-width: 1200px;
       margin: 0 auto;
     }
-
-    /* ── SALE BANNER ── */
-    .sale-banner {
-      background: var(--black);
-      border-radius: 14px;
-      padding: 26px 32px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 52px;
-      gap: 24px;
-    }
-    .sale-eyebrow {
-      font-size: 10px;
-      font-weight: 500;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: #888;
-      margin-bottom: 6px;
-    }
-    .sale-heading {
-      font-size: 22px;
-      font-weight: 700;
-      color: var(--white);
-      letter-spacing: -0.5px;
-    }
-    .sale-sub {
-      font-size: 13px;
-      color: #999;
-      margin-top: 5px;
-    }
-    .sale-btn {
-      background: var(--white);
-      color: var(--black);
-      font-family: var(--font);
-      font-size: 13px;
-      font-weight: 700;
-      border: none;
-      border-radius: 999px;
-      padding: 11px 24px;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: background 0.15s, transform 0.1s;
-    }
-    .sale-btn:hover { background: #f0f0f0; }
-    .sale-btn:active { transform: scale(0.98); }
 
     /* ── DEPT BLOCK ── */
     .dept-block { margin-bottom: 52px; }
@@ -157,11 +73,8 @@
     }
 
     /* ── RESPONSIVE ── */
-    @media (max-width: 768px) {
-      .hero-strip { padding: 36px 20px 32px; }
-      .hero-title { font-size: 34px; }
+    @media (max-width: 998px) {
       .cats-page { padding: 28px 20px 48px; }
-      .sale-banner { flex-direction: column; align-items: flex-start; gap: 16px; }
       .cat-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
       .footer { padding: 32px 20px 24px; }
     }

@@ -326,6 +326,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     document.querySelector('.hero')?.style.setProperty('display', 'none');
     document.querySelector('.trust')?.style.setProperty('display', 'none');
+    document.getElementById('dept-hero').style.display = 'block';
+    document.getElementById('dept-sale-banner').style.display = 'block';
   }
 
   showSkeletonCards(8);
@@ -336,6 +338,10 @@ document.addEventListener('DOMContentLoaded', function() {
       state.allCategories  = res.categories;
 
       if (deptParam) {
+        const dept = state.allDepartments.find(function(d) { return String(d.department_id) === String(deptParam); });
+        const heroTitle = document.getElementById('dept-hero-title');
+        if (heroTitle && dept) heroTitle.textContent = dept.department_name;
+
         state.activeDeptId      = deptParam;
         state.visibleCategories = res.categories.filter(function(c) {
           return String(c.category_department_id) === String(deptParam);

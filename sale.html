@@ -36,22 +36,26 @@
   </div>
 </nav>
 
-<!-- SALE HERO -->
-<section class="section gray">
-  <p class="sec-eyebrow">Limited time</p>
-  <h1 class="sec-title">Up to 40% off</h1>
-  <p style="color:var(--gray-muted);margin-top:10px;font-size:14px;">Sale items update weekly, check back next week for more great deals!</p>
-</section>
+<!-- HERO -->
+<div class="hero-strip">
+  <p class="hero-eyebrow">Limited time</p>
+  <h1 class="hero-title">Sale</h1>
+</div>
+
+<!-- SALE BANNER -->
+<div class="sale-banner-wrap">
+  <div class="sale-banner">
+    <div>
+      <p class="sale-eyebrow">This week</p>
+      <p class="sale-heading">Up to 40% off select gear</p>
+      <p class="sale-sub">Sale items update weekly — check back for new deals</p>
+    </div>
+    <button class="sale-btn" onclick="location.href='all-products.html'">All products &rarr;</button>
+  </div>
+</div>
 
 <!-- SALE PRODUCTS -->
-<section class="section">
-  <div class="sec-header">
-    <div>
-      <p class="sec-eyebrow">This week&rsquo;s deals</p>
-      <h2 class="sec-title">Sale items</h2>
-    </div>
-    <a href="index.html" class="see-all">All products &rarr;</a>
-  </div>
+<section class="section" style="padding-top:0">
   <div id="sale-grid" class="product-grid"></div>
   <p id="sale-loading" style="text-align:center;color:var(--gray-muted);padding:60px 0;font-size:14px;">Loading sale items&hellip;</p>
 </section>
