@@ -262,7 +262,7 @@ function renderProduct(product, images, categoryName) {
     <div id="pdp-features"></div>`;
 
   document.getElementById('pdp-add-to-wishlist')?.addEventListener('click', function() {
-    alert('You must login');
+    alert('You must sign in');
   });
 
   document.getElementById('pdp-add-to-cart')?.addEventListener('click', function() {
