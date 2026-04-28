@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Category &mdash; Sports Equip</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    :root {
+      --gray-50:  #f7f7f5;
+      --gray-100: #f0f0ec;
+      --gray-200: #e8e8e6;
+      --gray-300: #e5e5e5;
+      --gray-400: #cccccc;
+      --gray-500: #999999;
+      --gray-600: #666666;
+      --gray-700: #444444;
+      --font: 'DM Sans', system-ui, -apple-system, sans-serif;
+    }
+
+    body { font-family: var(--font); }
+
+    /* ── HERO ── */
+    .hero-strip {
+      background: var(--black);
+      padding: 52px 40px 48px;
+    }
+    .hero-eyebrow {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #888;
+      margin-bottom: 12px;
+    }
+    .hero-title {
+      font-size: 46px;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: -2px;
+      line-height: 1.0;
+    }
+
+    /* ── MAIN ── */
+    .cat-page {
+      padding: 44px 40px 72px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* ── FOOTER OVERRIDES ── */
+    .footer {
+      background: var(--gray-50);
+      border-top: 0.5px solid var(--gray-300);
+      padding: 44px 40px 28px;
+    }
+    .footer-grid {
+      max-width: 1200px;
+      margin: 0 auto 36px;
+    }
+    .footer-bottom {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .hero-strip { padding: 36px 20px 32px; }
+      .hero-title { font-size: 34px; }
+      .cat-page { padding: 28px 20px 48px; }
+      .footer { padding: 32px 20px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a class="nav-logo" href="index.html"><img src="assets/images/logo.png" alt="Sports Equip" class="nav-logo-img"></a>
+  <ul id="nav-dept-links" class="nav-links"></ul>
+  <div class="nav-right">
+    <button class="nav-icon-btn" aria-label="Search">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <circle cx="6.5" cy="6.5" r="4.5" stroke="currentColor" stroke-width="1.2"/>
+        <line x1="10.2" y1="10.2" x2="14" y2="14" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+      </svg>
+    </button>
+    <button class="nav-icon-btn" aria-label="Account">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <circle cx="8" cy="5" r="3" stroke="currentColor" stroke-width="1.2"/>
+        <path d="M2 14c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+      </svg>
+    </button>
+    <button class="nav-icon-btn" id="nav-cart-btn" aria-label="Cart">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M2 3h12l-1.5 8H3.5L2 3z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>
+        <circle cx="5.5" cy="13" r="1" fill="currentColor"/>
+        <circle cx="10.5" cy="13" r="1" fill="currentColor"/>
+      </svg>
+      <span class="cart-badge" id="cart-badge" style="display:none">0</span>
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero-strip">
+  <p class="hero-eyebrow">Browse</p>
+  <h1 class="hero-title" id="cat-hero-title">Category</h1>
+</div>
+
+<!-- MAIN -->
+<main class="cat-page">
+  <div id="cat-product-grid" class="product-grid"></div>
+  <div id="cat-sentinel" style="height:1px"></div>
+</main>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-col-title">Shop</p>
+      <a href="index.html?dept=5" class="footer-link">Men's gear</a>
+      <a href="index.html?dept=5" class="footer-link">Women's gear</a>
+      <a href="index.html?dept=5" class="footer-link">Kids' gear</a>
+      <a href="index.html?dept=2" class="footer-link">Equipment</a>
+      <a href="sale.html" class="footer-link">Sale</a>
+    </div>
+    <div>
+      <p class="footer-col-title">Support</p>
+      <a href="#" class="footer-link">Order status</a>
+      <a href="#" class="footer-link">Returns &amp; exchanges</a>
+      <a href="#" class="footer-link">Sizing guide</a>
+      <a href="#" class="footer-link">Contact us</a>
+      <a href="#" class="footer-link">FAQ</a>
+    </div>
+    <div>
+      <p class="footer-col-title">Company</p>
+      <a href="#" class="footer-link">About</a>
+      <a href="#" class="footer-link">Careers</a>
+      <a href="#" class="footer-link">Rewards</a>
+      <a href="#" class="footer-link">Gift cards</a>
+      <a href="#" class="footer-link">Press</a>
+    </div>
+    <div>
+      <p class="footer-col-title">Stay connected</p>
+      <a href="#" class="footer-link">Instagram</a>
+      <a href="#" class="footer-link">X / Twitter</a>
+      <a href="#" class="footer-link">YouTube</a>
+      <a href="#" class="footer-link">Newsletter</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-copy">Copyright &copy; 2026 Sports Equip Inc.</p>
+    <div class="footer-legal">
+      <span>Privacy policy</span>
+      <span>Terms of use</span>
+      <span>Accessibility</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/api.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/category.js"></script>
+</body>
+</html>

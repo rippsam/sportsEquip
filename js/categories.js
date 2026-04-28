@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function() {
         cats.forEach(function(cat) {
           const a = document.createElement('a');
           a.className = 'cat-card';
-          a.href = `index.html?dept=${deptId}`;
+          a.href = `category.html?cat=${cat.category_id}&name=${encodeURIComponent(cat.category_name)}`;
           a.innerHTML = `<span class="cat-label">${escHtml(cat.category_name)}</span>`;
           grid.appendChild(a);
         });
