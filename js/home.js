@@ -237,7 +237,7 @@ function renderTopCategories(categories) {
   picked.forEach(function(cat) {
     const a     = document.createElement('a');
     a.className = 'brand-chip';
-    a.href      = `index.html?dept=${cat.category_department_id}`;
+    a.href      = `category.html?cat=${cat.category_id}&name=${encodeURIComponent(cat.category_name)}`;
     a.textContent = cat.category_name;
     row.appendChild(a);
   });
