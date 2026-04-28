@@ -20,8 +20,25 @@
 ## CSS zoom
 - `body { zoom: 1.3 }` in `styles.css` is intentional — it simulates 150% browser zoom for development. The responsive breakpoints at 1331px and 998px are deliberate. Do not remove or adjust them.
 
+## Hosting
+- The site is hosted on GitHub Pages at `https://rippsam.github.io/sportsEquip/`.
+- `.nojekyll` is required in the repo root — without it GitHub Pages runs Jekyll and deployments fail.
+- Every push to `main` triggers an automatic Pages deployment (allow 1–2 min to go live).
+
+## Pages
+- `categories.html` / `js/categories.js` — all-categories browse page; dept blocks with category card grid.
+- `category.html` / `js/category.js` — per-category product listing with infinite scroll. URL: `category.html?cat=ID&name=Name`.
+- `all-products.html` / `js/all-products.js` — all products with infinite scroll.
+- `sale.html` / `js/sale.js` — sale items page.
+
 ## Department pages
-- When `?dept=X` is in the URL, `js/home.js` intentionally hides `.hero`, `#promo-section`, `#top-categories-section`, and `.trust`. Dept pages show only the product grid. This is by design.
+- When `?dept=X` is in the URL, `js/home.js` intentionally hides `.hero`, `#promo-section`, `#top-categories-section`, and `.trust`, and shows `#dept-hero` and `#dept-sale-banner`. The dept name is set from the API after load. This is by design.
+
+## Shared CSS components
+- DM Sans is loaded site-wide via `@import` at the top of `styles.css`.
+- `.hero-strip` / `.hero-eyebrow` / `.hero-title` — black hero banner used on all browse/dept/sale pages.
+- `.sale-banner-wrap` / `.sale-banner` — dark promo banner. Both live in `styles.css`.
+- Do not move these back into per-page `<style>` blocks.
 
 ## JavaScript style
 - Use `const` by default; use `let` when the variable is reassigned. Never use `var`.
