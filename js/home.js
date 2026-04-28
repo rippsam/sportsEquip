@@ -311,6 +311,15 @@ function filterByDept(deptId) {
   setActiveCategory(null);
 }
 
+/* ── New arrivals (4-day rotation) ── */
+function initSamplerOffsets(categories) {
+  const fourDayNum = Math.floor(Date.now() / (1000 * 60 * 60 * 24 * 4));
+  categories.forEach(function(cat) {
+    const rand = seededRand(fourDayNum * 31 + cat.category_id);
+    state.samplerOffsets[cat.category_id] = Math.floor(rand() * 10);
+  });
+}
+
 /* ── Init ── */
 document.addEventListener('DOMContentLoaded', function() {
   const deptParam = new URLSearchParams(location.search).get('dept');
@@ -353,6 +362,7 @@ document.addEventListener('DOMContentLoaded', function() {
       if (deptParam) updateSectionHeader(deptParam);
       renderTopCategories(res.categories);
       loadFeaturedProduct(res.categories);
+      initSamplerOffsets(res.categories);
       loadProducts();
     })
     .catch(function(err) {
