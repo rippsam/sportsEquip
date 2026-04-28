@@ -23,6 +23,7 @@ window.Cart = (function() {
       const items    = load();
       const existing = items.find(function(i) { return i.product_id === product.product_id; });
       if (existing) {
+        if (existing.quantity >= 10) return false;
         existing.quantity += 1;
       } else {
         items.push({
@@ -34,6 +35,7 @@ window.Cart = (function() {
         });
       }
       save(items);
+      return true;
     },
 
     removeItem(productId) {
@@ -42,6 +44,7 @@ window.Cart = (function() {
 
     updateQty(productId, qty) {
       if (qty <= 0) { this.removeItem(productId); return; }
+      qty = Math.min(qty, 10);
       const items = load();
       const item  = items.find(function(i) { return i.product_id === productId; });
       if (item) item.quantity = qty;

@@ -266,8 +266,8 @@ function renderProduct(product, images, categoryName) {
   });
 
   document.getElementById('pdp-add-to-cart')?.addEventListener('click', function() {
-    Cart.addItem(product);
-    this.textContent = 'Added!';
+    const added = Cart.addItem(product);
+    this.textContent = added ? 'Added!' : 'Max 10';
     setTimeout(function() { this.textContent = 'Add to cart'; }.bind(this), 1000);
   });
 
