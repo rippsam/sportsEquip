@@ -257,9 +257,13 @@ function renderProduct(product, images, categoryName) {
     <p class="pdp-stock">In stock \u2014 ships in 1\u20132 days</p>
     <div class="pdp-ctas">
       <button class="btn-black" id="pdp-add-to-cart">Add to cart</button>
-      <button class="btn-ghost">Add to wishlist</button>
+      <button class="btn-ghost" id="pdp-add-to-wishlist">Add to wishlist</button>
     </div>
     <div id="pdp-features"></div>`;
+
+  document.getElementById('pdp-add-to-wishlist')?.addEventListener('click', function() {
+    alert('You must login');
+  });
 
   document.getElementById('pdp-add-to-cart')?.addEventListener('click', function() {
     Cart.addItem(product);
