@@ -256,7 +256,7 @@ function renderProduct(product, images, categoryName) {
     <p class="pdp-price">${escHtml(price)}</p>
     <p class="pdp-stock">In stock \u2014 ships in 1\u20132 days</p>
     <div class="pdp-ctas">
-      <button class="btn-black" id="pdp-add-to-cart">Add to cart</button>
+      <div id="pdp-cart-control"></div>
       <button class="btn-ghost" id="pdp-add-to-wishlist">Add to wishlist</button>
     </div>
     <div id="pdp-features"></div>`;
@@ -265,11 +265,58 @@ function renderProduct(product, images, categoryName) {
     alert('You must sign in');
   });
 
-  document.getElementById('pdp-add-to-cart')?.addEventListener('click', function() {
-    const added = Cart.addItem(product);
-    this.textContent = added ? 'Added!' : 'Max 10';
-    setTimeout(function() { this.textContent = 'Add to cart'; }.bind(this), 1000);
-  });
+  (function mountPdpCartControl() {
+    const container = document.getElementById('pdp-cart-control');
+    if (!container) return;
+
+    function getQty() {
+      const item = Cart.getItems().find(function(i) { return i.product_id === product.product_id; });
+      return item ? item.quantity : 0;
+    }
+
+    function showAddBtn() {
+      container.innerHTML = '';
+      const btn = document.createElement('button');
+      btn.className = 'btn-black';
+      btn.textContent = 'Add to cart';
+      btn.addEventListener('click', function() {
+        Cart.addItem(product);
+        showStepper();
+      });
+      container.appendChild(btn);
+    }
+
+    function showStepper() {
+      const qty = getQty();
+      if (qty === 0) { showAddBtn(); return; }
+      container.innerHTML = '';
+      const stepper = document.createElement('div');
+      stepper.className = 'pdp-qty-stepper';
+      const dec = document.createElement('button');
+      dec.className = 'pdp-qty-stepper-btn';
+      dec.setAttribute('aria-label', 'Decrease');
+      dec.textContent = '−';
+      const val = document.createElement('span');
+      val.className = 'pdp-qty-stepper-val';
+      val.textContent = qty;
+      const inc = document.createElement('button');
+      inc.className = 'pdp-qty-stepper-btn';
+      inc.setAttribute('aria-label', 'Increase');
+      inc.textContent = '+';
+      dec.addEventListener('click', function() {
+        if (getQty() <= 1) { Cart.removeItem(product.product_id); showAddBtn(); }
+        else { Cart.updateQty(product.product_id, getQty() - 1); val.textContent = getQty(); }
+      });
+      inc.addEventListener('click', function() {
+        const added = Cart.addItem(product);
+        if (added) val.textContent = getQty();
+      });
+      stepper.append(dec, val, inc);
+      container.appendChild(stepper);
+    }
+
+    getQty() > 0 ? showStepper() : showAddBtn();
+  }());
 
   /* Features from description snippets */
   if (product.product_description) {

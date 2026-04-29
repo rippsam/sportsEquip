@@ -801,6 +801,38 @@ button { font-family: inherit; }
   transition: background 0.15s;
 }
 .btn-black:hover { background: #333; }
+.pdp-qty-stepper {
+  display: flex;
+  align-items: stretch;
+  background: var(--black);
+  border-radius: var(--radius-pill);
+  width: 100%;
+  overflow: hidden;
+}
+.pdp-qty-stepper-btn {
+  min-width: 50px;
+  padding: 15px;
+  background: transparent;
+  border: none;
+  color: var(--white);
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+.pdp-qty-stepper-btn:hover { background: #333; }
+.pdp-qty-stepper-val {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--white);
+  font-size: 16px;
+  font-weight: 600;
+}
 .btn-ghost {
   background: transparent;
   color: var(--black);
