@@ -130,7 +130,9 @@ function generateReviews(productId) {
 }
 
 /* ── Render product ── */
-function renderProduct(product, images, categoryName) {
+function renderProduct(product, images, category) {
+  const categoryName = category?.category_name ?? null;
+  const categoryId   = category?.category_id   ?? null;
   const brand = parseBrand(product.product_name);
   const price = `$${parseFloat(product.product_price).toFixed(2)}`;
 
@@ -139,7 +141,7 @@ function renderProduct(product, images, categoryName) {
   /* Breadcrumb */
   const bc = document.getElementById('pdp-breadcrumb');
   bc.innerHTML = categoryName
-    ? `<a href="index.html">\u2190 Back</a> / ${escHtml(categoryName)} / ${escHtml(product.product_name)}`
+    ? `<a href="index.html">\u2190 Back</a> / <a href="category.html?cat=${categoryId}&name=${encodeURIComponent(categoryName)}">${escHtml(categoryName)}</a> / ${escHtml(product.product_name)}`
     : `<a href="index.html">\u2190 Back</a> / ${escHtml(product.product_name)}`;
 
   /* Gallery */
@@ -533,7 +535,7 @@ document.addEventListener('DOMContentLoaded', function() {
           const category = catRes.categories.find(function(c) {
             return c.category_id === product.product_category_id;
           });
-          renderProduct(product, images, category?.category_name ?? null);
+          renderProduct(product, images, category ?? null);
           loadRelated(product.product_category_id);
         })
         .catch(function() {
