@@ -496,6 +496,37 @@ button { font-family: inherit; }
 }
 .add-to-cart-icon:hover { background: #333; }
 
+.qty-stepper {
+  display: flex;
+  align-items: center;
+  background: var(--black);
+  border-radius: 20px;
+  height: 28px;
+  flex-shrink: 0;
+}
+.qty-stepper-btn {
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: none;
+  color: var(--white);
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 8px;
+}
+.qty-stepper-btn:hover { background: #333; }
+.qty-stepper-val {
+  color: var(--white);
+  font-size: 13px;
+  font-weight: 600;
+  min-width: 20px;
+  text-align: center;
+}
+
 /* ════════════════════════════════════════
    PROMO SPLIT CARDS
 ════════════════════════════════════════ */

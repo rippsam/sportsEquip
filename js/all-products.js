@@ -20,6 +20,63 @@ const state = {
 const productGrid = document.getElementById('product-grid');
 const sentinel    = document.getElementById('scroll-sentinel');
 
+function makeCartControl(cartProduct) {
+  const wrap = document.createElement('div');
+
+  function getQty() {
+    const item = Cart.getItems().find(function(i) { return i.product_id === cartProduct.product_id; });
+    return item ? item.quantity : 0;
+  }
+
+  function showPlus() {
+    wrap.innerHTML = '';
+    const btn = document.createElement('button');
+    btn.className = 'add-to-cart-icon';
+    btn.setAttribute('aria-label', 'Add to cart');
+    btn.textContent = '+';
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      Cart.addItem(cartProduct);
+      showStepper();
+    });
+    wrap.appendChild(btn);
+  }
+
+  function showStepper() {
+    const qty = getQty();
+    if (qty === 0) { showPlus(); return; }
+    wrap.innerHTML = '';
+    const stepper = document.createElement('div');
+    stepper.className = 'qty-stepper';
+    const dec = document.createElement('button');
+    dec.className = 'qty-stepper-btn';
+    dec.setAttribute('aria-label', 'Decrease');
+    dec.textContent = '−';
+    const val = document.createElement('span');
+    val.className = 'qty-stepper-val';
+    val.textContent = qty;
+    const inc = document.createElement('button');
+    inc.className = 'qty-stepper-btn';
+    inc.setAttribute('aria-label', 'Increase');
+    inc.textContent = '+';
+    dec.addEventListener('click', function(e) {
+      e.stopPropagation();
+      if (getQty() <= 1) { Cart.removeItem(cartProduct.product_id); showPlus(); }
+      else { Cart.updateQty(cartProduct.product_id, getQty() - 1); val.textContent = getQty(); }
+    });
+    inc.addEventListener('click', function(e) {
+      e.stopPropagation();
+      const added = Cart.addItem(cartProduct);
+      if (added) val.textContent = getQty();
+    });
+    stepper.append(dec, val, inc);
+    wrap.appendChild(stepper);
+  }
+
+  getQty() > 0 ? showStepper() : showPlus();
+  return wrap;
+}
+
 function buildCard(p) {
   const article = document.createElement('article');
   article.className = 'pcard';
@@ -45,21 +102,14 @@ function buildCard(p) {
     <p class="pcard-name">${escHtml(p.product_name)}</p>
     <div class="pcard-bottom">
       <span class="pcard-price">$${parseFloat(p.product_price).toFixed(2)}</span>
-      <button class="add-to-cart-icon" aria-label="Add to cart">+</button>
     </div>`;
 
   article.append(imgWrap, body);
 
-  const cartBtn = body.querySelector('.add-to-cart-icon');
-  cartBtn.addEventListener('click', function(e) {
-    e.stopPropagation();
-    Cart.addItem(p);
-    cartBtn.textContent = '✓';
-    setTimeout(function() { cartBtn.textContent = '+'; }, 800);
-  });
+  body.querySelector('.pcard-bottom').appendChild(makeCartControl(p));
 
   article.addEventListener('click', function(e) {
-    if (!e.target.classList.contains('add-to-cart-icon')) {
+    if (!e.target.closest('.add-to-cart-icon, .qty-stepper')) {
       location.href = `product.html?id=${p.product_id}`;
     }
   });
