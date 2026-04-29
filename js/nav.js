@@ -1,3 +1,13 @@
+document.getElementById('site-nav').innerHTML = [
+  '<a class="nav-logo" href="index.html"><img src="assets/images/logo.png" alt="Sports Equip" class="nav-logo-img"></a>',
+  '<ul id="nav-dept-links" class="nav-links"></ul>',
+  '<div class="nav-right">',
+  '<button class="nav-icon-btn" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="6.5" cy="6.5" r="4.5" stroke="currentColor" stroke-width="1.2"/><line x1="10.2" y1="10.2" x2="14" y2="14" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></button>',
+  '<button class="nav-icon-btn" aria-label="Account"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5" r="3" stroke="currentColor" stroke-width="1.2"/><path d="M2 14c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></button>',
+  '<button class="nav-icon-btn" id="nav-cart-btn" aria-label="Cart"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 3h12l-1.5 8H3.5L2 3z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><circle cx="5.5" cy="13" r="1" fill="currentColor"/><circle cx="10.5" cy="13" r="1" fill="currentColor"/></svg><span class="cart-badge" id="cart-badge" style="display:none">0</span></button>',
+  '</div>'
+].join('');
+
 function updateCartBadge() {
   const badge = document.getElementById('cart-badge');
   if (!badge) return;

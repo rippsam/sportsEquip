@@ -8,33 +8,9 @@
 </head>
 <body>
 
-<!-- NAV -->
-<nav class="nav">
-  <a class="nav-logo" href="index.html"><img src="assets/images/logo.png" alt="Sports Equip" class="nav-logo-img"></a>
-  <ul id="nav-dept-links" class="nav-links"></ul>
-  <div class="nav-right">
-    <button class="nav-icon-btn" aria-label="Search">
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-        <circle cx="6.5" cy="6.5" r="4.5" stroke="currentColor" stroke-width="1.2"/>
-        <line x1="10.2" y1="10.2" x2="14" y2="14" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
-      </svg>
-    </button>
-    <button class="nav-icon-btn" aria-label="Account">
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-        <circle cx="8" cy="5" r="3" stroke="currentColor" stroke-width="1.2"/>
-        <path d="M2 14c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
-      </svg>
-    </button>
-    <button class="nav-icon-btn" id="nav-cart-btn" aria-label="Cart">
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-        <path d="M2 3h12l-1.5 8H3.5L2 3z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>
-        <circle cx="5.5" cy="13" r="1" fill="currentColor"/>
-        <circle cx="10.5" cy="13" r="1" fill="currentColor"/>
-      </svg>
-      <span class="cart-badge" id="cart-badge" style="display:none">0</span>
-    </button>
-  </div>
-</nav>
+<nav class="nav" id="site-nav"></nav>
+<script src="js/utils.js"></script>
+<script src="js/nav.js"></script>
 
 <!-- CART -->
 <section class="section">
@@ -42,55 +18,11 @@
   <div id="cart-container"></div>
 </section>
 
-<!-- FOOTER -->
-<footer class="footer">
-  <div class="footer-grid">
-    <div>
-      <p class="footer-col-title">Shop</p>
-      <a href="index.html?dept=5" class="footer-link">Men's gear</a>
-      <a href="index.html?dept=5" class="footer-link">Women's gear</a>
-      <a href="index.html?dept=5" class="footer-link">Kids' gear</a>
-      <a href="index.html?dept=2" class="footer-link">Equipment</a>
-      <a href="sale.html" class="footer-link">Sale</a>
-    </div>
-    <div>
-      <p class="footer-col-title">Support</p>
-      <a href="#" class="footer-link">Order status</a>
-      <a href="#" class="footer-link">Returns &amp; exchanges</a>
-      <a href="#" class="footer-link">Sizing guide</a>
-      <a href="#" class="footer-link">Contact us</a>
-      <a href="#" class="footer-link">FAQ</a>
-    </div>
-    <div>
-      <p class="footer-col-title">Company</p>
-      <a href="about.html" class="footer-link">About</a>
-      <a href="https://mtec.edu/programs/software-quality-assurance/" class="footer-link" target="_blank" rel="noopener">Careers</a>
-      <a href="rewards.html" class="footer-link">Rewards</a>
-      <a href="gift-cards.html" class="footer-link">Gift cards</a>
-      <a href="press.html" class="footer-link">Press</a>
-    </div>
-    <div>
-      <p class="footer-col-title">Stay connected</p>
-      <a href="instagram.html" class="footer-link">Instagram</a>
-      <a href="twitter.html" class="footer-link">X / Twitter</a>
-      <a href="https://www.youtube.com/watch?v=Aq5WXmQQooo" class="footer-link" target="_blank" rel="noopener">YouTube</a>
-      <a href="newsletter.html" class="footer-link">Newsletter</a>
-    </div>
-  </div>
-  <div class="footer-bottom">
-    <p class="footer-copy">Copyright &copy; 2026 Sports Equip Inc.</p>
-    <div class="footer-legal">
-      <span>Privacy policy</span>
-      <span>Terms of use</span>
-      <span>Accessibility</span>
-    </div>
-  </div>
-</footer>
+<footer class="footer" id="site-footer"></footer>
 
-<script src="js/utils.js"></script>
 <script src="js/api.js"></script>
 <script src="js/cart.js"></script>
-<script src="js/nav.js"></script>
 <script src="js/cart-page.js"></script>
+<script src="js/footer.js"></script>
 </body>
 </html>
