@@ -98,6 +98,14 @@ function renderCart() {
       Cart.removeItem(parseInt(btn.dataset.id));
     });
   });
+
+  container.querySelectorAll('.cart-item').forEach(function(row) {
+    row.addEventListener('click', function(e) {
+      if (!e.target.closest('.qty-btn, .cart-item-remove')) {
+        location.href = `product.html?id=${row.dataset.id}`;
+      }
+    });
+  });
 }
 
 document.addEventListener('DOMContentLoaded', renderCart);
