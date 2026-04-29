@@ -202,7 +202,7 @@
       if (isWinner) {
         btn.dataset.won = '1';
         btn.style.background = '#2a7d4f';
-        launchConfetti(function() {});
+        launchConfetti(function() { location.href = 'index.html'; });
       } else {
         btn.style.background = '#cc0000';
         btn.animate([
