@@ -28,7 +28,7 @@ function renderCart() {
     container.innerHTML = `
       <div class="cart-empty">
         <p class="cart-empty-msg">Your cart is empty.</p>
-        <a href="index.html" class="btn-black" style="display:inline-block;padding:14px 32px;text-decoration:none;border-radius:30px;width:50%;">Continue shopping</a>
+        <a href="all-products.html" class="btn-black" style="display:inline-block;padding:14px 32px;text-decoration:none;border-radius:30px;width:50%;">Continue shopping</a>
       </div>`;
     return;
   }
