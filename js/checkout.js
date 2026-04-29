@@ -59,6 +59,8 @@ function validate() {
   btn.disabled = !filled;
 }
 
+window.addEventListener('pageshow', function(e) { if (e.persisted) renderOrderSummary(); });
+
 document.addEventListener('DOMContentLoaded', function() {
   renderOrderSummary();
 
