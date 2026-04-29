@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Press &mdash; Sports Equip</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .btn {
+      position: relative;
+      width: 280px;
+      height: 72px;
+      border-radius: 999px;
+      background: #111;
+      cursor: pointer;
+      user-select: none;
+      overflow: hidden;
+      box-shadow: 0 0 0 2px #111;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn-fill {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 0%;
+      background: #fff;
+      border-radius: 999px;
+      pointer-events: none;
+    }
+
+    .btn-label {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: 600;
+      color: #fff;
+      letter-spacing: 0.02em;
+      pointer-events: none;
+      mix-blend-mode: difference;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="btn"
+       id="btn"
+       onmousedown="startHold()"
+       onmouseup="endHold()"
+       onmouseleave="endHold()"
+       ontouchstart="startHold(event)"
+       ontouchend="endHold()">
+    <div class="btn-fill" id="fill"></div>
+    <span class="btn-label">Press</span>
+  </div>
+
+  <script>
+    const HOLD_MS = 10000;
+    let raf = null;
+    let startTime = null;
+    let holding = false;
+
+    function startHold(e) {
+      if (e) e.preventDefault();
+      if (holding) return;
+      holding = true;
+      startTime = performance.now();
+      animate();
+    }
+
+    function animate() {
+      if (!holding) return;
+      const elapsed = performance.now() - startTime;
+      const pct = Math.min(elapsed / HOLD_MS * 100, 100);
+      document.getElementById('fill').style.width = `${pct}%`;
+      if (pct >= 100) { holding = false; location.href = 'index.html'; return; }
+      raf = requestAnimationFrame(animate);
+    }
+
+    function endHold() {
+      if (!holding) return;
+      holding = false;
+      cancelAnimationFrame(raf);
+      const fill = document.getElementById('fill');
+      fill.style.transition = 'width 0.4s ease';
+      fill.style.width = '0%';
+      setTimeout(function() { fill.style.transition = 'none'; }, 400);
+    }
+  </script>
+
+</body>
+</html>
