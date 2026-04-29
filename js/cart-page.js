@@ -44,7 +44,7 @@ function renderCart() {
           <div class="cart-item" data-id="${item.product_id}">
             <div class="cart-item-img">${imgHtml}</div>
             <div class="cart-item-info">
-              <p class="cart-item-name">${escHtml(item.product_name)}</p>
+              <a class="cart-item-name" href="product.html?id=${item.product_id}">${escHtml(item.product_name)}</a>
               <p class="cart-item-price">$${parseFloat(item.product_price).toFixed(2)} each</p>
             </div>
             <div class="qty-control">
@@ -99,13 +99,6 @@ function renderCart() {
     });
   });
 
-  container.querySelectorAll('.cart-item').forEach(function(row) {
-    row.addEventListener('click', function(e) {
-      if (!e.target.closest('.qty-btn, .cart-item-remove')) {
-        location.href = `product.html?id=${row.dataset.id}`;
-      }
-    });
-  });
 }
 
 document.addEventListener('DOMContentLoaded', renderCart);
