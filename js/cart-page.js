@@ -72,10 +72,21 @@ function renderCart() {
       <div class="cart-summary-divider"></div>
       <div class="cart-summary-row cart-summary-total"><span>Total</span><span>$${total.toFixed(2)}</span></div>
       <button class="btn-black" style="width:100%;margin-top:20px;" onclick="location.href='checkout.html'">Checkout</button>
-      <a href="index.html" class="cart-continue-link">Continue shopping</a>
+      <button class="cart-continue-link" id="continue-shopping-btn">Continue shopping</button>
     </div>`;
 
   container.innerHTML = `<div class="cart-layout">${itemsHtml}${summaryHtml}</div>`;
+
+  const continuBtn = document.getElementById('continue-shopping-btn');
+  if (continuBtn) {
+    continuBtn.addEventListener('click', function() {
+      if (document.referrer && document.referrer !== location.href) {
+        history.back();
+      } else {
+        location.href = 'index.html';
+      }
+    });
+  }
 
   container.querySelectorAll('.qty-dec').forEach(function(btn) {
     btn.addEventListener('click', function() {

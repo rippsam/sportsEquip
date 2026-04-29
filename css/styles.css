@@ -1318,6 +1318,11 @@ button { font-family: inherit; }
   margin-top: 14px;
   font-size: 13px;
   color: var(--gray-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  width: 100%;
   text-decoration: underline;
 }
 .cart-continue-link:hover { color: var(--black); }
