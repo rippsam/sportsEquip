@@ -794,6 +794,7 @@ button { font-family: inherit; }
   font-size: 14px;
   font-weight: 500;
   border: none;
+  outline: none;
   border-radius: var(--radius-pill);
   padding: 15px;
   cursor: pointer;
