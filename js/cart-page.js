@@ -71,7 +71,7 @@ function renderCart() {
       ${freeShippingHint}
       <div class="cart-summary-divider"></div>
       <div class="cart-summary-row cart-summary-total"><span>Total</span><span>$${total.toFixed(2)}</span></div>
-      <button class="btn-black" style="width:100%;margin-top:20px;" onclick="alert('Checkout coming soon!')">Checkout</button>
+      <button class="btn-black" style="width:100%;margin-top:20px;" onclick="location.href='checkout.html'">Checkout</button>
       <a href="index.html" class="cart-continue-link">Continue shopping</a>
     </div>`;
 

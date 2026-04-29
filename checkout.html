@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checkout &mdash; Sports Equip</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a class="nav-logo" href="index.html"><img src="assets/images/logo.png" alt="Sports Equip" class="nav-logo-img"></a>
+  <ul id="nav-dept-links" class="nav-links"></ul>
+  <div class="nav-right">
+    <button class="nav-icon-btn" aria-label="Search">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <circle cx="6.5" cy="6.5" r="4.5" stroke="currentColor" stroke-width="1.2"/>
+        <line x1="10.2" y1="10.2" x2="14" y2="14" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+      </svg>
+    </button>
+    <button class="nav-icon-btn" aria-label="Account">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <circle cx="8" cy="5" r="3" stroke="currentColor" stroke-width="1.2"/>
+        <path d="M2 14c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+      </svg>
+    </button>
+    <button class="nav-icon-btn" id="nav-cart-btn" aria-label="Cart">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M2 3h12l-1.5 8H3.5L2 3z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>
+        <circle cx="5.5" cy="13" r="1" fill="currentColor"/>
+        <circle cx="10.5" cy="13" r="1" fill="currentColor"/>
+      </svg>
+      <span class="cart-badge" id="cart-badge" style="display:none">0</span>
+    </button>
+  </div>
+</nav>
+
+<!-- CHECKOUT -->
+<div class="checkout-layout">
+
+  <!-- FORM -->
+  <div>
+    <button class="checkout-back-btn" id="back-btn">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+        <path d="M10 3L5 8l5 5"/>
+      </svg>
+      Back to cart
+    </button>
+
+    <h1 class="checkout-title">Checkout</h1>
+
+    <p class="checkout-section-label">Contact information</p>
+    <div class="checkout-input-group">
+      <label for="f-name">Full name</label>
+      <input id="f-name" type="text" placeholder="Jane Smith" maxlength="30" autocomplete="name">
+    </div>
+
+    <p class="checkout-section-label" style="margin-top:24px;">Shipping address</p>
+    <div class="checkout-input-group">
+      <label for="f-street">Street address</label>
+      <input id="f-street" type="text" placeholder="123 Main St" maxlength="40" autocomplete="street-address">
+    </div>
+    <div class="checkout-input-group">
+      <label for="f-apt">Apt, suite, etc. <span style="color:#bbb;font-weight:400;">(optional)</span></label>
+      <input id="f-apt" type="text" placeholder="Apt 4B" maxlength="30" autocomplete="address-line2">
+    </div>
+    <div class="checkout-input-row">
+      <div class="checkout-input-group">
+        <label for="f-city">City</label>
+        <input id="f-city" type="text" placeholder="Salt Lake City" maxlength="30" autocomplete="address-level2">
+      </div>
+      <div class="checkout-input-group">
+        <label for="f-state">State</label>
+        <div class="checkout-select-wrap">
+          <select id="f-state" autocomplete="address-level1">
+            <option value="">Select state</option>
+            <option>AL</option><option>AK</option><option>AZ</option><option>AR</option><option>CA</option>
+            <option>CO</option><option>CT</option><option>DE</option><option>FL</option><option>GA</option>
+            <option>HI</option><option>ID</option><option>IL</option><option>IN</option><option>IA</option>
+            <option>KS</option><option>KY</option><option>LA</option><option>ME</option><option>MD</option>
+            <option>MA</option><option>MI</option><option>MN</option><option>MS</option><option>MO</option>
+            <option>MT</option><option>NE</option><option>NV</option><option>NH</option><option>NJ</option>
+            <option>NM</option><option>NY</option><option>NC</option><option>ND</option><option>OH</option>
+            <option>OK</option><option>OR</option><option>PA</option><option>RI</option><option>SC</option>
+            <option>SD</option><option>TN</option><option>TX</option><option>UT</option><option>VT</option>
+            <option>VA</option><option>WA</option><option>WV</option><option>WI</option><option>WY</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="checkout-input-row">
+      <div class="checkout-input-group">
+        <label for="f-zip">ZIP code</label>
+        <input id="f-zip" type="text" placeholder="84101" maxlength="5" inputmode="numeric" autocomplete="postal-code">
+      </div>
+      <div class="checkout-input-group">
+        <label>Country</label>
+        <input type="text" value="USA" disabled autocomplete="country-name">
+      </div>
+    </div>
+
+    <div class="checkout-divider-row">
+      <div class="checkout-divider-line"></div>
+      <span class="checkout-divider-text">Or sign in</span>
+      <div class="checkout-divider-line"></div>
+    </div>
+
+    <button class="checkout-signin-btn" id="signin-btn" type="button">Sign in to your account</button>
+    <button id="place-order-btn" class="checkout-place-order-btn disabled" disabled type="button">Place order &rarr;</button>
+  </div>
+
+  <!-- ORDER SUMMARY -->
+  <div>
+    <div class="checkout-summary-box">
+      <p class="checkout-summary-title">Order summary</p>
+      <div id="checkout-items"></div>
+      <hr class="checkout-summary-divider">
+      <div class="checkout-summary-row">
+        <span class="label">Subtotal</span>
+        <span id="summary-subtotal" class="val"></span>
+      </div>
+      <div class="checkout-summary-row">
+        <span class="label">Shipping</span>
+        <span id="summary-shipping"></span>
+      </div>
+      <hr class="checkout-summary-divider">
+      <div class="checkout-summary-total">
+        <span>Total</span>
+        <span id="summary-total"></span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-col-title">Shop</p>
+      <a href="index.html?dept=5" class="footer-link">Men's gear</a>
+      <a href="index.html?dept=5" class="footer-link">Women's gear</a>
+      <a href="index.html?dept=5" class="footer-link">Kids' gear</a>
+      <a href="index.html?dept=2" class="footer-link">Equipment</a>
+      <a href="sale.html" class="footer-link">Sale</a>
+    </div>
+    <div>
+      <p class="footer-col-title">Support</p>
+      <a href="#" class="footer-link">Order status</a>
+      <a href="#" class="footer-link">Returns &amp; exchanges</a>
+      <a href="#" class="footer-link">Sizing guide</a>
+      <a href="#" class="footer-link">Contact us</a>
+      <a href="#" class="footer-link">FAQ</a>
+    </div>
+    <div>
+      <p class="footer-col-title">Company</p>
+      <a href="#" class="footer-link">About</a>
+      <a href="#" class="footer-link">Careers</a>
+      <a href="#" class="footer-link">Rewards</a>
+      <a href="#" class="footer-link">Gift cards</a>
+      <a href="#" class="footer-link">Press</a>
+    </div>
+    <div>
+      <p class="footer-col-title">Stay connected</p>
+      <a href="#" class="footer-link">Instagram</a>
+      <a href="#" class="footer-link">X / Twitter</a>
+      <a href="#" class="footer-link">YouTube</a>
+      <a href="#" class="footer-link">Newsletter</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-copy">Copyright &copy; 2026 Sports Equip Inc.</p>
+    <div class="footer-legal">
+      <span>Privacy policy</span>
+      <span>Terms of use</span>
+      <span>Accessibility</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/api.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/checkout.js"></script>
+</body>
+</html>
