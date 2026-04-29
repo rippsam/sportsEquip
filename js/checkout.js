@@ -78,13 +78,12 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('f-state').addEventListener('change', validate);
 
   document.getElementById('signin-btn').addEventListener('click', function() {
-    alert('You must sign in');
+    location.href = 'login.html';
   });
 
   document.getElementById('place-order-btn').addEventListener('click', function() {
     if (this.disabled) return;
-    alert('Thank you for your order!');
-    Cart.clear();
-    location.href = 'index.html';
+    sessionStorage.setItem('auth_granted', '1');
+    location.href = 'login-success.html';
   });
 });
