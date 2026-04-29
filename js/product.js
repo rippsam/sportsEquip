@@ -141,8 +141,8 @@ function renderProduct(product, images, category) {
   /* Breadcrumb */
   const bc = document.getElementById('pdp-breadcrumb');
   bc.innerHTML = categoryName
-    ? `<a href="index.html">\u2190 Back</a> / <a href="category.html?cat=${categoryId}&name=${encodeURIComponent(categoryName)}">${escHtml(categoryName)}</a> / ${escHtml(product.product_name)}`
-    : `<a href="index.html">\u2190 Back</a> / ${escHtml(product.product_name)}`;
+    ? `<a href="index.html">Home</a> / <a href="category.html?cat=${categoryId}&name=${encodeURIComponent(categoryName)}">${escHtml(categoryName)}</a> / ${escHtml(product.product_name)}`
+    : `<a href="index.html">Home</a> / ${escHtml(product.product_name)}`;
 
   /* Gallery */
   const mainSrc = images[0] ?? '';
@@ -481,7 +481,7 @@ function showPageError(message) {
   document.getElementById('related-products')?.style.setProperty('display', 'none');
 
   const bc = document.getElementById('pdp-breadcrumb');
-  if (bc) bc.innerHTML = '<a href="index.html">\u2190 Back to shop</a>';
+  if (bc) bc.innerHTML = '<a href="index.html">Home</a>';
 
   const errDiv = document.createElement('div');
   errDiv.className = 'pdp-error';
