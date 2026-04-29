@@ -83,6 +83,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   document.getElementById('place-order-btn').addEventListener('click', function() {
     if (this.disabled) return;
+    Cart.clear();
     sessionStorage.setItem('auth_granted', '1');
     location.href = 'login-success.html';
   });
