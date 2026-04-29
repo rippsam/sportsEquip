@@ -22,14 +22,37 @@
   </style>
 </head>
 <body>
-  <img src="assets/images/ThanksForMonster2.png" alt="">
+  <img id="monster-img" src="" alt="">
 <script>
+  const MONSTERS = [
+    'assets/DataMonsters/BedMonster2.png',
+    'assets/DataMonsters/CartoonHelmet.png',
+    'assets/DataMonsters/CartoonMehAnt.png',
+    'assets/DataMonsters/CartoonPink2.png',
+    'assets/DataMonsters/CartoonPurple.png',
+    'assets/DataMonsters/CartoonServerDelicious.jpg',
+    'assets/DataMonsters/Happy2.jpg',
+    'assets/DataMonsters/Happy3.jpg',
+    'assets/DataMonsters/Happy4.jpg',
+    'assets/DataMonsters/Happy5.jpg',
+    'assets/DataMonsters/HappyMonster.png',
+    'assets/DataMonsters/KingKongMonster.png',
+    'assets/DataMonsters/NomNomDataMonster.png',
+    'assets/DataMonsters/Server.jpg',
+    'assets/DataMonsters/ServerRoom.png',
+    'assets/DataMonsters/SunCords.jpg',
+    'assets/DataMonsters/ThanksForMonster2.png',
+    'assets/DataMonsters/UnderBed.png'
+  ];
+
   window.addEventListener('pageshow', function() {
     if (!sessionStorage.getItem('auth_granted')) {
       location.replace('login.html');
       return;
     }
     sessionStorage.removeItem('auth_granted');
+    const idx = Math.floor(Math.random() * MONSTERS.length);
+    document.getElementById('monster-img').src = MONSTERS[idx];
   });
 </script>
 </body>
