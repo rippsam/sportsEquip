@@ -114,3 +114,4 @@ function renderCart() {
 
 document.addEventListener('DOMContentLoaded', renderCart);
 document.addEventListener('cartUpdated', renderCart);
+window.addEventListener('pageshow', function(e) { if (e.persisted) renderCart(); });
