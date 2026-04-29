@@ -7,10 +7,13 @@
 
 ## Commits
 - Never add `Co-Authored-By: Claude` or any AI attribution to commit messages.
+- Before committing, verify the changes follow all style and architecture rules in this file.
 
 ## Assets
 - Product images are served from the API (`storeapi-60py.onrender.com/images/`). Do not store product images in this repo.
-- Site-level assets live in `assets/images/`: `logo.png`, `BannerSportsEquip.png`, `SportEquipNoWordslogo.png`, `ThanksForMonster2.png`.
+- Site-level assets live in `assets/images/`: `logo.png`, `BannerSportsEquip.png`, `SportEquipNoWordslogo.png`.
+- DataMonsters images live in `assets/DataMonsters/` — used by `login-success.html`.
+- Footer media assets live in `assets/Footer/` — used by standalone footer pages.
 
 ## Product images
 - `product.product_image` is the primary image used on product cards (list views).
@@ -26,10 +29,24 @@
 - Every push to `main` triggers an automatic Pages deployment (allow 1–2 min to go live).
 
 ## Pages
+
+Standard pages (full nav + footer, load `js/utils.js` + `js/nav.js` at top of body, `js/footer.js` at bottom):
+- `index.html` / `js/home.js` — home page; dept hero, product grid, featured product, top categories.
+- `all-products.html` / `js/all-products.js` — all products with infinite scroll.
 - `categories.html` / `js/categories.js` — all-categories browse page; dept blocks with category card grid.
 - `category.html` / `js/category.js` — per-category product listing with infinite scroll. URL: `category.html?cat=ID&name=Name`.
-- `all-products.html` / `js/all-products.js` — all products with infinite scroll.
-- `sale.html` / `js/sale.js` — sale items page.
+- `sale.html` / `js/sale.js` — weekly rotating sale items at 40% off.
+- `product.html` / `js/product.js` — product detail page with gallery, tabs, reviews, related products.
+- `cart.html` / `js/cart-page.js` — cart with quantity controls and order summary.
+- `checkout.html` / `js/checkout.js` — checkout form and order summary.
+- `about.html` — static about page.
+- `gift-cards.html` — interactive gift card game page.
+
+Standalone pages (no nav/footer, no shared scripts):
+- `press.html` — white page with long-hold button.
+- `rewards.html` — full-screen rewards gif.
+- `instagram.html`, `twitter.html`, `newsletter.html` — full-screen image/gif pages.
+- `login-success.html` — post-checkout success page with random DataMonsters image.
 
 ## Department pages
 - When `?dept=X` is in the URL, `js/home.js` intentionally hides `.hero`, `#promo-section`, `#top-categories-section`, and `.trust`, and shows `#dept-hero` and `#dept-sale-banner`. The dept name is set from the API after load. This is by design.
@@ -39,6 +56,49 @@
 - `.hero-strip` / `.hero-eyebrow` / `.hero-title` — black hero banner used on all browse/dept/sale pages.
 - `.sale-banner-wrap` / `.sale-banner` — dark promo banner. Both live in `styles.css`.
 - Do not move these back into per-page `<style>` blocks.
+
+## New page template
+
+Standard pages must follow this body structure — do not inline nav or footer HTML:
+
+```html
+<body>
+<nav class="nav" id="site-nav"></nav>
+<script src="js/utils.js"></script>
+<script src="js/nav.js"></script>
+
+<!-- page content -->
+
+<footer class="footer" id="site-footer"></footer>
+<script src="js/api.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/[page].js"></script>
+<script src="js/footer.js"></script>
+</body>
+```
+
+## Shared JS utilities (`js/utils.js`)
+
+Loaded on every standard page before all other scripts. Do not redefine these in individual files:
+- `escHtml(str)` — HTML-escapes a string.
+- `MULTI_WORD_BRANDS` / `parseBrand(name)` — extracts brand name from product name.
+- `seededRand(seed)` — LCG deterministic RNG; returns a `rand()` function.
+- `makeCartControl(cartProduct)` — builds the `+` / qty-stepper DOM node for product cards.
+
+## Cart
+
+- `js/cart.js` exposes `window.Cart` — use `Cart.addItem`, `Cart.removeItem`, `Cart.updateQty`, `Cart.getItems`, `Cart.getTotalCount`, `Cart.clear`.
+- Max quantity per item is 10. `Cart.addItem` returns `false` when the cap is hit.
+- Cart mutations fire a `cartUpdated` custom event on `document`.
+- Use `window.addEventListener('pageshow', function(e) { if (e.persisted) render(); })` on any page that reads cart state, to handle browser back/forward cache correctly.
+
+## DRY principle
+
+Follow DRY (Don't Repeat Yourself) throughout the codebase:
+- Shared utility functions belong in `js/utils.js`, not copied into individual files.
+- Nav and footer HTML are injected by `js/nav.js` and `js/footer.js` — never paste them into page HTML.
+- Shared CSS components belong in `css/styles.css`, not in per-page `<style>` blocks.
+- Before adding a new function, check if an equivalent already exists in `js/utils.js` or elsewhere.
 
 ## JavaScript style
 - Use `const` by default; use `let` when the variable is reassigned. Never use `var`.
