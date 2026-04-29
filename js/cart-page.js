@@ -1,13 +1,5 @@
 /* ── Cart page logic ── */
 
-function escHtml(str) {
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
-}
-
 const SHIPPING_THRESHOLD = 75;
 const SHIPPING_COST      = 8.99;
 

@@ -1,14 +1,6 @@
 const SHIPPING_THRESHOLD = 75;
 const SHIPPING_COST      = 8.99;
 
-function escHtml(str) {
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
-}
-
 function renderOrderSummary() {
   const items = Cart.getItems();
   if (items.length === 0) {

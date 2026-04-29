@@ -1,12 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
   const main = document.getElementById('cats-main');
 
-  function escHtml(str) {
-    return String(str)
-      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-  }
-
   Api.getAllCategories()
     .then(function(res) {
       const groups = {};

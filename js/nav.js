@@ -161,12 +161,6 @@ document.addEventListener('DOMContentLoaded', function() {
       .slice(0, 8);
   }
 
-  function escHtml(str) {
-    return String(str)
-      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-  }
-
   function renderResults(results) {
     dropdown.innerHTML = '';
     if (!results.length) {

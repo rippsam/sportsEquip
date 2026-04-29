@@ -1,9 +1,3 @@
-const MULTI_WORD_BRANDS = ['Under Armour', 'New Balance', 'The North Face'];
-
-function parseBrand(name) {
-  return MULTI_WORD_BRANDS.find(function(b) { return name.startsWith(b); }) || name.split(' ')[0] || 'Brand';
-}
-
 /* ── State ── */
 const state = {
   allCategories:     [],
@@ -44,73 +38,6 @@ function setActiveCategory(catId) {
   state.hasMore          = true;
   productGrid.innerHTML  = '';
   loadProducts();
-}
-
-/* ── Helpers ── */
-function escHtml(str) {
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
-}
-
-/* ── Cart quantity stepper for product cards ── */
-function makeCartControl(cartProduct) {
-  const wrap = document.createElement('div');
-
-  function getQty() {
-    const item = Cart.getItems().find(function(i) { return i.product_id === cartProduct.product_id; });
-    return item ? item.quantity : 0;
-  }
-
-  function showPlus() {
-    wrap.innerHTML = '';
-    const btn = document.createElement('button');
-    btn.className = 'add-to-cart-icon';
-    btn.setAttribute('aria-label', 'Add to cart');
-    btn.textContent = '+';
-    btn.addEventListener('click', function(e) {
-      e.stopPropagation();
-      Cart.addItem(cartProduct);
-      showStepper();
-    });
-    wrap.appendChild(btn);
-  }
-
-  function showStepper() {
-    const qty = getQty();
-    if (qty === 0) { showPlus(); return; }
-    wrap.innerHTML = '';
-    const stepper = document.createElement('div');
-    stepper.className = 'qty-stepper';
-    const dec = document.createElement('button');
-    dec.className = 'qty-stepper-btn';
-    dec.setAttribute('aria-label', 'Decrease');
-    dec.textContent = '−';
-    const val = document.createElement('span');
-    val.className = 'qty-stepper-val';
-    val.textContent = qty;
-    const inc = document.createElement('button');
-    inc.className = 'qty-stepper-btn';
-    inc.setAttribute('aria-label', 'Increase');
-    inc.textContent = '+';
-    dec.addEventListener('click', function(e) {
-      e.stopPropagation();
-      if (getQty() <= 1) { Cart.removeItem(cartProduct.product_id); showPlus(); }
-      else { Cart.updateQty(cartProduct.product_id, getQty() - 1); val.textContent = getQty(); }
-    });
-    inc.addEventListener('click', function(e) {
-      e.stopPropagation();
-      const added = Cart.addItem(cartProduct);
-      if (added) val.textContent = getQty();
-    });
-    stepper.append(dec, val, inc);
-    wrap.appendChild(stepper);
-  }
-
-  getQty() > 0 ? showStepper() : showPlus();
-  return wrap;
 }
 
 /* ── Product card ── */
@@ -295,14 +222,6 @@ function renderTopCategories(categories) {
 }
 
 /* ── Featured product (weekly rotation) ── */
-function seededRand(seed) {
-  let s = seed;
-  return function() {
-    s = (s * 1664525 + 1013904223) & 0xffffffff;
-    return (s >>> 0) / 0xffffffff;
-  };
-}
-
 function loadFeaturedProduct(categories) {
   const weekNum = Math.floor(Date.now() / (1000 * 60 * 60 * 24 * 7));
   const rand    = seededRand(weekNum * 17 + 3);
