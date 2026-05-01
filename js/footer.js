@@ -7,7 +7,7 @@ document.getElementById('site-footer').innerHTML = [
   '<a href="index.html?dept=2" class="footer-link">Equipment</a>',
   '<a href="sale.html" class="footer-link">Sale</a></div>',
   '<div><p class="footer-col-title">Support</p>',
-  '<a href="#" class="footer-link">Order status</a>',
+  '<a href="order-status.html" class="footer-link">Order status</a>',
   '<a href="#" class="footer-link">Returns &amp; exchanges</a>',
   '<a href="#" class="footer-link">Sizing guide</a>',
   '<a href="#" class="footer-link">Contact us</a>',
