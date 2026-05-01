@@ -1651,12 +1651,12 @@ button { font-family: inherit; }
 /* ── Gift cards grid ── */
 #gift-grid {
   display: grid;
-  grid-template-columns: repeat(10, 1fr);
+  grid-template-columns: repeat(10, minmax(0, 1fr));
   gap: 10px;
   justify-items: center;
 }
-@media (max-width: 1440px) { #gift-grid { grid-template-columns: repeat(8, 1fr); } }
-@media (max-width: 1100px) { #gift-grid { grid-template-columns: repeat(5, 1fr); } }
-@media (max-width: 800px)  { #gift-grid { grid-template-columns: repeat(4, 1fr); } }
-@media (max-width: 600px)  { #gift-grid { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 400px)  { #gift-grid { grid-template-columns: repeat(1, 1fr); } }
+@media (max-width: 1440px) { #gift-grid { grid-template-columns: repeat(8, minmax(0, 1fr)); } }
+@media (max-width: 1100px) { #gift-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
+@media (max-width: 800px)  { #gift-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (max-width: 600px)  { #gift-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 400px)  { #gift-grid { grid-template-columns: repeat(1, minmax(0, 1fr)); } }
