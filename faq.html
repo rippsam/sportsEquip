@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FAQ &mdash; Sports Equip</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    canvas {
+      display: block;
+      border: 1px solid #fff;
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="pong" width="680" height="420"></canvas>
+
+<script>
+  const canvas = document.getElementById('pong');
+  const ctx = canvas.getContext('2d');
+
+  const W = 680;
+  const H = 420;
+  const PAD_W = 12;
+  const PAD_H = 80;
+  const PAD_OFFSET = 18;
+  const BALL_SIZE = 10;
+  const BASE_SPEED = 4;
+  const WIN_SCORE = 5;
+  const SPEED_INTERVAL = 5000;
+  const CPU_SLOW = 1.4;
+
+  let ball, playerPad, cpuPad, scores, ballSpeed, speedTimer, gameOver;
+
+  function resetBall(serveToward) {
+    ballSpeed = BASE_SPEED;
+    speedTimer = performance.now();
+    let dy = (Math.random() * 1.2) - 0.6;
+    if (Math.abs(dy) < 0.15) dy = dy >= 0 ? 0.15 : -0.15;
+    ball = {
+      x: W / 2 - BALL_SIZE / 2,
+      y: H / 2 - BALL_SIZE / 2,
+      dx: serveToward === 'cpu' ? 1 : -1,
+      dy: dy
+    };
+    playerPad = { y: H / 2 - PAD_H / 2 };
+    cpuPad = { y: H / 2 - PAD_H / 2 };
+  }
+
+  function resetGame() {
+    scores = { player: 0, cpu: 0 };
+    gameOver = null;
+    resetBall(Math.random() < 0.5 ? 'player' : 'cpu');
+  }
+
+  function update(timestamp) {
+    if (timestamp - speedTimer >= SPEED_INTERVAL) {
+      ballSpeed += 0.5;
+      speedTimer = timestamp;
+    }
+
+    ball.x += ball.dx * ballSpeed;
+    ball.y += ball.dy * ballSpeed;
+
+    if (ball.y <= 0) {
+      ball.y = 0;
+      ball.dy = Math.abs(ball.dy);
+    }
+    if (ball.y + BALL_SIZE >= H) {
+      ball.y = H - BALL_SIZE;
+      ball.dy = -Math.abs(ball.dy);
+    }
+
+    // Player paddle collision (left)
+    if (
+      ball.dx < 0 &&
+      ball.x <= PAD_OFFSET + PAD_W &&
+      ball.x + BALL_SIZE > PAD_OFFSET &&
+      ball.y + BALL_SIZE > playerPad.y &&
+      ball.y < playerPad.y + PAD_H
+    ) {
+      ball.x = PAD_OFFSET + PAD_W;
+      ball.dx = 1;
+      const hitPos = (ball.y + BALL_SIZE / 2 - (playerPad.y + PAD_H / 2)) / (PAD_H / 2);
+      ball.dy = hitPos * 0.9;
+      if (Math.abs(ball.dy) < 0.1) ball.dy = ball.dy >= 0 ? 0.1 : -0.1;
+    }
+
+    // CPU paddle collision (right)
+    const cpuPadX = W - PAD_OFFSET - PAD_W;
+    if (
+      ball.dx > 0 &&
+      ball.x + BALL_SIZE >= cpuPadX &&
+      ball.x < cpuPadX + PAD_W &&
+      ball.y + BALL_SIZE > cpuPad.y &&
+      ball.y < cpuPad.y + PAD_H
+    ) {
+      ball.x = cpuPadX - BALL_SIZE;
+      ball.dx = -1;
+      const hitPos = (ball.y + BALL_SIZE / 2 - (cpuPad.y + PAD_H / 2)) / (PAD_H / 2);
+      ball.dy = hitPos * 0.9;
+      if (Math.abs(ball.dy) < 0.1) ball.dy = ball.dy >= 0 ? 0.1 : -0.1;
+    }
+
+    // CPU AI
+    if (scores.cpu === 4) {
+      cpuPad.y = ball.y - PAD_H / 2;
+    } else {
+      const center = cpuPad.y + PAD_H / 2;
+      if (center < ball.y) {
+        cpuPad.y += CPU_SLOW;
+      } else {
+        cpuPad.y -= CPU_SLOW;
+      }
+    }
+    cpuPad.y = Math.max(0, Math.min(H - PAD_H, cpuPad.y));
+
+    // Scoring
+    if (ball.x + BALL_SIZE < 0) {
+      scores.cpu++;
+      if (scores.cpu >= WIN_SCORE) {
+        gameOver = 'cpu';
+      } else {
+        resetBall('player');
+      }
+    }
+    if (ball.x > W) {
+      scores.player++;
+      if (scores.player >= WIN_SCORE) {
+        gameOver = 'player';
+      } else {
+        resetBall('cpu');
+      }
+    }
+  }
+
+  function draw() {
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, W, H);
+
+    ctx.setLineDash([10, 10]);
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(W / 2, 0);
+    ctx.lineTo(W / 2, H);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 32px "DM Sans", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    ctx.fillText(`${scores.player}   ${scores.cpu}`, W / 2, 16);
+
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(PAD_OFFSET, playerPad.y, PAD_W, PAD_H);
+    ctx.fillRect(W - PAD_OFFSET - PAD_W, cpuPad.y, PAD_W, PAD_H);
+
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(ball.x, ball.y, BALL_SIZE, BALL_SIZE);
+
+    if (gameOver) {
+      ctx.fillStyle = 'rgba(0,0,0,0.7)';
+      ctx.fillRect(0, 0, W, H);
+      ctx.textAlign = 'center';
+
+      if (gameOver === 'player') {
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 48px "DM Sans", sans-serif';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('you win!', W / 2, H / 2 - 20);
+        ctx.fillStyle = '#888';
+        ctx.font = '16px "DM Sans", sans-serif';
+        ctx.fillText('click to play again', W / 2, H / 2 + 20);
+      } else {
+        ctx.font = 'bold 100px "DM Sans", sans-serif';
+        const measured = ctx.measureText('YOU LOSE').width;
+        const fontSize = Math.floor(100 * (W * 0.8) / measured);
+        ctx.font = `bold ${fontSize}px "DM Sans", sans-serif`;
+        ctx.fillStyle = '#cd1c18';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('YOU LOSE', W / 2, H / 2);
+        ctx.fillStyle = '#888';
+        ctx.font = '16px "DM Sans", sans-serif';
+        ctx.textBaseline = 'alphabetic';
+        ctx.fillText('click to play again', W / 2, H - 20);
+      }
+    }
+  }
+
+  canvas.addEventListener('mousemove', function(e) {
+    const rect = canvas.getBoundingClientRect();
+    const mouseY = e.clientY - rect.top;
+    playerPad.y = Math.max(0, Math.min(H - PAD_H, mouseY - PAD_H / 2));
+  });
+
+  canvas.addEventListener('click', function() {
+    if (gameOver) resetGame();
+  });
+
+  resetGame();
+
+  function loop(timestamp) {
+    if (!gameOver) update(timestamp);
+    draw();
+    requestAnimationFrame(loop);
+  }
+
+  requestAnimationFrame(loop);
+</script>
+
+</body>
+</html>

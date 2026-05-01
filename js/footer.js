@@ -11,7 +11,7 @@ document.getElementById('site-footer').innerHTML = [
   '<a href="#" class="footer-link">Returns &amp; exchanges</a>',
   '<a href="#" class="footer-link">Sizing guide</a>',
   '<a href="#" class="footer-link">Contact us</a>',
-  '<a href="#" class="footer-link">FAQ</a></div>',
+  '<a href="faq.html" class="footer-link">FAQ</a></div>',
   '<div><p class="footer-col-title">Company</p>',
   '<a href="about.html" class="footer-link">About</a>',
   '<a href="https://mtec.edu/programs/software-quality-assurance/" class="footer-link" target="_blank" rel="noopener">Careers</a>',
