@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact Us — Sports Equip</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #1a1a1a; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; font-family: monospace; }
+  #game-wrap { position: relative; }
+  canvas { display: block; border: 2px solid #444; image-rendering: pixelated; }
+  #controls-hint { margin-top: 10px; color: #666; font-size: 12px; text-align: center; letter-spacing: 0.5px; }
+  #overlay {
+    display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.88); flex-direction: column; align-items: center; justify-content: center;
+    pointer-events: none;
+  }
+  #overlay.show { display: flex; pointer-events: all; }
+  #overlay-title { color: #e8d090; font-family: monospace; font-size: 28px; letter-spacing: 6px; text-transform: uppercase; text-align: center; margin-bottom: 10px; }
+  #overlay-sub { color: #a09060; font-family: monospace; font-size: 14px; margin-bottom: 30px; }
+  #btn-restart {
+    background: #111; border: 1.5px solid #e8d090; color: #e8d090;
+    font-family: monospace; font-size: 14px; letter-spacing: 2px;
+    padding: 10px 28px; cursor: pointer;
+  }
+  #btn-restart:hover { background: #222; }
+</style>
+</head>
+<body>
+<div id="game-wrap">
+  <canvas id="c" width="900" height="320"></canvas>
+  <div id="overlay">
+    <div id="overlay-title">YOU SHALL NOT PASS</div>
+    <div id="overlay-sub">— Gandalf the Grey</div>
+    <button id="btn-restart">TRY AGAIN</button>
+  </div>
+</div>
+<div id="controls-hint">Arrow keys / WASD to move &nbsp;·&nbsp; Space or Up to jump</div>
+
+<script>
+(function() {
+  const canvas = document.getElementById('c');
+  const ctx = canvas.getContext('2d');
+  const W = 900, H = 320;
+  const GROUND_Y = H - 60;
+  const LAVA_X = 360, LAVA_W = 140;
+  const GANDALF_X = 680;
+  const FLAG_X = 820;
+
+  // platforms
+  const platforms = [
+    { x: 320, y: GROUND_Y - 60, w: 80, h: 22 },
+    { x: 440, y: GROUND_Y - 100, w: 80, h: 22 }
+  ];
+
+  let state, keys;
+
+  function initState() {
+    state = {
+      player: {
+        x: 60, y: GROUND_Y - 36, w: 44, h: 36,
+        vx: 0, vy: 0, onGround: false, onPlatform: false,
+        facing: 1, walkFrame: 0, walkTimer: 0,
+        spinning: false, spinAngle: 0, spinVx: 0,
+        knockTimer: 0
+      },
+      gandalf: {
+        y: H + 40, targetY: GROUND_Y - 110, risen: false,
+        staffAngle: 0, staffSlapping: false, slapTimer: 0
+      },
+      particles: [],
+      clouds: [
+        { x: 80, y: 40, w: 90, speed: 0.18 },
+        { x: 300, y: 25, w: 60, speed: 0.12 },
+        { x: 600, y: 55, w: 75, speed: 0.15 },
+        { x: 750, y: 30, w: 55, speed: 0.10 }
+      ],
+      flagWave: 0,
+      lavaFlicker: 0,
+      slapText: { show: false, alpha: 0, timer: 0 },
+      gameOver: false,
+      phase: 'play'  // 'play', 'slap', 'over'
+    };
+  }
+
+  function initKeys() {
+    keys = {};
+    window.addEventListener('keydown', function(e) {
+      keys[e.code] = true;
+      const gameKeys = ['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Space','KeyW','KeyA','KeyS','KeyD'];
+      if (gameKeys.includes(e.code)) e.preventDefault();
+    });
+    window.addEventListener('keyup', function(e) { keys[e.code] = false; });
+  }
+
+  initState();
+  initKeys();
+
+  document.getElementById('btn-restart').addEventListener('click', function() {
+    document.getElementById('overlay').classList.remove('show');
+    initState();
+  });
+
+  // ---- draw helpers ----
+
+  function drawMountains() {
+    ctx.fillStyle = '#2a2d35';
+    [[0,220,120,H],[80,200,180,H],[200,215,130,H],[320,205,100,H],[420,195,160,H],[560,210,120,H],[680,198,140,H],[820,212,110,H]].forEach(function(m) {
+      ctx.beginPath();
+      ctx.moveTo(m[0], H);
+      ctx.lineTo(m[0] + m[2]/2, m[1]);
+      ctx.lineTo(m[0] + m[2], H);
+      ctx.closePath();
+      ctx.fill();
+    });
+  }
+
+  function drawClouds() {
+    state.clouds.forEach(function(c) {
+      ctx.fillStyle = 'rgba(180,170,150,0.25)';
+      ctx.beginPath();
+      ctx.ellipse(c.x, c.y, c.w/2, 14, 0, 0, Math.PI*2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.ellipse(c.x + c.w*0.2, c.y - 8, c.w*0.3, 10, 0, 0, Math.PI*2);
+      ctx.fill();
+    });
+  }
+
+  function drawGround() {
+    // stone tiles
+    const tileW = 30;
+    for (let tx = 0; tx < W; tx += tileW) {
+      // skip lava pit
+      if (tx + tileW > LAVA_X && tx < LAVA_X + LAVA_W) continue;
+      const shade = (Math.floor(tx/tileW) % 2 === 0) ? '#5a5550' : '#524e4a';
+      ctx.fillStyle = shade;
+      ctx.fillRect(tx, GROUND_Y, tileW, H - GROUND_Y);
+      ctx.strokeStyle = '#3a3530';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(tx, GROUND_Y, tileW, H - GROUND_Y);
+    }
+    // dirt below
+    ctx.fillStyle = '#3a2e22';
+    ctx.fillRect(0, GROUND_Y + 20, LAVA_X, H);
+    ctx.fillRect(LAVA_X + LAVA_W, GROUND_Y + 20, W - LAVA_X - LAVA_W, H);
+  }
+
+  function drawLava() {
+    state.lavaFlicker += 0.07;
+    const flicker = Math.sin(state.lavaFlicker);
+    const flicker2 = Math.sin(state.lavaFlicker * 1.7);
+    const grad = ctx.createLinearGradient(LAVA_X, GROUND_Y, LAVA_X, H);
+    grad.addColorStop(0, `rgba(255,${80 + flicker*30|0},0,1)`);
+    grad.addColorStop(0.4, `rgba(220,${40 + flicker2*20|0},0,1)`);
+    grad.addColorStop(1, '#1a0a00');
+    ctx.fillStyle = grad;
+    ctx.fillRect(LAVA_X, GROUND_Y, LAVA_W, H - GROUND_Y);
+
+    // lava surface bubbles
+    for (let i = 0; i < 4; i++) {
+      const bx = LAVA_X + 20 + i * 28 + Math.sin(state.lavaFlicker + i) * 5;
+      const by = GROUND_Y + 4 + Math.sin(state.lavaFlicker * 1.3 + i * 0.9) * 3;
+      ctx.fillStyle = `rgba(255,${140+i*20},0,0.7)`;
+      ctx.beginPath();
+      ctx.ellipse(bx, by, 6, 4, 0, 0, Math.PI*2);
+      ctx.fill();
+    }
+  }
+
+  function drawPlatform(p) {
+    // body
+    ctx.fillStyle = '#8a8f94';
+    ctx.fillRect(p.x, p.y, p.w, p.h);
+    // mortar lines
+    ctx.strokeStyle = '#5a5f64';
+    ctx.lineWidth = 1;
+    for (let lx = p.x; lx < p.x + p.w; lx += 20) {
+      ctx.beginPath(); ctx.moveTo(lx, p.y); ctx.lineTo(lx, p.y + p.h); ctx.stroke();
+    }
+    ctx.beginPath(); ctx.moveTo(p.x, p.y + p.h/2); ctx.lineTo(p.x + p.w, p.y + p.h/2); ctx.stroke();
+    // highlight
+    ctx.fillStyle = 'rgba(255,255,255,0.18)';
+    ctx.fillRect(p.x, p.y, p.w, 3);
+    ctx.fillRect(p.x, p.y, 3, p.h);
+    // crenellations
+    const crenW = 10, crenH = 8, gap = 6;
+    ctx.fillStyle = '#8a8f94';
+    for (let cx = p.x + 4; cx < p.x + p.w - crenW; cx += crenW + gap) {
+      ctx.fillRect(cx, p.y - crenH, crenW, crenH);
+      ctx.fillStyle = '#5a5f64'; ctx.fillRect(cx, p.y - crenH, crenW, 1); ctx.fillStyle = '#8a8f94';
+    }
+  }
+
+  function drawGandalf() {
+    const g = state.gandalf;
+    const gx = GANDALF_X;
+    const gy = g.y;
+
+    ctx.save();
+    ctx.translate(gx, gy);
+
+    // robe layers
+    ctx.fillStyle = '#7a7a7a';
+    ctx.fillRect(-16, 0, 32, 70);
+    ctx.fillStyle = '#686868';
+    ctx.fillRect(-14, 5, 28, 60);
+    // vertical robe lines
+    ctx.strokeStyle = '#555';
+    ctx.lineWidth = 1;
+    for (let lx = -12; lx < 14; lx += 5) {
+      ctx.beginPath(); ctx.moveTo(lx, 2); ctx.lineTo(lx, 68); ctx.stroke();
+    }
+    // robe bottom flair
+    ctx.fillStyle = '#606060';
+    ctx.beginPath();
+    ctx.moveTo(-18, 65); ctx.lineTo(-22, 78); ctx.lineTo(22, 78); ctx.lineTo(18, 65); ctx.closePath();
+    ctx.fill();
+
+    // beard
+    ctx.fillStyle = '#ddd';
+    ctx.beginPath();
+    ctx.moveTo(-10, -2); ctx.quadraticCurveTo(0, 30, -8, 50); ctx.quadraticCurveTo(0, 55, 8, 50); ctx.quadraticCurveTo(0, 30, 10, -2); ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = '#aaa'; ctx.lineWidth = 0.5;
+    for (let bl = 0; bl < 5; bl++) {
+      ctx.beginPath(); ctx.moveTo(-6 + bl*3, 0); ctx.lineTo(-8 + bl*3, 45); ctx.stroke();
+    }
+
+    // eyebrows — angry
+    ctx.strokeStyle = '#333'; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(-12, -36); ctx.lineTo(-4, -30); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(12, -36); ctx.lineTo(4, -30); ctx.stroke();
+
+    // eyes
+    ctx.fillStyle = '#222';
+    ctx.beginPath(); ctx.arc(-6, -28, 2.5, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(6, -28, 2.5, 0, Math.PI*2); ctx.fill();
+
+    // nose
+    ctx.fillStyle = '#b08060';
+    ctx.beginPath(); ctx.ellipse(0, -22, 4, 5, 0, 0, Math.PI*2); ctx.fill();
+
+    // head / face
+    ctx.fillStyle = '#c8a882';
+    ctx.beginPath(); ctx.ellipse(0, -34, 14, 16, 0, 0, Math.PI*2); ctx.fill();
+
+    // pointed hat
+    ctx.fillStyle = '#666';
+    ctx.beginPath();
+    ctx.moveTo(-18, -46); ctx.lineTo(0, -85); ctx.lineTo(18, -46); ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = '#555';
+    ctx.fillRect(-20, -50, 40, 6);
+    ctx.strokeStyle = '#444'; ctx.lineWidth = 1;
+    ctx.strokeRect(-20, -50, 40, 6);
+
+    // staff (left side)
+    const slapProgress = g.staffSlapping ? Math.sin(g.slapTimer * Math.PI) : 0;
+    const staffBaseAngle = -0.3 - slapProgress * 0.7;
+    ctx.strokeStyle = '#8B6914'; ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(-14, -10);
+    const staffTipX = -14 + Math.cos(staffBaseAngle - Math.PI/2) * 90;
+    const staffTipY = -10 + Math.sin(staffBaseAngle - Math.PI/2) * 90;
+    ctx.lineTo(staffTipX, staffTipY);
+    ctx.stroke();
+    // glowing tip
+    ctx.fillStyle = '#ffe060';
+    ctx.beginPath(); ctx.ellipse(staffTipX, staffTipY, 5, 5, 0, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = 'rgba(255,220,80,0.3)';
+    ctx.beginPath(); ctx.ellipse(staffTipX, staffTipY, 10, 10, 0, 0, Math.PI*2); ctx.fill();
+
+    ctx.restore();
+  }
+
+  function drawFlag() {
+    state.flagWave += 0.08;
+    const fx = FLAG_X;
+    const fy = GROUND_Y;
+    const poleH = 90;
+
+    // stone base
+    ctx.fillStyle = '#6a6a6a';
+    ctx.fillRect(fx - 12, fy - 16, 24, 16);
+    ctx.strokeStyle = '#444'; ctx.lineWidth = 1;
+    ctx.strokeRect(fx - 12, fy - 16, 24, 16);
+
+    // pole
+    ctx.strokeStyle = '#8a7a5a'; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(fx, fy - 16); ctx.lineTo(fx, fy - poleH); ctx.stroke();
+
+    // waving pennant (triangle with sine wave)
+    const flagLen = 50;
+    const flagH = 24;
+    const topY = fy - poleH;
+    ctx.fillStyle = '#2a6a20';
+    ctx.beginPath();
+    ctx.moveTo(fx, topY);
+    for (let i = 0; i <= flagLen; i += 2) {
+      const wave = Math.sin(state.flagWave + i * 0.15) * 4 * (i / flagLen);
+      ctx.lineTo(fx + i, topY + wave);
+    }
+    ctx.lineTo(fx, topY + flagH);
+    ctx.closePath();
+    ctx.fill();
+
+    // white horse silhouette on flag (simple)
+    ctx.fillStyle = 'rgba(255,255,255,0.85)';
+    const hx = fx + 14, hy = topY + 10;
+    ctx.beginPath();
+    ctx.ellipse(hx, hy + Math.sin(state.flagWave) * 2, 8, 5, -0.2, 0, Math.PI*2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(hx + 6, hy - 4 + Math.sin(state.flagWave) * 2, 4, 4, 0.3, 0, Math.PI*2);
+    ctx.fill();
+  }
+
+  function drawHorse(p) {
+    const px = p.x + p.w/2;
+    const py = p.y + p.h;
+    const f = p.facing;
+
+    ctx.save();
+    ctx.translate(px, py);
+    if (f < 0) ctx.scale(-1, 1);
+
+    if (p.spinning) {
+      ctx.translate(0, -p.h/2);
+      ctx.rotate(p.spinAngle);
+      ctx.translate(0, p.h/2);
+    }
+
+    const wt = p.walkTimer;
+    const legSwing = p.onGround ? Math.sin(wt * 0.25) * 10 : 0;
+
+    // tail
+    ctx.strokeStyle = '#6b3a1f'; ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(-18, -14);
+    ctx.quadraticCurveTo(-28, -8 + Math.sin(wt*0.2)*4, -24, -2);
+    ctx.stroke();
+
+    // body
+    ctx.fillStyle = '#8B4513';
+    ctx.beginPath(); ctx.ellipse(0, -14, 18, 10, 0, 0, Math.PI*2); ctx.fill();
+
+    // legs
+    ctx.fillStyle = '#6b3000';
+    const legPairs = [[-10, legSwing], [-4, -legSwing], [4, legSwing], [10, -legSwing]];
+    legPairs.forEach(function(lp) {
+      ctx.save();
+      ctx.translate(lp[0], -6);
+      ctx.rotate(lp[1] * Math.PI/180);
+      ctx.fillRect(-2.5, 0, 5, 14);
+      ctx.restore();
+    });
+
+    // neck + head
+    ctx.fillStyle = '#8B4513';
+    ctx.fillRect(10, -24, 6, 12);
+    ctx.beginPath(); ctx.ellipse(14, -27, 6, 5, -0.3, 0, Math.PI*2); ctx.fill();
+    // snout
+    ctx.fillStyle = '#7a3a10';
+    ctx.fillRect(16, -27, 6, 4);
+    // eye
+    ctx.fillStyle = '#111';
+    ctx.beginPath(); ctx.arc(17, -29, 1.5, 0, Math.PI*2); ctx.fill();
+
+    // rider
+    ctx.fillStyle = '#3a3060'; // torso
+    ctx.fillRect(-4, -34, 10, 14);
+    ctx.fillStyle = '#c8a882'; // head
+    ctx.beginPath(); ctx.ellipse(1, -38, 5, 5, 0, 0, Math.PI*2); ctx.fill();
+    // helmet
+    ctx.fillStyle = '#555';
+    ctx.fillRect(-4, -44, 10, 8);
+    ctx.fillRect(-5, -40, 12, 3);
+    // lance
+    ctx.strokeStyle = '#8B6914'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(6, -32); ctx.lineTo(26, -22); ctx.stroke();
+
+    ctx.restore();
+  }
+
+  function drawParticles() {
+    state.particles = state.particles.filter(function(pt) { return pt.life > 0; });
+    state.particles.forEach(function(pt) {
+      ctx.save();
+      ctx.globalAlpha = pt.life / pt.maxLife;
+      ctx.fillStyle = pt.color;
+      ctx.beginPath();
+      ctx.arc(pt.x, pt.y, pt.r, 0, Math.PI*2);
+      ctx.fill();
+      ctx.restore();
+      pt.x += pt.vx;
+      pt.y += pt.vy;
+      pt.vy += 0.2;
+      pt.life--;
+    });
+  }
+
+  function spawnSlapParticles(x, y) {
+    const colors = ['#ffe060','#ffaa00','#ff6600','#ffffff','#ffdd00'];
+    for (let i = 0; i < 22; i++) {
+      const angle = (Math.PI * 2 * i / 22);
+      const speed = 1.5 + Math.random() * 3;
+      state.particles.push({
+        x: x, y: y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed - 1,
+        r: 2 + Math.random() * 3,
+        color: colors[i % colors.length],
+        life: 30 + Math.random() * 20 | 0,
+        maxLife: 50
+      });
+    }
+  }
+
+  function drawSlapText() {
+    const st = state.slapText;
+    if (!st.show) return;
+    ctx.save();
+    ctx.globalAlpha = Math.min(1, st.alpha);
+    ctx.font = 'bold 38px monospace';
+    ctx.textAlign = 'center';
+    ctx.strokeStyle = '#000';
+    ctx.lineWidth = 5;
+    ctx.strokeText('YOU SHALL NOT PASS', W/2, H/2 - 20);
+    ctx.fillStyle = '#fff';
+    ctx.fillText('YOU SHALL NOT PASS', W/2, H/2 - 20);
+    ctx.restore();
+  }
+
+  function drawHUD() {
+    ctx.fillStyle = '#333';
+    ctx.font = '11px monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText('GET PAST THE MONSTER', 10, 18);
+  }
+
+  // ---- physics ----
+
+  function isOnPlatform(p) {
+    return platforms.some(function(pl) {
+      return p.x + p.w > pl.x + 4 &&
+             p.x < pl.x + pl.w - 4 &&
+             p.y + p.h >= pl.y &&
+             p.y + p.h <= pl.y + pl.h + 8 &&
+             p.vy >= 0;
+    });
+  }
+
+  function platformLandingY(p) {
+    for (let i = 0; i < platforms.length; i++) {
+      const pl = platforms[i];
+      if (p.x + p.w > pl.x + 4 && p.x < pl.x + pl.w - 4 &&
+          p.y + p.h >= pl.y && p.y + p.h <= pl.y + pl.h + 10 && p.vy >= 0) {
+        return pl.y;
+      }
+    }
+    return null;
+  }
+
+  function isOverLava(p) {
+    return p.x + p.w/2 > LAVA_X && p.x + p.w/2 < LAVA_X + LAVA_W;
+  }
+
+  function updatePlayer() {
+    const p = state.player;
+    const g = state.gandalf;
+
+    if (p.spinning) {
+      p.x += p.spinVx;
+      p.y += p.vy;
+      p.vy += 0.4;
+      p.spinAngle += 0.18;
+      p.knockTimer--;
+      if (p.knockTimer <= 0) { p.spinning = false; p.spinAngle = 0; }
+      // ground landing
+      if (p.y + p.h >= GROUND_Y) {
+        p.y = GROUND_Y - p.h;
+        p.vy = 0; p.spinning = false; p.spinAngle = 0;
+      }
+      return;
+    }
+
+    const left = keys['ArrowLeft'] || keys['KeyA'];
+    const right = keys['ArrowRight'] || keys['KeyD'];
+    const jump = keys['Space'] || keys['ArrowUp'] || keys['KeyW'];
+
+    const accel = 0.4, maxSpd = 2, friction = 0.8;
+
+    if (left) { p.vx -= accel; p.facing = -1; }
+    else if (right) { p.vx += accel; p.facing = 1; }
+    else { p.vx *= friction; if (Math.abs(p.vx) < 0.05) p.vx = 0; }
+
+    p.vx = Math.max(-maxSpd, Math.min(maxSpd, p.vx));
+
+    if (p.vx !== 0 && p.onGround) {
+      p.walkTimer++;
+      p.walkFrame = Math.floor(p.walkTimer / 8) % 2;
+    } else if (p.vx === 0) {
+      p.walkTimer = 0;
+    }
+
+    if (jump && p.onGround) {
+      p.vy = -8.5;
+      p.onGround = false;
+    }
+
+    p.vy += 0.45; // gravity
+
+    p.x += p.vx;
+    p.y += p.vy;
+
+    // left wall
+    if (p.x < 0) { p.x = 0; p.vx = 0; }
+
+    // Gandalf wall — cannot walk into Gandalf
+    const gandalfLeft = g.risen ? GANDALF_X - 24 : W + 100;
+    if (p.x + p.w > gandalfLeft) { p.x = gandalfLeft - p.w; p.vx = 0; }
+
+    // platform landing
+    const platY = platformLandingY(p);
+    if (platY !== null) {
+      p.y = platY - p.h;
+      p.vy = 0;
+      p.onGround = true;
+    } else {
+      // ground collision
+      if (p.y + p.h >= GROUND_Y && !isOverLava(p)) {
+        p.y = GROUND_Y - p.h;
+        p.vy = 0;
+        p.onGround = true;
+      } else {
+        p.onGround = false;
+      }
+    }
+
+    // fall into lava
+    if (p.y + p.h > H + 10) {
+      triggerSlap(p.x + p.w/2, H/2);
+    }
+
+    // slap detection
+    if (!state.gameOver && state.phase === 'play' && g.risen) {
+      const airborne = !p.onGround;
+      const movingUp = p.vy < 0;
+      const near = Math.abs((p.x + p.w/2) - GANDALF_X) < 60;
+      if (airborne && movingUp && near) {
+        triggerSlap(p.x + p.w/2, g.y - 20);
+      }
+    }
+  }
+
+  function triggerSlap(ix, iy) {
+    if (state.phase !== 'play') return;
+    state.phase = 'slap';
+    const p = state.player;
+    const g = state.gandalf;
+    g.staffSlapping = true; g.slapTimer = 0;
+    spawnSlapParticles(ix, iy);
+    p.spinning = true;
+    p.spinVx = -4;
+    p.vy = -3;
+    p.knockTimer = 60;
+    state.slapText.show = true;
+    state.slapText.alpha = 0;
+    state.slapText.timer = 0;
+    setTimeout(function() { showOverlay(); }, 1800);
+  }
+
+  function showOverlay() {
+    state.gameOver = true;
+    document.getElementById('overlay').classList.add('show');
+  }
+
+  function updateGandalf() {
+    const g = state.gandalf;
+    if (g.y > g.targetY) {
+      g.y -= 0.4;
+      if (g.y <= g.targetY) { g.y = g.targetY; g.risen = true; }
+    }
+    if (g.staffSlapping) {
+      g.slapTimer = Math.min(g.slapTimer + 0.04, 1);
+    }
+  }
+
+  function updateSlapText() {
+    const st = state.slapText;
+    if (!st.show) return;
+    st.timer++;
+    if (st.alpha < 1) st.alpha += 0.08;
+  }
+
+  function updateClouds() {
+    state.clouds.forEach(function(c) {
+      c.x += c.speed;
+      if (c.x - c.w/2 > W) c.x = -c.w;
+    });
+  }
+
+  // ---- main loop ----
+
+  function draw() {
+    // sky gradient
+    const sky = ctx.createLinearGradient(0, 0, 0, H);
+    sky.addColorStop(0, '#1c2030');
+    sky.addColorStop(0.6, '#2a3045');
+    sky.addColorStop(1, '#3a3020');
+    ctx.fillStyle = sky;
+    ctx.fillRect(0, 0, W, H);
+
+    drawMountains();
+    drawClouds();
+    drawGround();
+    drawLava();
+    platforms.forEach(drawPlatform);
+    drawFlag();
+    drawGandalf();
+    drawHorse(state.player);
+    drawParticles();
+    drawSlapText();
+    drawHUD();
+  }
+
+  function loop() {
+    if (!state.gameOver) {
+      updateClouds();
+      updateGandalf();
+      updatePlayer();
+      updateSlapText();
+    } else {
+      updateClouds();
+      updateSlapText();
+    }
+    draw();
+    requestAnimationFrame(loop);
+  }
+
+  loop();
+})();
+</script>
+</body>
+</html>
