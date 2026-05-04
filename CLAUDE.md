@@ -9,6 +9,13 @@
 - Never add `Co-Authored-By: Claude` or any AI attribution to commit messages.
 - Before committing, verify the changes follow all style and architecture rules in this file.
 
+## Pre-push code review
+Before pushing to GitHub, review the changes and confirm:
+- No shortcuts taken — logic is complete, not approximated.
+- Edge cases are covered: empty states, boundary values, rapid user actions, concurrent events, re-entry into the same code path.
+- No loopholes: state transitions are guarded so invalid sequences (e.g. triggering an action twice, acting on stale async callbacks after a reset) cannot occur.
+- Every new code path has been mentally traced from start to finish, including failure and early-exit branches.
+
 ## Assets
 - Product images are served from the API (`storeapi-60py.onrender.com/images/`). Do not store product images in this repo.
 - Site-level assets live in `assets/images/`: `logo.png`, `BannerSportsEquip.png`, `SportEquipNoWordslogo.png`.
