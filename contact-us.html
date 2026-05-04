@@ -53,9 +53,10 @@
     { x: 440, y: GROUND_Y - 100, w: 80, h: 22 }
   ];
 
-  let state, keys;
+  let state, keys, generation = 0;
 
   function initState() {
+    generation++;
     state = {
       player: {
         x: 60, y: GROUND_Y - 36, w: 44, h: 36,
@@ -545,6 +546,12 @@
       triggerSlap(p.x + p.w/2, H/2);
     }
 
+    // win detection — must reach flag before Gandalf fully rises
+    if (state.phase === 'play' && p.x + p.w >= FLAG_X - 14) {
+      triggerWin();
+      return;
+    }
+
     // slap detection — any proximity to Gandalf triggers the staff
     if (!state.gameOver && state.phase === 'play' && g.risen) {
       const near = Math.abs((p.x + p.w/2) - GANDALF_X) < 60;
@@ -559,6 +566,11 @@
     state.phase = 'slap';
     const p = state.player;
     const g = state.gandalf;
+    // snap to ground so spin is always visible (lava-fall case puts player below canvas)
+    if (p.y + p.h > GROUND_Y) {
+      p.x = Math.min(p.x, LAVA_X - p.w - 4);
+      p.y = GROUND_Y - p.h;
+    }
     g.staffSlapping = true; g.slapTimer = 0;
     spawnSlapParticles(ix, iy);
     p.spinning = true;
@@ -568,11 +580,28 @@
     state.slapText.show = true;
     state.slapText.alpha = 0;
     state.slapText.timer = 0;
-    setTimeout(function() { showOverlay(); }, 1800);
+    const gen = generation;
+    setTimeout(function() { if (generation === gen) showOverlay(); }, 1800);
   }
 
   function showOverlay() {
     state.gameOver = true;
+    document.getElementById('overlay-title').textContent = 'YOU SHALL NOT PASS';
+    document.getElementById('overlay-sub').textContent = '— Gandalf the Grey';
+    document.getElementById('overlay').classList.add('show');
+  }
+
+  function triggerWin() {
+    if (state.phase !== 'play') return;
+    state.phase = 'win';
+    const gen = generation;
+    setTimeout(function() { if (generation === gen) showWinOverlay(); }, 400);
+  }
+
+  function showWinOverlay() {
+    state.gameOver = true;
+    document.getElementById('overlay-title').textContent = 'YOU WIN!';
+    document.getElementById('overlay-sub').textContent = 'But sorry, you cannot contact us.';
     document.getElementById('overlay').classList.add('show');
   }
 
