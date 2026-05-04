@@ -100,6 +100,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
   let searchCache = null;
   let searchTimer = null;
+  let searchFetching = false;
+  let searchLatestQuery = '';
 
   /* Build search UI */
   const wrap = document.createElement('div');
@@ -153,12 +155,17 @@ document.addEventListener('DOMContentLoaded', function() {
       renderResults(filterProducts(searchCache, query));
       return;
     }
+    searchLatestQuery = query;
+    if (searchFetching) return;
+    searchFetching = true;
     Api.getAllProducts(200)
       .then(function(res) {
         searchCache = res.data || [];
-        renderResults(filterProducts(searchCache, query));
+        searchFetching = false;
+        renderResults(filterProducts(searchCache, searchLatestQuery));
       })
       .catch(function() {
+        searchFetching = false;
         dropdown.innerHTML = '<p class="search-no-results">Could not load products.</p>';
         dropdown.classList.add('visible');
       });
@@ -197,7 +204,7 @@ document.addEventListener('DOMContentLoaded', function() {
       info.className = 'search-result-info';
       info.innerHTML = `
         <p class="search-result-name">${escHtml(p.product_name)}</p>
-        <p class="search-result-price">$${parseFloat(p.product_price).toFixed(2)}</p>`;
+        <p class="search-result-price">$${(parseFloat(p.product_price) || 0).toFixed(2)}</p>`;
 
       a.append(imgWrap, info);
       dropdown.appendChild(a);

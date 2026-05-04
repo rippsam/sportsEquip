@@ -59,19 +59,24 @@ function makeCartControl(cartProduct) {
     inc.className = 'qty-stepper-btn';
     inc.setAttribute('aria-label', 'Increase');
     inc.textContent = '+';
+    inc.disabled = qty >= 10;
     dec.addEventListener('click', function(e) {
       e.stopPropagation();
       if (getQty() <= 1) { Cart.removeItem(cartProduct.product_id); showPlus(); }
-      else { Cart.updateQty(cartProduct.product_id, getQty() - 1); val.textContent = getQty(); }
+      else { Cart.updateQty(cartProduct.product_id, getQty() - 1); val.textContent = getQty(); inc.disabled = false; }
     });
     inc.addEventListener('click', function(e) {
       e.stopPropagation();
-      const added = Cart.addItem(cartProduct);
-      if (added) val.textContent = getQty();
+      Cart.addItem(cartProduct);
+      val.textContent = getQty();
+      inc.disabled = getQty() >= 10;
     });
     stepper.append(dec, val, inc);
     wrap.appendChild(stepper);
   }
+
+  wrap.dataset.cartControl = '1';
+  wrap.refresh = function() { getQty() > 0 ? showStepper() : showPlus(); };
 
   getQty() > 0 ? showStepper() : showPlus();
   return wrap;

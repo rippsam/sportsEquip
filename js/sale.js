@@ -14,7 +14,7 @@ function pickUnique(arr, count, rand) {
 }
 
 function buildSaleCard(product) {
-  const origPrice = parseFloat(product.product_price);
+  const origPrice = parseFloat(product.product_price) || 0;
   const salePrice = origPrice * (1 - SALE_DISCOUNT);
   const brand     = parseBrand(product.product_name);
 
@@ -115,4 +115,9 @@ document.addEventListener('DOMContentLoaded', function() {
       const loading = document.getElementById('sale-loading');
       if (loading) loading.textContent = 'Could not load sale items. Please refresh.';
     });
+});
+
+window.addEventListener('pageshow', function(e) {
+  if (!e.persisted) return;
+  document.querySelectorAll('[data-cart-control]').forEach(function(ctrl) { ctrl.refresh(); });
 });

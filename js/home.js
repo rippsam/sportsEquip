@@ -43,7 +43,7 @@ function setActiveCategory(catId) {
 /* ── Product card ── */
 function renderProductCard(p) {
   const brand   = parseBrand(p.product_name);
-  const price   = `$${parseFloat(p.product_price).toFixed(2)}`;
+  const price   = `$${(parseFloat(p.product_price) || 0).toFixed(2)}`;
   const article = document.createElement('article');
   article.className = 'pcard';
 
@@ -343,6 +343,11 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
   document.addEventListener('deptSelected', function(e) { filterByDept(e.detail.deptId); });
+
+  window.addEventListener('pageshow', function(e) {
+    if (!e.persisted) return;
+    document.querySelectorAll('[data-cart-control]').forEach(function(ctrl) { ctrl.refresh(); });
+  });
 
   const sentinel = document.getElementById('scroll-sentinel');
   if (sentinel) {

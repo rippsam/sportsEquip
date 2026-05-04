@@ -32,7 +32,7 @@ function buildCard(p) {
     <p class="pcard-brand">${escHtml(parseBrand(p.product_name))}</p>
     <p class="pcard-name">${escHtml(p.product_name)}</p>
     <div class="pcard-bottom">
-      <span class="pcard-price">$${parseFloat(p.product_price).toFixed(2)}</span>
+      <span class="pcard-price">$${(parseFloat(p.product_price) || 0).toFixed(2)}</span>
     </div>`;
 
   article.append(imgWrap, body);
@@ -88,4 +88,9 @@ document.addEventListener('DOMContentLoaded', function() {
   }, { rootMargin: '200px' });
 
   observer.observe(sentinel);
+});
+
+window.addEventListener('pageshow', function(e) {
+  if (!e.persisted) return;
+  document.querySelectorAll('[data-cart-control]').forEach(function(ctrl) { ctrl.refresh(); });
 });

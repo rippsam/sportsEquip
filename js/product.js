@@ -104,7 +104,7 @@ function renderProduct(product, images, category) {
   const categoryName = category?.category_name ?? null;
   const categoryId   = category?.category_id   ?? null;
   const brand = parseBrand(product.product_name);
-  const price = `$${parseFloat(product.product_price).toFixed(2)}`;
+  const price = `$${(parseFloat(product.product_price) || 0).toFixed(2)}`;
 
   document.title = `${product.product_name} \u2014 Sports Equip`;
 
@@ -275,13 +275,15 @@ function renderProduct(product, images, category) {
       inc.className = 'pdp-qty-stepper-btn';
       inc.setAttribute('aria-label', 'Increase');
       inc.textContent = '+';
+      inc.disabled = qty >= 10;
       dec.addEventListener('click', function() {
         if (getQty() <= 1) { Cart.removeItem(product.product_id); showAddBtn(); }
-        else { Cart.updateQty(product.product_id, getQty() - 1); val.textContent = getQty(); }
+        else { Cart.updateQty(product.product_id, getQty() - 1); val.textContent = getQty(); inc.disabled = false; }
       });
       inc.addEventListener('click', function() {
-        const added = Cart.addItem(product);
-        if (added) val.textContent = getQty();
+        Cart.addItem(product);
+        val.textContent = getQty();
+        inc.disabled = getQty() >= 10;
       });
       stepper.append(dec, val, inc);
       container.appendChild(stepper);
@@ -386,7 +388,7 @@ function buildProductCard(p) {
     <p class="pcard-brand">${escHtml(parseBrand(p.product_name))}</p>
     <p class="pcard-name">${escHtml(p.product_name)}</p>
     <div class="pcard-bottom">
-      <span class="pcard-price">$${parseFloat(p.product_price).toFixed(2)}</span>
+      <span class="pcard-price">$${(parseFloat(p.product_price) || 0).toFixed(2)}</span>
     </div>`;
 
   body.querySelector('.pcard-bottom').appendChild(makeCartControl(p));
@@ -510,4 +512,9 @@ document.addEventListener('DOMContentLoaded', function() {
       console.error('getProduct error:', err);
       showPageError('Could not load product');
     });
+});
+
+window.addEventListener('pageshow', function(e) {
+  if (!e.persisted) return;
+  document.querySelectorAll('[data-cart-control]').forEach(function(ctrl) { ctrl.refresh(); });
 });
