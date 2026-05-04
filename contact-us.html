@@ -474,7 +474,7 @@
       p.x += p.spinVx;
       p.y += p.vy;
       p.vy += 0.4;
-      p.spinAngle += 0.18;
+      p.spinAngle += 0.28;
       p.knockTimer--;
       if (p.knockTimer <= 0) { p.spinning = false; p.spinAngle = 0; }
       // ground landing
@@ -484,6 +484,8 @@
       }
       return;
     }
+
+    if (state.phase !== 'play') return;
 
     const left = keys['ArrowLeft'] || keys['KeyA'];
     const right = keys['ArrowRight'] || keys['KeyD'];
@@ -560,9 +562,9 @@
     g.staffSlapping = true; g.slapTimer = 0;
     spawnSlapParticles(ix, iy);
     p.spinning = true;
-    p.spinVx = -4;
-    p.vy = -3;
-    p.knockTimer = 60;
+    p.spinVx = -7;
+    p.vy = -10;
+    p.knockTimer = 90;
     state.slapText.show = true;
     state.slapText.alpha = 0;
     state.slapText.timer = 0;
