@@ -543,12 +543,10 @@
       triggerSlap(p.x + p.w/2, H/2);
     }
 
-    // slap detection
+    // slap detection — any proximity to Gandalf triggers the staff
     if (!state.gameOver && state.phase === 'play' && g.risen) {
-      const airborne = !p.onGround;
-      const movingUp = p.vy < 0;
       const near = Math.abs((p.x + p.w/2) - GANDALF_X) < 60;
-      if (airborne && movingUp && near) {
+      if (near) {
         triggerSlap(p.x + p.w/2, g.y - 20);
       }
     }
