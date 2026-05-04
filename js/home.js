@@ -145,7 +145,7 @@ function loadProducts() {
       batch.forEach(function(v) {
         state.samplerOffsets[v.cat.category_id] = (state.samplerOffsets[v.cat.category_id] || 0) + 1;
       });
-      state.hasMore = available.length >= state.limit;
+      state.hasMore = available.length > 0;
       return batch.map(function(v) { return v.item; });
     });
   }
