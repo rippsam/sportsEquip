@@ -48,6 +48,14 @@ document.addEventListener('DOMContentLoaded', function() {
       imgWrap.innerHTML = '<div class="pcard-img-placeholder">No image</div>';
     }
 
+    const badge = getProductBadge(p);
+    if (badge) {
+      const b = document.createElement('span');
+      b.className = `pcard-badge badge-${badge}`;
+      b.textContent = badge === 'sale' ? 'Sale' : 'New';
+      imgWrap.appendChild(b);
+    }
+
     const body = document.createElement('div');
     body.className = 'pcard-body';
     body.innerHTML = `

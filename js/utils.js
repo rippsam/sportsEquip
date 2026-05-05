@@ -20,6 +20,14 @@ function seededRand(seed) {
   };
 }
 
+function getProductBadge(product) {
+  const rand = seededRand(product.product_id * 31 + 17);
+  const r = rand();
+  if (r < 0.15) return 'sale';
+  if (r < 0.28) return 'new';
+  return null;
+}
+
 function makeCartControl(cartProduct) {
   const wrap = document.createElement('div');
 

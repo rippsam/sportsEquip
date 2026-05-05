@@ -11,10 +11,14 @@ const state = {
   limit:             8,
   hasMore:           true,
   loading:           false,
-  firstLoad:         true
+  firstLoad:         true,
+  filterCatIds:      [],
+  sortKey:           'default',
+  deptProducts:      null
 };
 
 let slowTimer = null;
+let filterBarReady = false;
 
 /* ── DOM refs ── */
 const productGrid   = document.getElementById('product-grid');
@@ -61,6 +65,14 @@ function renderProductCard(p) {
     imgWrap.innerHTML = '<div class="pcard-img-placeholder">No image</div>';
   }
 
+  const badge = getProductBadge(p);
+  if (badge) {
+    const b = document.createElement('span');
+    b.className = `pcard-badge badge-${badge}`;
+    b.textContent = badge === 'sale' ? 'Sale' : 'New';
+    imgWrap.appendChild(b);
+  }
+
   const body = document.createElement('div');
   body.className = 'pcard-body';
   body.innerHTML = `
@@ -98,6 +110,68 @@ function showProductError() {
   productGrid.appendChild(errDiv);
 }
 
+/* ── Filter helpers ── */
+function isFiltered() {
+  return state.filterCatIds.length > 0 || state.sortKey !== 'default';
+}
+
+function sortProducts(products) {
+  const sorted = products.slice();
+  if (state.sortKey === 'price-asc') {
+    sorted.sort(function(a, b) { return (parseFloat(a.product_price) || 0) - (parseFloat(b.product_price) || 0); });
+  } else if (state.sortKey === 'price-desc') {
+    sorted.sort(function(a, b) { return (parseFloat(b.product_price) || 0) - (parseFloat(a.product_price) || 0); });
+  } else if (state.sortKey === 'name-asc') {
+    sorted.sort(function(a, b) { return a.product_name.toLowerCase().localeCompare(b.product_name.toLowerCase()); });
+  } else if (state.sortKey === 'name-desc') {
+    sorted.sort(function(a, b) { return b.product_name.toLowerCase().localeCompare(a.product_name.toLowerCase()); });
+  } else if (state.sortKey === 'on-sale') {
+    sorted.sort(function(a, b) { return (getProductBadge(b) === 'sale' ? 1 : 0) - (getProductBadge(a) === 'sale' ? 1 : 0); });
+  } else if (state.sortKey === 'new') {
+    sorted.sort(function(a, b) { return (getProductBadge(b) === 'new' ? 1 : 0) - (getProductBadge(a) === 'new' ? 1 : 0); });
+  }
+  return sorted;
+}
+
+function getFilteredSorted() {
+  let products = state.deptProducts;
+  if (state.filterCatIds.length > 0) {
+    const idSet = new Set(state.filterCatIds.map(Number));
+    products = products.filter(function(p) { return idSet.has(p._catId); });
+  }
+  return sortProducts(products);
+}
+
+/* ── Apply filter/sort ── */
+function applyFilter() {
+  productGrid.innerHTML = '';
+  state.products = [];
+  state.hasMore = true;
+  state.firstLoad = false;
+
+  if (!isFiltered()) {
+    state.samplerOffsets = {};
+    initSamplerOffsets(state.visibleCategories);
+    loadProducts();
+    return;
+  }
+
+  if (state.deptProducts !== null) {
+    const products = getFilteredSorted();
+    if (products.length === 0) {
+      productGrid.innerHTML = '<div class="error-state"><strong>No products found</strong>Try a different filter.</div>';
+    } else {
+      products.forEach(function(p) { productGrid.appendChild(renderProductCard(p)); });
+      state.products = products;
+    }
+    state.hasMore = false;
+    updateResultsCount();
+    return;
+  }
+
+  loadProducts();
+}
+
 /* ── Load products ── */
 function loadProducts() {
   if (state.loading || !state.hasMore) return;
@@ -108,7 +182,7 @@ function loadProducts() {
       const notice = document.createElement('div');
       notice.className   = 'slow-notice';
       notice.id          = 'slow-notice';
-      notice.textContent = 'Waking up the server\u2026 this may take a moment.';
+      notice.textContent = 'Waking up the server… this may take a moment.';
       productGrid.appendChild(notice);
     }, 5000);
   }
@@ -122,9 +196,34 @@ function loadProducts() {
   if (state.activeCategoryId !== null) {
     promise = Api.getProducts(state.activeCategoryId, state.limit, state.offset)
       .then(function(res) { return res.data; });
+  } else if (isFiltered()) {
+    if (state.visibleCategories.length === 0) {
+      state.loading = false;
+      return;
+    }
+    promise = Promise.allSettled(
+      state.visibleCategories.map(function(c) {
+        return Api.getProducts(c.category_id, 500, 0)
+          .then(function(res) {
+            return res.data.map(function(p) {
+              return Object.assign({}, p, { _catId: c.category_id });
+            });
+          });
+      })
+    ).then(function(results) {
+      const seen = new Set();
+      state.deptProducts = results
+        .filter(function(r) { return r.status === 'fulfilled'; })
+        .flatMap(function(r) { return r.value; })
+        .filter(function(p) {
+          if (seen.has(p.product_id)) return false;
+          seen.add(p.product_id);
+          return true;
+        });
+      return getFilteredSorted();
+    });
   } else {
-    /* Fetch 1 item from every visible category so any empty/sparse categories
-       don't prevent filling a full batch of 8 */
+    /* Sampler: fetch 1 item from every visible category per batch */
     if (state.visibleCategories.length === 0) {
       state.loading = false;
       return;
@@ -170,6 +269,11 @@ function loadProducts() {
     if (state.activeCategoryId !== null) {
       state.offset += products.length;
       if (products.length < state.limit) state.hasMore = false;
+    }
+
+    if (isFiltered()) {
+      state.hasMore = false;
+      updateResultsCount();
     }
 
     if (allProductsBtn && !state.activeDeptId && !state.activeCategoryId) {
@@ -234,7 +338,7 @@ function loadFeaturedProduct(categories) {
     const brand  = parseBrand(product.product_name);
     const model  = product.product_name.slice(brand.length).trim().split(' ').slice(0, 3).join(' ');
     const rawDesc = product.product_description ?? '';
-    const desc   = rawDesc.length > 75 ? `${rawDesc.slice(0, 75)}\u2026` : rawDesc;
+    const desc   = rawDesc.length > 75 ? `${rawDesc.slice(0, 75)}…` : rawDesc;
     card.innerHTML = `
       <p class="split-eyebrow">Just dropped</p>
       <h3 class="split-title">${escHtml(brand)}<br>${escHtml(model)}</h3>
@@ -272,13 +376,25 @@ function updateSectionHeader(deptId) {
 
 /* ── Dept filter ── */
 function filterByDept(deptId) {
-  state.activeDeptId = deptId;
+  state.activeDeptId    = deptId;
+  state.filterCatIds    = [];
+  state.sortKey         = 'default';
+  state.deptProducts    = null;
   if (state.allCategories.length === 0) return;
   state.visibleCategories = deptId
     ? state.allCategories.filter(function(c) { return String(c.category_department_id) === String(deptId); })
     : state.allCategories;
   updateSectionHeader(deptId);
   setActiveCategory(null);
+
+  if (!deptId) return;
+
+  if (!filterBarReady) {
+    initFilterBar();
+    filterBarReady = true;
+  } else {
+    resetFilterUI();
+  }
 }
 
 /* ── New arrivals (4-day rotation) ── */
@@ -287,6 +403,177 @@ function initSamplerOffsets(categories) {
   categories.forEach(function(cat) {
     const rand = seededRand(fourDayNum * 31 + cat.category_id);
     state.samplerOffsets[cat.category_id] = Math.floor(rand() * 10);
+  });
+}
+
+/* ── Filter bar ── */
+function renderPills() {
+  const container = document.getElementById('filter-pills');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const allPill = document.createElement('button');
+  allPill.className = `filter-pill${state.filterCatIds.length === 0 ? ' active' : ''}`;
+  allPill.textContent = 'All';
+  allPill.addEventListener('click', function() {
+    state.filterCatIds = [];
+    renderPills();
+    updateCatChips();
+    updateActiveFiltersBar();
+    applyFilter();
+  });
+  container.appendChild(allPill);
+
+  state.visibleCategories.forEach(function(cat) {
+    const pill = document.createElement('button');
+    pill.className = `filter-pill${state.filterCatIds.includes(cat.category_id) ? ' active' : ''}`;
+    pill.textContent = cat.category_name;
+    pill.addEventListener('click', function() {
+      const idx = state.filterCatIds.indexOf(cat.category_id);
+      if (idx === -1) { state.filterCatIds.push(cat.category_id); }
+      else { state.filterCatIds.splice(idx, 1); }
+      renderPills();
+      updateCatChips();
+      updateActiveFiltersBar();
+      applyFilter();
+    });
+    container.appendChild(pill);
+  });
+}
+
+function updateCatChips() {
+  const container = document.getElementById('cat-chips');
+  if (!container) return;
+  container.innerHTML = '';
+  state.filterCatIds.forEach(function(catId) {
+    const cat = state.visibleCategories.find(function(c) { return c.category_id === catId; });
+    if (!cat) return;
+    const chip = document.createElement('span');
+    chip.className = 'active-chip';
+    const label = document.createElement('span');
+    label.textContent = cat.category_name;
+    const x = document.createElement('button');
+    x.className = 'active-chip-x';
+    x.setAttribute('aria-label', `Remove ${cat.category_name} filter`);
+    x.textContent = '×';
+    x.addEventListener('click', function() {
+      state.filterCatIds = state.filterCatIds.filter(function(id) { return id !== catId; });
+      renderPills();
+      updateCatChips();
+      updateActiveFiltersBar();
+      applyFilter();
+    });
+    chip.append(label, x);
+    container.appendChild(chip);
+  });
+}
+
+function updateActiveSortChip() {
+  const chip  = document.getElementById('active-sort-chip');
+  const label = document.getElementById('active-sort-label');
+  if (!chip) return;
+  if (state.sortKey === 'default') {
+    chip.style.display = 'none';
+    return;
+  }
+  const sortLabels = {
+    'price-asc':  'Price: Low to High',
+    'price-desc': 'Price: High to Low',
+    'name-asc':   'Name: A → Z',
+    'name-desc':  'Name: Z → A',
+    'on-sale':    'On sale',
+    'new':        'New arrivals'
+  };
+  if (label) label.textContent = sortLabels[state.sortKey] || state.sortKey;
+  chip.style.display = 'inline-flex';
+}
+
+function updateActiveFiltersBar() {
+  const bar = document.getElementById('dept-active-filters');
+  if (!bar) return;
+  bar.style.display = (state.filterCatIds.length > 0 || state.sortKey !== 'default') ? 'flex' : 'none';
+}
+
+function updateResultsCount() {
+  const el = document.getElementById('filter-results-count');
+  if (!el) return;
+  if (!isFiltered() || state.deptProducts === null) { el.textContent = ''; return; }
+  const count = getFilteredSorted().length;
+  el.textContent = `${count} ${count === 1 ? 'product' : 'products'}`;
+}
+
+function resetFilterUI() {
+  const sortSelectedText = document.getElementById('sort-selected-text');
+  if (sortSelectedText) sortSelectedText.textContent = 'Featured';
+  document.getElementById('sort-dropdown')?.querySelectorAll('.sort-option').forEach(function(o) {
+    o.classList.toggle('selected', o.dataset.sort === 'default');
+  });
+  renderPills();
+  updateCatChips();
+  updateActiveSortChip();
+  updateActiveFiltersBar();
+  updateResultsCount();
+}
+
+function initFilterBar() {
+  const wrap = document.getElementById('dept-filter-wrap');
+  if (!wrap) return;
+  wrap.style.display = 'block';
+
+  renderPills();
+
+  const sortBtn      = document.getElementById('sort-btn');
+  const sortDropdown = document.getElementById('sort-dropdown');
+
+  sortBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    const isOpen = sortDropdown.classList.contains('open');
+    sortDropdown.classList.toggle('open', !isOpen);
+    sortBtn.classList.toggle('open', !isOpen);
+  });
+
+  sortDropdown.querySelectorAll('.sort-option').forEach(function(opt) {
+    opt.addEventListener('click', function() {
+      state.sortKey = opt.dataset.sort;
+      sortDropdown.querySelectorAll('.sort-option').forEach(function(o) { o.classList.remove('selected'); });
+      opt.classList.add('selected');
+      document.getElementById('sort-selected-text').textContent = opt.textContent.trim();
+      sortDropdown.classList.remove('open');
+      sortBtn.classList.remove('open');
+      updateActiveSortChip();
+      updateActiveFiltersBar();
+      applyFilter();
+    });
+  });
+
+  document.addEventListener('click', function() {
+    sortDropdown.classList.remove('open');
+    sortBtn.classList.remove('open');
+  });
+
+  document.getElementById('sort-chip-x').addEventListener('click', function() {
+    state.sortKey = 'default';
+    document.getElementById('sort-selected-text').textContent = 'Featured';
+    sortDropdown.querySelectorAll('.sort-option').forEach(function(o) {
+      o.classList.toggle('selected', o.dataset.sort === 'default');
+    });
+    updateActiveSortChip();
+    updateActiveFiltersBar();
+    applyFilter();
+  });
+
+  document.getElementById('clear-all-btn').addEventListener('click', function() {
+    state.filterCatIds = [];
+    state.sortKey = 'default';
+    document.getElementById('sort-selected-text').textContent = 'Featured';
+    sortDropdown.querySelectorAll('.sort-option').forEach(function(o) {
+      o.classList.toggle('selected', o.dataset.sort === 'default');
+    });
+    renderPills();
+    updateCatChips();
+    updateActiveSortChip();
+    updateActiveFiltersBar();
+    applyFilter();
   });
 }
 
@@ -325,6 +612,9 @@ document.addEventListener('DOMContentLoaded', function() {
         state.visibleCategories = res.categories.filter(function(c) {
           return String(c.category_department_id) === String(deptParam);
         });
+
+        initFilterBar();
+        filterBarReady = true;
       } else {
         state.visibleCategories = res.categories;
       }

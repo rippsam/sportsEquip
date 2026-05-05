@@ -35,6 +35,11 @@ function buildSaleCard(product) {
     imgWrap.innerHTML = '<div class="pcard-img-placeholder">No image</div>';
   }
 
+  const saleBadge = document.createElement('span');
+  saleBadge.className = 'pcard-badge badge-sale';
+  saleBadge.textContent = 'Sale';
+  imgWrap.appendChild(saleBadge);
+
   const body = document.createElement('div');
   body.className = 'pcard-body';
   body.innerHTML = `
