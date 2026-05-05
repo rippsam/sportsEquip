@@ -20,7 +20,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const header = document.createElement('div');
         header.className = 'dept-header';
-        header.innerHTML = `<span class="dept-name">${escHtml(dept.department_name)}</span>`;
+        const deptLink = document.createElement('a');
+        deptLink.className = 'dept-name';
+        deptLink.href = `index.html?dept=${deptId}`;
+        deptLink.textContent = dept.department_name;
+        header.appendChild(deptLink);
 
         const grid = document.createElement('div');
         grid.className = 'cat-grid';
