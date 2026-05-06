@@ -402,7 +402,8 @@ function initSamplerOffsets(categories) {
   const fourDayNum = Math.floor(Date.now() / (1000 * 60 * 60 * 24 * 4));
   categories.forEach(function(cat) {
     const rand = seededRand(fourDayNum * 31 + cat.category_id);
-    state.samplerOffsets[cat.category_id] = Math.floor(rand() * 10);
+    rand(); rand(); rand(); rand(); rand(); // warm up LCG to decorrelate nearby seeds
+    state.samplerOffsets[cat.category_id] = Math.floor(rand() * 18);
   });
 }
 
