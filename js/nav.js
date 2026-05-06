@@ -98,7 +98,6 @@ document.addEventListener('DOMContentLoaded', function() {
   const searchBtn = document.querySelector('.nav-icon-btn[aria-label="Search"]');
   if (!searchBtn) return;
 
-  let searchCache = null;
   let searchTimer = null;
   let searchFetching = false;
   let searchLatestQuery = '';
@@ -151,31 +150,20 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   function runSearch(query) {
-    if (searchCache) {
-      renderResults(filterProducts(searchCache, query));
-      return;
-    }
     searchLatestQuery = query;
     if (searchFetching) return;
     searchFetching = true;
-    Api.getAllProducts(200)
+    Api.searchProducts(query)
       .then(function(res) {
-        searchCache = res.data || [];
         searchFetching = false;
-        renderResults(filterProducts(searchCache, searchLatestQuery));
+        renderResults(res.data || []);
+        if (searchLatestQuery !== query) runSearch(searchLatestQuery);
       })
       .catch(function() {
         searchFetching = false;
         dropdown.innerHTML = '<p class="search-no-results">Could not load products.</p>';
         dropdown.classList.add('visible');
       });
-  }
-
-  function filterProducts(products, query) {
-    const q = query.toLowerCase();
-    return products
-      .filter(function(p) { return p.product_name && p.product_name.toLowerCase().includes(q); })
-      .slice(0, 8);
   }
 
   function renderResults(results) {

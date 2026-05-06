@@ -45,5 +45,9 @@ window.Api = {
 
   getProductImages(id) {
     return apiFetch(`/products/${id}/images`);
+  },
+
+  searchProducts(q) {
+    return apiFetch(`/products/search?q=${encodeURIComponent(q)}&limit=8`);
   }
 };
