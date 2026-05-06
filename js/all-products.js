@@ -11,6 +11,7 @@ const sentinel    = document.getElementById('scroll-sentinel');
 function buildCard(p) {
   const article = document.createElement('article');
   article.className = 'pcard';
+  article.dataset.productId = p.product_id;
 
   const imgWrap = document.createElement('div');
   imgWrap.className = 'pcard-img';
@@ -26,7 +27,7 @@ function buildCard(p) {
     imgWrap.innerHTML = '<div class="pcard-img-placeholder">No image</div>';
   }
 
-  const badge = getProductBadge(p);
+  const badge = BadgeRegistry.getBadge(p.product_id);
   if (badge) {
     const b = document.createElement('span');
     b.className = `pcard-badge badge-${badge}`;
@@ -89,6 +90,7 @@ function loadMore() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+  BadgeRegistry.init();
   loadMore();
 
   const observer = new IntersectionObserver(function(entries) {

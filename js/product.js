@@ -367,6 +367,7 @@ function renderProduct(product, images, category) {
 function buildProductCard(p) {
   const article = document.createElement('article');
   article.className = 'pcard';
+  article.dataset.productId = p.product_id;
 
   const imgWrap = document.createElement('div');
   imgWrap.className = 'pcard-img';
@@ -382,7 +383,7 @@ function buildProductCard(p) {
     imgWrap.innerHTML = '<div class="pcard-img-placeholder">No image</div>';
   }
 
-  const badge = getProductBadge(p);
+  const badge = BadgeRegistry.getBadge(p.product_id);
   if (badge) {
     const b = document.createElement('span');
     b.className = `pcard-badge badge-${badge}`;
@@ -468,6 +469,8 @@ function showPageError(message) {
 
 /* ── Init ── */
 document.addEventListener('DOMContentLoaded', function() {
+  BadgeRegistry.init();
+
   const productId = new URLSearchParams(location.search).get('id');
   if (!productId) { location.href = 'index.html'; return; }
 

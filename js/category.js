@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
+  BadgeRegistry.init();
+
   const params  = new URLSearchParams(location.search);
   const catId   = params.get('cat');
   const catName = params.get('name') || 'Category';
@@ -34,6 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const article = document.createElement('article');
     article.className = 'pcard';
+    article.dataset.productId = p.product_id;
 
     const imgWrap = document.createElement('div');
     imgWrap.className = 'pcard-img';
@@ -48,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
       imgWrap.innerHTML = '<div class="pcard-img-placeholder">No image</div>';
     }
 
-    const badge = getProductBadge(p);
+    const badge = BadgeRegistry.getBadge(p.product_id);
     if (badge) {
       const b = document.createElement('span');
       b.className = `pcard-badge badge-${badge}`;

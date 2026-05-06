@@ -2,17 +2,6 @@
 
 const SALE_DISCOUNT = 0.40;
 
-/* Pick `count` unique items from an array using the provided rand function */
-function pickUnique(arr, count, rand) {
-  const pool   = arr.slice();
-  const picked = [];
-  while (picked.length < count && pool.length > 0) {
-    const idx = Math.floor(rand() * pool.length);
-    picked.push(pool.splice(idx, 1)[0]);
-  }
-  return picked;
-}
-
 function buildSaleCard(product) {
   const origPrice = parseFloat(product.product_price) || 0;
   const salePrice = origPrice * (1 - SALE_DISCOUNT);
@@ -20,6 +9,7 @@ function buildSaleCard(product) {
 
   const article = document.createElement('article');
   article.className = 'pcard';
+  article.dataset.productId = product.product_id;
 
   const imgWrap = document.createElement('div');
   imgWrap.className = 'pcard-img';
@@ -83,9 +73,12 @@ function renderSaleProducts(products) {
   }
 
   products.forEach(function(p) { grid.appendChild(buildSaleCard(p)); });
+  BadgeRegistry.registerSale(products.map(function(p) { return p.product_id; }));
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+  BadgeRegistry.init();
+
   const weekNum = Math.floor(Date.now() / (1000 * 60 * 60 * 24 * 7));
   const rand    = seededRand(weekNum * 31 + 11); /* different seed from featured product */
   const offset  = (weekNum % 8) + 1;             /* rotate 1–8 within each category */

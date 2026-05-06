@@ -20,12 +20,14 @@ function seededRand(seed) {
   };
 }
 
-function getProductBadge(product) {
-  const rand = seededRand(product.product_id * 31 + 17);
-  const r = rand();
-  if (r < 0.15) return 'sale';
-  if (r < 0.28) return 'new';
-  return null;
+function pickUnique(arr, count, rand) {
+  const pool   = arr.slice();
+  const picked = [];
+  while (picked.length < count && pool.length > 0) {
+    const idx = Math.floor(rand() * pool.length);
+    picked.push(pool.splice(idx, 1)[0]);
+  }
+  return picked;
 }
 
 function makeCartControl(cartProduct) {
