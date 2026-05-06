@@ -1,9 +1,10 @@
 document.getElementById('site-footer').innerHTML = [
   '<div class="footer-grid">',
   '<div><p class="footer-col-title">Shop</p>',
-  '<a href="index.html?dept=5" class="footer-link">Men\'s gear</a>',
-  '<a href="index.html?dept=5" class="footer-link">Women\'s gear</a>',
-  '<a href="index.html?dept=5" class="footer-link">Kids\' gear</a>',
+  '<a href="category.html?cat=2&name=Football" class="footer-link">Football</a>',
+  '<a href="category.html?cat=5&name=Basketball" class="footer-link">Basketball</a>',
+  '<a href="category.html?cat=4&name=Baseball%20%26%20Softball" class="footer-link">Baseball &amp; Softball</a>',
+  '<a href="category.html?cat=3&name=Soccer" class="footer-link">Soccer</a>',
   '<a href="index.html?dept=2" class="footer-link">Equipment</a>',
   '<a href="sale.html" class="footer-link">Sale</a></div>',
   '<div><p class="footer-col-title">Support</p>',
