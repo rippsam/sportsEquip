@@ -5,7 +5,6 @@ document.getElementById('site-footer').innerHTML = [
   '<a href="category.html?cat=5&name=Basketball" class="footer-link">Basketball</a>',
   '<a href="category.html?cat=4&name=Baseball%20%26%20Softball" class="footer-link">Baseball &amp; Softball</a>',
   '<a href="category.html?cat=3&name=Soccer" class="footer-link">Soccer</a>',
-  '<a href="index.html?dept=2" class="footer-link">Equipment</a>',
   '<a href="sale.html" class="footer-link">Sale</a></div>',
   '<div><p class="footer-col-title">Support</p>',
   '<a href="order-status.html" class="footer-link">Order status</a>',
