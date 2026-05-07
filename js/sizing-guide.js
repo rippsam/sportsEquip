@@ -32,9 +32,21 @@
       : 1;
   }
 
-  // Scale multiplier so all 4 slots fit within 88% of the stage width.
+  // Set the stage height to the visually available CSS pixels, accounting for
+  // any CSS zoom on a parent. Without this, zoom > 1 causes the stage to
+  // overflow below the viewport fold even though its CSS height looks correct.
+  function setStageHeight() {
+    const z = getZoom();
+    const h = Math.max(480, Math.round(window.innerHeight / z) - 52);
+    stage.style.height = `${h}px`;
+  }
+
+  // Scale multiplier so all 4 slots fit within 88% of the stage width AND
+  // the tallest shirt (XL) fits fully within the bottom 32% of the stage.
   function computeScaleMult() {
-    return Math.min(1, Math.max(0.38, stage.clientWidth * 0.88 / NATURAL_SLOT_WIDTH));
+    const widthMult  = Math.min(1, Math.max(0.38, stage.clientWidth  * 0.88 / NATURAL_SLOT_WIDTH));
+    const heightMult = Math.min(1, Math.max(0.38, (stage.clientHeight * 0.32 - 44) / (130 * 1.5)));
+    return Math.min(widthMult, heightMult);
   }
 
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -149,6 +161,7 @@
     doneArea.id = 'sg-done';
     bottomArea.appendChild(doneArea);
 
+    setStageHeight();
     scaleMult = computeScaleMult();
     startGame();
 
@@ -169,6 +182,7 @@
     flying    = false;
     animating = false;
     drag      = null;
+    setStageHeight();
     scaleMult = computeScaleMult();
 
     setPrompt(false);
@@ -241,6 +255,7 @@
   // ── Resize ─────────────────────────────────────────────────────────────────
 
   function handleResize() {
+    setStageHeight();
     scaleMult = computeScaleMult();
 
     SIZES.forEach(function(s) {
