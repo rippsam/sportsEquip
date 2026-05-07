@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sizing Guide &mdash; Sports Equip</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    #sg-stage {
+      position: relative;
+      width: 100%;
+      height: calc(100vh - 52px);
+      min-height: 560px;
+      background: #000;
+      overflow: hidden;
+      color: #fff;
+      user-select: none;
+    }
+    #sg-prompt {
+      position: absolute;
+      top: 36px;
+      left: 0; right: 0;
+      text-align: center;
+      font-size: 22px;
+      font-weight: 500;
+      letter-spacing: 0.2px;
+      color: #fff;
+      transition: font-size 280ms ease;
+    }
+    #sg-slots {
+      position: absolute;
+      top: 30%;
+      left: 0; right: 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      gap: 12px;
+      padding: 0 24px;
+      flex-wrap: nowrap;
+    }
+    .sg-slot {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 12px 10px 10px;
+      border-radius: 18px;
+      cursor: pointer;
+      transition: background 200ms ease, box-shadow 200ms ease;
+    }
+    .sg-label {
+      margin-top: 14px;
+      height: 22px;
+      font-size: 18px;
+      letter-spacing: 1.5px;
+      font-weight: 600;
+      color: rgba(255,255,255,0);
+      transition: color 300ms ease 120ms;
+    }
+    #sg-bottom {
+      position: absolute;
+      left: 0; right: 0;
+      top: 72%;
+      height: 28%;
+    }
+    #sg-target {
+      position: absolute;
+      left: 50%;
+      top: 0;
+      transform: translate(-50%, 0);
+      transition: transform 240ms cubic-bezier(.4,1.4,.5,1);
+      cursor: grab;
+      touch-action: none;
+      filter: drop-shadow(0 8px 16px rgba(255,255,255,0.08));
+    }
+    #sg-target.sg-dragging {
+      cursor: grabbing;
+      filter: drop-shadow(0 16px 30px rgba(255,255,255,0.18));
+    }
+    .sg-hint {
+      position: absolute;
+      top: -28px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.45);
+      white-space: nowrap;
+      pointer-events: none;
+    }
+    #sg-done {
+      position: absolute;
+      left: 0; right: 0; top: 0;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+    .sg-score {
+      font-size: 14px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.5);
+    }
+    .sg-replay-btn {
+      background: transparent;
+      color: #fff;
+      border: 1.5px solid #fff;
+      padding: 12px 28px;
+      font-size: 15px;
+      font-weight: 500;
+      letter-spacing: 1px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 180ms ease;
+    }
+    .sg-replay-btn:hover { background: rgba(255,255,255,0.1); }
+    @keyframes sg-shake {
+      0%,100% { transform: translate(-50%, 0) rotate(0deg); }
+      15%      { transform: translate(calc(-50% - 14px), 0) rotate(-3deg); }
+      35%      { transform: translate(calc(-50% + 14px), 0) rotate(3deg); }
+      55%      { transform: translate(calc(-50% - 10px), 0) rotate(-2deg); }
+      75%      { transform: translate(calc(-50% + 8px),  0) rotate(1.5deg); }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="nav" id="site-nav"></nav>
+<script src="js/utils.js"></script>
+<script src="js/nav.js"></script>
+
+<div id="sg-stage"></div>
+
+<footer class="footer" id="site-footer"></footer>
+
+<script src="js/api.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/sizing-guide.js"></script>
+<script src="js/footer.js"></script>
+</body>
+</html>
