@@ -26,6 +26,5 @@ document.getElementById('site-footer').innerHTML = [
   '</div>',
   '<div class="footer-bottom">',
   '<p class="footer-copy">Copyright &copy; 2026 Sports Equip Inc.</p>',
-  '<div class="footer-legal"><span>Privacy policy</span><span>Terms of use</span><span>Accessibility</span></div>',
   '</div>'
 ].join('');

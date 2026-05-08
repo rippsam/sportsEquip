@@ -9,6 +9,9 @@
 - Never add `Co-Authored-By: Claude` or any AI attribution to commit messages.
 - Before committing, verify the changes follow all style and architecture rules in this file.
 
+## Check existing code first
+Before proposing or writing any new script, function, or fix — read the relevant existing files. Check `ClassSite/scripts/` before writing a migration or data script; check `js/utils.js` before adding a utility; check existing pages and CSS before adding new patterns. The solution often already exists.
+
 ## Pre-push code review
 Before pushing to GitHub, review the changes and confirm:
 - No shortcuts taken — logic is complete, not approximated.
@@ -26,6 +29,7 @@ Before pushing to GitHub, review the changes and confirm:
 - `product.product_image` is the primary image used on product cards (list views).
 - The product detail gallery calls `GET /products/:id/images` for all images.
 - The card image always matches `sort_order=0` from the `product_images` table — kept in sync by `add-product-images-table.js` in the API repo. If they ever diverge, re-run that script.
+- When deleting images from `ClassSite/Memes/`, re-run `add-product-images-table.js` to rebuild all product image assignments from the current folder. Do not write targeted per-product remaps.
 
 ## CSS zoom
 - `body { zoom: 1.3 }` in `styles.css` is intentional — it simulates 150% browser zoom for development. The responsive breakpoints at 1331px and 998px are deliberate. Do not remove or adjust them.
@@ -48,10 +52,14 @@ Standard pages (full nav + footer, load `js/utils.js` + `js/nav.js` at top of bo
 - `checkout.html` / `js/checkout.js` — checkout form and order summary.
 - `about.html` — static about page.
 - `gift-cards.html` — interactive gift card game page.
+- `sizing-guide.html` / `js/sizing-guide.js` — shirt sizing drag-and-drop game.
+- `faq.html` / `js/faq.js` — FAQ page with Pong game.
+- `order-status.html` — order status page with autoplay video.
 
 Standalone pages (no nav/footer, no shared scripts):
 - `press.html` — white page with long-hold button.
 - `rewards.html` — full-screen rewards gif.
+- `returns.html` — all-black page with warehouse gif and title.
 - `instagram.html`, `twitter.html`, `newsletter.html` — full-screen image/gif pages.
 - `login-success.html` — post-checkout success page with random DataMonsters image.
 
