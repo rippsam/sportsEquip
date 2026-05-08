@@ -1,0 +1,262 @@
+
+<h2 class="sr-only">Interactive cart and checkout flow with field constraints, state dropdown, and auto-filled country</h2>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+.se{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#111;font-size:14px;min-height:100vh;}
+.nav{background:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 40px;height:56px;border-bottom:1px solid #eee;}
+.nav-logo{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:#111;}
+.nav-logo svg{width:24px;height:24px;}
+.nav-links{display:flex;gap:24px;list-style:none;}
+.nav-links a{font-size:13px;color:#444;text-decoration:none;}
+.nav-links a.sale{color:#c00;}
+.nav-right{display:flex;align-items:center;gap:16px;}
+.search-box{border:1px solid #e0e0e0;border-radius:999px;padding:6px 14px;font-size:13px;color:#999;width:180px;}
+.nav-icon{width:20px;height:20px;stroke:#444;fill:none;cursor:pointer;}
+.cart-badge{background:#111;color:#fff;border-radius:50%;width:18px;height:18px;font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:600;}
+.page{display:none;}
+.page.active{display:block;}
+.cart-layout{display:grid;grid-template-columns:1fr 340px;gap:40px;padding:40px 40px 80px;max-width:1300px;margin:0 auto;}
+.cart-title{font-size:32px;font-weight:700;color:#111;margin-bottom:32px;letter-spacing:-1px;}
+.cart-item{display:flex;align-items:center;gap:20px;padding:24px 0;border-bottom:1px solid #eee;}
+.cart-item-img{width:90px;height:90px;border-radius:8px;background:#f0f0ec;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.cart-item-info{flex:1;}
+.cart-item-name{font-size:15px;font-weight:600;color:#111;margin-bottom:4px;}
+.cart-item-price{font-size:13px;color:#888;}
+.cart-item-controls{display:flex;align-items:center;gap:12px;margin-left:auto;}
+.qty-wrap{display:flex;align-items:center;gap:12px;}
+.qty-circle-btn{width:34px;height:34px;border-radius:50%;border:1px solid #ddd;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:300;color:#111;line-height:1;}
+.qty-val{font-size:15px;font-weight:500;min-width:16px;text-align:center;}
+.item-total{font-size:15px;font-weight:600;color:#111;min-width:70px;text-align:right;}
+.remove-btn{background:none;border:none;cursor:pointer;color:#bbb;font-size:18px;padding:4px;line-height:1;}
+.order-summary{background:#f7f7f5;border-radius:14px;padding:28px;height:fit-content;}
+.summary-title{font-size:18px;font-weight:700;color:#111;margin-bottom:20px;}
+.summary-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font-size:14px;}
+.summary-row .label{color:#444;}
+.summary-row .val{color:#111;font-weight:500;}
+.summary-row .free{color:#2a7d4f;font-weight:600;}
+.summary-divider{border:none;border-top:1px solid #e5e5e5;margin:16px 0;}
+.summary-total{display:flex;justify-content:space-between;align-items:center;font-size:16px;font-weight:700;margin-bottom:24px;}
+.checkout-btn{width:100%;background:#111;color:#fff;border:none;border-radius:999px;padding:16px;font-size:15px;font-weight:600;cursor:pointer;}
+.checkout-btn:hover{background:#333;}
+.continue-link{display:block;text-align:center;margin-top:14px;font-size:13px;color:#888;text-decoration:underline;cursor:pointer;}
+.checkout-layout{display:grid;grid-template-columns:1fr 340px;gap:40px;padding:40px 40px 80px;max-width:1300px;margin:0 auto;}
+.back-btn{background:none;border:none;cursor:pointer;font-size:13px;color:#888;display:flex;align-items:center;gap:6px;margin-bottom:28px;padding:0;}
+.back-btn:hover{color:#111;}
+.checkout-title{font-size:28px;font-weight:700;color:#111;margin-bottom:28px;letter-spacing:-0.5px;}
+.section-label{font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#888;margin-bottom:14px;}
+.input-group{margin-bottom:16px;}
+.input-group label{display:block;font-size:13px;font-weight:500;color:#444;margin-bottom:6px;}
+.input-group input, .input-group select{width:100%;border:1px solid #ddd;border-radius:10px;padding:12px 14px;font-size:14px;font-family:inherit;color:#111;outline:none;transition:border-color 0.15s;background:#fff;appearance:none;-webkit-appearance:none;}
+.input-group input:focus, .input-group select:focus{border-color:#111;}
+.input-group input::placeholder{color:#bbb;}
+.input-group input:disabled{background:#f5f5f3;color:#999;cursor:not-allowed;}
+.select-wrap{position:relative;}
+.select-wrap select{padding-right:32px;cursor:pointer;}
+.select-wrap::after{content:"";position:absolute;right:14px;top:50%;transform:translateY(-50%);width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-top:5px solid #888;pointer-events:none;}
+.input-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.divider-row{display:flex;align-items:center;gap:12px;margin:24px 0;}
+.divider-line{flex:1;height:1px;background:#eee;}
+.divider-text{font-size:13px;color:#999;}
+.signin-btn{width:100%;background:#fff;color:#111;border:1px solid #ddd;border-radius:999px;padding:14px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;}
+.signin-btn:hover{border-color:#111;}
+.place-order-btn{width:100%;border:none;border-radius:999px;padding:16px;font-size:15px;font-weight:600;margin-top:28px;font-family:inherit;transition:background 0.2s,color 0.2s;}
+.place-order-btn.disabled{background:#e5e5e5;color:#aaa;cursor:not-allowed;}
+.place-order-btn.enabled{background:#111;color:#fff;cursor:pointer;}
+.place-order-btn.enabled:hover{background:#333;}
+.checkout-summary{background:#f7f7f5;border-radius:14px;padding:28px;height:fit-content;}
+.checkout-summary-item{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
+.checkout-item-img{width:52px;height:52px;border-radius:8px;background:#e8e8e4;flex-shrink:0;display:flex;align-items:center;justify-content:center;position:relative;}
+.checkout-item-badge{position:absolute;top:-6px;right:-6px;background:#888;color:#fff;border-radius:50%;width:18px;height:18px;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+.checkout-item-name{font-size:13px;font-weight:500;color:#111;flex:1;line-height:1.35;}
+.checkout-item-price{font-size:13px;font-weight:600;color:#111;}
+.footer{background:#f7f7f5;border-top:1px solid #eee;padding:40px 40px 28px;}
+.footer-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;max-width:1300px;margin:0 auto 28px;}
+.footer-col-title{font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#111;margin-bottom:12px;}
+.footer-link{display:block;font-size:13px;color:#666;margin-bottom:8px;}
+.footer-bottom{display:flex;justify-content:space-between;max-width:1300px;margin:0 auto;padding-top:20px;border-top:1px solid #eee;}
+.footer-copy{font-size:12px;color:#999;}
+.footer-legal{display:flex;gap:16px;}
+.footer-legal span{font-size:12px;color:#999;}
+</style>
+
+<div class="se">
+  <nav class="nav">
+    <div class="nav-logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+      sports equip
+    </div>
+    <ul class="nav-links">
+      <li><a href="#">All Products</a></li><li><a href="#">Fitness</a></li><li><a href="#">Footwear</a></li><li><a href="#">Apparel</a></li><li><a href="#">Golf</a></li><li><a href="#">Outdoors</a></li><li><a href="#">Fan Shop</a></li><li><a href="#" class="sale">Sale</a></li>
+    </ul>
+    <div class="nav-right">
+      <div class="search-box">Search products...</div>
+      <svg class="nav-icon" viewBox="0 0 20 20"><circle cx="8" cy="6" r="4" stroke-width="1.3"/><path d="M2 18c0-4 2.7-7 6-7s6 3 6 7" stroke-width="1.3" stroke-linecap="round"/></svg>
+      <svg class="nav-icon" viewBox="0 0 20 20"><path d="M3 4h14l-2 9H5L3 4z" stroke-width="1.3" stroke-linejoin="round"/><circle cx="7" cy="16" r="1.2" fill="#444" stroke="none"/><circle cx="13" cy="16" r="1.2" fill="#444" stroke="none"/></svg>
+      <div class="cart-badge">9</div>
+    </div>
+  </nav>
+
+  <!-- CART -->
+  <div id="page-cart" class="page active">
+    <div class="cart-layout">
+      <div>
+        <h1 class="cart-title">Your cart (9 items)</h1>
+        <div class="cart-item">
+          <div class="cart-item-img"><svg width="40" height="40" viewBox="0 0 40 40" fill="none" style="opacity:0.25;"><rect x="2" y="6" width="36" height="28" rx="3" stroke="#111" stroke-width="1.5"/><circle cx="12" cy="16" r="4" stroke="#111" stroke-width="1.5"/><path d="M2 32l10-10 7 7 5-5 10 10" stroke="#111" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="cart-item-info"><p class="cart-item-name">Quest Q64 10 FT. x 10 FT. Slant Leg Instant U</p><p class="cart-item-price">$59.98 each</p></div>
+          <div class="cart-item-controls"><div class="qty-wrap"><button class="qty-circle-btn">&#8722;</button><span class="qty-val">1</span><button class="qty-circle-btn">+</button></div><span class="item-total">$59.98</span><button class="remove-btn">&#10005;</button></div>
+        </div>
+        <div class="cart-item">
+          <div class="cart-item-img"><svg width="40" height="40" viewBox="0 0 40 40" fill="none" style="opacity:0.25;"><rect x="2" y="6" width="36" height="28" rx="3" stroke="#111" stroke-width="1.5"/><circle cx="12" cy="16" r="4" stroke="#111" stroke-width="1.5"/><path d="M2 32l10-10 7 7 5-5 10 10" stroke="#111" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="cart-item-info"><p class="cart-item-name">Quest Q64 10 FT. x 10 FT. Slant Leg Instant U</p><p class="cart-item-price">$59.98 each</p></div>
+          <div class="cart-item-controls"><div class="qty-wrap"><button class="qty-circle-btn">&#8722;</button><span class="qty-val">8</span><button class="qty-circle-btn">+</button></div><span class="item-total">$479.84</span><button class="remove-btn">&#10005;</button></div>
+        </div>
+      </div>
+      <div>
+        <div class="order-summary">
+          <p class="summary-title">Order summary</p>
+          <div class="summary-row"><span class="label">Subtotal</span><span class="val">$539.82</span></div>
+          <div class="summary-row"><span class="label">Shipping</span><span class="free">Free</span></div>
+          <hr class="summary-divider">
+          <div class="summary-total"><span>Total</span><span>$539.82</span></div>
+          <button class="checkout-btn" onclick="goTo('checkout')">Checkout</button>
+          <a class="continue-link">Continue shopping</a>
+        </div>
+      </div>
+    </div>
+    <footer class="footer">
+      <div class="footer-grid">
+        <div><p class="footer-col-title">Shop</p><a class="footer-link">Men's gear</a><a class="footer-link">Women's gear</a><a class="footer-link">Kids' gear</a><a class="footer-link">Equipment</a><a class="footer-link">Sale</a></div>
+        <div><p class="footer-col-title">Support</p><a class="footer-link">Order status</a><a class="footer-link">Returns &amp; exchanges</a><a class="footer-link">Sizing guide</a><a class="footer-link">Contact us</a><a class="footer-link">FAQ</a></div>
+        <div><p class="footer-col-title">Company</p><a class="footer-link">About</a><a class="footer-link">Careers</a><a class="footer-link">Rewards</a><a class="footer-link">Gift cards</a><a class="footer-link">Press</a></div>
+        <div><p class="footer-col-title">Stay connected</p><a class="footer-link">Instagram</a><a class="footer-link">X / Twitter</a><a class="footer-link">YouTube</a><a class="footer-link">Newsletter</a></div>
+      </div>
+      <div class="footer-bottom"><p class="footer-copy">Copyright &copy; 2026 Sports Equip Inc.</p><div class="footer-legal"><span>Privacy policy</span><span>Terms of use</span><span>Accessibility</span></div></div>
+    </footer>
+  </div>
+
+  <!-- CHECKOUT -->
+  <div id="page-checkout" class="page">
+    <div class="checkout-layout">
+      <div class="checkout-main">
+        <button class="back-btn" onclick="goTo('cart')">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 3L5 8l5 5"/></svg>
+          Back to cart
+        </button>
+        <h1 class="checkout-title">Checkout</h1>
+
+        <p class="section-label">Contact information</p>
+        <div class="input-group">
+          <label>Full name</label>
+          <input id="f-name" type="text" placeholder="Jane Smith" maxlength="30" oninput="validate()">
+        </div>
+
+        <p class="section-label" style="margin-top:24px;">Shipping address</p>
+        <div class="input-group">
+          <label>Street address</label>
+          <input id="f-street" type="text" placeholder="123 Main St" maxlength="40" oninput="validate()">
+        </div>
+        <div class="input-group">
+          <label>Apt, suite, etc. <span style="color:#bbb;font-weight:400;">(optional)</span></label>
+          <input id="f-apt" type="text" placeholder="Apt 4B" maxlength="30">
+        </div>
+        <div class="input-row">
+          <div class="input-group">
+            <label>City</label>
+            <input id="f-city" type="text" placeholder="Salt Lake City" maxlength="30" oninput="validate()">
+          </div>
+          <div class="input-group">
+            <label>State</label>
+            <div class="select-wrap">
+              <select id="f-state" onchange="validate()">
+                <option value="">Select state</option>
+                <option>AL</option><option>AK</option><option>AZ</option><option>AR</option><option>CA</option>
+                <option>CO</option><option>CT</option><option>DE</option><option>FL</option><option>GA</option>
+                <option>HI</option><option>ID</option><option>IL</option><option>IN</option><option>IA</option>
+                <option>KS</option><option>KY</option><option>LA</option><option>ME</option><option>MD</option>
+                <option>MA</option><option>MI</option><option>MN</option><option>MS</option><option>MO</option>
+                <option>MT</option><option>NE</option><option>NV</option><option>NH</option><option>NJ</option>
+                <option>NM</option><option>NY</option><option>NC</option><option>ND</option><option>OH</option>
+                <option>OK</option><option>OR</option><option>PA</option><option>RI</option><option>SC</option>
+                <option>SD</option><option>TN</option><option>TX</option><option>UT</option><option>VT</option>
+                <option>VA</option><option>WA</option><option>WV</option><option>WI</option><option>WY</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="input-group">
+            <label>ZIP code</label>
+            <input id="f-zip" type="text" placeholder="84101" maxlength="5" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'');validate()">
+          </div>
+          <div class="input-group">
+            <label>Country</label>
+            <input type="text" value="USA" disabled>
+          </div>
+        </div>
+
+        <div class="divider-row">
+          <div class="divider-line"></div>
+          <span class="divider-text">Or sign in</span>
+          <div class="divider-line"></div>
+        </div>
+        <button class="signin-btn">Sign in to your account</button>
+        <button id="place-order-btn" class="place-order-btn disabled" disabled>Place order &rarr;</button>
+      </div>
+
+      <div>
+        <div class="checkout-summary">
+          <p class="summary-title">Order summary</p>
+          <div class="checkout-summary-item">
+            <div class="checkout-item-img"><svg width="28" height="28" viewBox="0 0 28 28" fill="none" style="opacity:0.25;"><rect x="1" y="4" width="26" height="20" rx="2" stroke="#111" stroke-width="1.5"/><circle cx="8" cy="11" r="3" stroke="#111" stroke-width="1.5"/><path d="M1 22l7-7 5 5 4-4 7 7" stroke="#111" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="checkout-item-badge">1</span></div>
+            <span class="checkout-item-name">Quest Q64 10 FT. x 10 FT. Slant Leg Instant U</span>
+            <span class="checkout-item-price">$59.98</span>
+          </div>
+          <div class="checkout-summary-item">
+            <div class="checkout-item-img"><svg width="28" height="28" viewBox="0 0 28 28" fill="none" style="opacity:0.25;"><rect x="1" y="4" width="26" height="20" rx="2" stroke="#111" stroke-width="1.5"/><circle cx="8" cy="11" r="3" stroke="#111" stroke-width="1.5"/><path d="M1 22l7-7 5 5 4-4 7 7" stroke="#111" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="checkout-item-badge">8</span></div>
+            <span class="checkout-item-name">Quest Q64 10 FT. x 10 FT. Slant Leg Instant U</span>
+            <span class="checkout-item-price">$479.84</span>
+          </div>
+          <hr class="summary-divider">
+          <div class="summary-row"><span class="label">Subtotal</span><span class="val">$539.82</span></div>
+          <div class="summary-row"><span class="label">Shipping</span><span class="free">Free</span></div>
+          <hr class="summary-divider">
+          <div class="summary-total"><span>Total</span><span>$539.82</span></div>
+        </div>
+      </div>
+    </div>
+    <footer class="footer">
+      <div class="footer-grid">
+        <div><p class="footer-col-title">Shop</p><a class="footer-link">Men's gear</a><a class="footer-link">Women's gear</a><a class="footer-link">Kids' gear</a><a class="footer-link">Equipment</a><a class="footer-link">Sale</a></div>
+        <div><p class="footer-col-title">Support</p><a class="footer-link">Order status</a><a class="footer-link">Returns &amp; exchanges</a><a class="footer-link">Sizing guide</a><a class="footer-link">Contact us</a><a class="footer-link">FAQ</a></div>
+        <div><p class="footer-col-title">Company</p><a class="footer-link">About</a><a class="footer-link">Careers</a><a class="footer-link">Rewards</a><a class="footer-link">Gift cards</a><a class="footer-link">Press</a></div>
+        <div><p class="footer-col-title">Stay connected</p><a class="footer-link">Instagram</a><a class="footer-link">X / Twitter</a><a class="footer-link">YouTube</a><a class="footer-link">Newsletter</a></div>
+      </div>
+      <div class="footer-bottom"><p class="footer-copy">Copyright &copy; 2026 Sports Equip Inc.</p><div class="footer-legal"><span>Privacy policy</span><span>Terms of use</span><span>Accessibility</span></div></div>
+    </footer>
+  </div>
+</div>
+
+<script>
+function goTo(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function validate() {
+  const name   = document.getElementById('f-name').value.trim();
+  const street = document.getElementById('f-street').value.trim();
+  const city   = document.getElementById('f-city').value.trim();
+  const state  = document.getElementById('f-state').value;
+  const zip    = document.getElementById('f-zip').value.trim();
+  const allFilled = name && street && city && state && zip.length === 5;
+  const btn = document.getElementById('place-order-btn');
+  if (allFilled) {
+    btn.classList.remove('disabled'); btn.classList.add('enabled'); btn.disabled = false;
+  } else {
+    btn.classList.remove('enabled'); btn.classList.add('disabled'); btn.disabled = true;
+  }
+}
+</script>

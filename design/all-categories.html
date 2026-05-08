@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>All Categories — Sports Equip</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black: #111111;
+      --white: #ffffff;
+      --gray-50: #f7f7f5;
+      --gray-100: #f0f0ec;
+      --gray-200: #e8e8e6;
+      --gray-300: #e5e5e5;
+      --gray-400: #cccccc;
+      --gray-500: #999999;
+      --gray-600: #666666;
+      --gray-700: #444444;
+      --red: #cc0000;
+      --font: 'DM Sans', system-ui, -apple-system, sans-serif;
+    }
+
+    html { font-size: 14px; }
+
+    body {
+      font-family: var(--font);
+      background: var(--white);
+      color: var(--black);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { text-decoration: none; color: inherit; }
+
+    /* ── NAV ── */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.97);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      height: 52px;
+      border-bottom: 0.5px solid var(--gray-300);
+    }
+
+    .nav-logo {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--black);
+      letter-spacing: -0.5px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 24px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 13px;
+      color: var(--gray-700);
+      transition: color 0.15s;
+    }
+
+    .nav-links a:hover { color: var(--black); }
+    .nav-links a.sale { color: var(--red); }
+    .nav-links a.active { color: var(--black); font-weight: 600; }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .nav-icon-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--gray-700);
+      display: flex;
+      align-items: center;
+      padding: 4px;
+      border-radius: 6px;
+      transition: color 0.15s, background 0.15s;
+    }
+
+    .nav-icon-btn:hover {
+      color: var(--black);
+      background: var(--gray-50);
+    }
+
+    /* ── HERO ── */
+    .hero-strip {
+      background: var(--black);
+      padding: 52px 40px 48px;
+    }
+
+    .hero-eyebrow {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #888;
+      margin-bottom: 12px;
+    }
+
+    .hero-title {
+      font-size: 46px;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: -2px;
+      line-height: 1.0;
+    }
+
+    /* ── MAIN ── */
+    .main {
+      padding: 44px 40px 72px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* ── SALE BANNER ── */
+    .sale-banner {
+      background: var(--black);
+      border-radius: 14px;
+      padding: 26px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 52px;
+      gap: 24px;
+    }
+
+    .sale-eyebrow {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #888;
+      margin-bottom: 6px;
+    }
+
+    .sale-heading {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: -0.5px;
+    }
+
+    .sale-sub {
+      font-size: 13px;
+      color: #999;
+      margin-top: 5px;
+    }
+
+    .sale-btn {
+      background: var(--white);
+      color: var(--black);
+      font-family: var(--font);
+      font-size: 13px;
+      font-weight: 700;
+      border: none;
+      border-radius: 999px;
+      padding: 11px 24px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    .sale-btn:hover { background: #f0f0f0; }
+    .sale-btn:active { transform: scale(0.98); }
+
+    /* ── DEPT BLOCK ── */
+    .dept-block { margin-bottom: 52px; }
+
+    .dept-header {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .dept-name {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--black);
+      letter-spacing: -0.5px;
+      white-space: nowrap;
+    }
+
+    .dept-count {
+      font-size: 12px;
+      color: var(--gray-500);
+      white-space: nowrap;
+    }
+
+    .dept-divider {
+      flex: 1;
+      height: 0.5px;
+      background: var(--gray-300);
+      margin-left: 4px;
+    }
+
+    /* ── CATEGORY GRID ── */
+    .cat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+      gap: 10px;
+    }
+
+    .cat-card {
+      background: var(--gray-50);
+      border: 0.5px solid var(--gray-200);
+      border-radius: 10px;
+      padding: 16px 18px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: background 0.15s, border-color 0.15s, transform 0.1s;
+      text-decoration: none;
+    }
+
+    .cat-card:hover {
+      background: var(--gray-100);
+      border-color: var(--gray-400);
+    }
+
+    .cat-card:active { transform: scale(0.98); }
+
+    .cat-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 7px;
+      background: var(--black);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .cat-icon svg {
+      width: 15px;
+      height: 15px;
+      stroke: var(--white);
+      fill: none;
+      stroke-width: 1.3;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .cat-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--black);
+      line-height: 1.3;
+    }
+
+    .cat-sub {
+      font-size: 11.5px;
+      color: var(--gray-500);
+      line-height: 1.4;
+    }
+
+    /* ── FOOTER ── */
+    .footer {
+      background: var(--gray-50);
+      border-top: 0.5px solid var(--gray-300);
+      padding: 44px 40px 28px;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 32px;
+      max-width: 1200px;
+      margin: 0 auto 36px;
+    }
+
+    .footer-col-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--black);
+      margin-bottom: 14px;
+    }
+
+    .footer-link {
+      display: block;
+      font-size: 13px;
+      color: var(--gray-600);
+      margin-bottom: 10px;
+      transition: color 0.15s;
+    }
+
+    .footer-link:hover { color: var(--black); }
+
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 24px;
+      border-top: 0.5px solid var(--gray-300);
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .footer-copy {
+      font-size: 12px;
+      color: var(--gray-500);
+    }
+
+    .footer-legal {
+      display: flex;
+      gap: 20px;
+    }
+
+    .footer-legal span {
+      font-size: 12px;
+      color: var(--gray-500);
+      cursor: pointer;
+      transition: color 0.15s;
+    }
+
+    .footer-legal span:hover { color: var(--black); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .nav { padding: 0 20px; }
+      .nav-links { display: none; }
+      .hero-strip { padding: 36px 20px 32px; }
+      .hero-title { font-size: 34px; }
+      .main { padding: 28px 20px 48px; }
+      .sale-banner { flex-direction: column; align-items: flex-start; gap: 16px; }
+      .cat-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
+      .footer { padding: 32px 20px 24px; }
+      .footer-grid { grid-template-columns: repeat(2, 1fr); gap: 24px; }
+      .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+      .footer-legal { flex-wrap: wrap; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <a class="nav-logo" href="index.html">Sports Equip</a>
+    <ul class="nav-links">
+      <li><a href="all-products.html">All Products</a></li>
+      <li><a href="index.html?dept=2">Fitness</a></li>
+      <li><a href="index.html?dept=3">Footwear</a></li>
+      <li><a href="index.html?dept=4">Apparel</a></li>
+      <li><a href="index.html?dept=5">Golf</a></li>
+      <li><a href="index.html?dept=6">Outdoors</a></li>
+      <li><a href="index.html?dept=7">Fan Shop</a></li>
+      <li><a href="sale.html" class="sale">Sale</a></li>
+    </ul>
+    <div class="nav-right">
+      <button class="nav-icon-btn" aria-label="Search">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2">
+          <circle cx="6.5" cy="6.5" r="4.5"/>
+          <line x1="10.2" y1="10.2" x2="14" y2="14" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <button class="nav-icon-btn" aria-label="Account">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2">
+          <circle cx="8" cy="5" r="3"/>
+          <path d="M2 14c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <button class="nav-icon-btn" aria-label="Cart">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2">
+          <path d="M2 3h12l-1.5 8H3.5L2 3z" stroke-linejoin="round"/>
+          <circle cx="5.5" cy="13" r="1" fill="currentColor" stroke="none"/>
+          <circle cx="10.5" cy="13" r="1" fill="currentColor" stroke="none"/>
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero-strip">
+    <p class="hero-eyebrow">Browse</p>
+    <h1 class="hero-title">All categories</h1>
+  </div>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- SALE BANNER -->
+    <div class="sale-banner">
+      <div>
+        <p class="sale-eyebrow">Limited time</p>
+        <p class="sale-heading">Up to 40% off select gear</p>
+        <p class="sale-sub">New markdowns added daily across all departments</p>
+      </div>
+      <button class="sale-btn">Shop sale →</button>
+    </div>
+
+    <!-- FITNESS -->
+    <div class="dept-block">
+      <div class="dept-header">
+        <span class="dept-name">Fitness</span>
+        <span class="dept-count">8 categories</span>
+        <div class="dept-divider"></div>
+      </div>
+      <div class="cat-grid">
+        <a class="cat-card" href="index.html?dept=2&cat=football">
+          <div class="cat-icon"><svg viewBox="0 0 16 16"><ellipse cx="8" cy="8" rx="5" ry="3.5"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="8" y1="4.5" x2="8" y2="11.5"/></svg></div>
+          <span class="cat-label">Football</span>
+          <span class="cat-sub">Helmets, pads &amp; balls</span>
+        </a>
+        <a class="cat-card" href="index.html?dept=2&cat=soccer">
+          <div class="cat-icon"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="5"/><path d="M8 3.5L9.5 6h3L10.5 8l1 3L8 9.5 4.5 11l1-3L3.5 6h3z"/></svg></div>
+          <span class="cat-label">Soccer</span>
+          <span class="cat-sub">Balls, goals &amp; gear</span>
+        </a>
+        <a class="cat-card" href="index.html?dept=2&cat=baseball">
+          <div class="cat-icon"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="5"/><path d="M5.5 5.5c.5 1 .5 4 0 5M10.5 5.5c-.5 1-.5 4 0 5"/></svg></div>
+          <span class="cat-label">Baseball &amp; Softball</span>
+          <span class="cat-sub">Bats, gloves &amp; more</span>
+        </a>
+        <a class="cat-card" href="index.html?dept=2&cat=basketball">
+          <div class="cat-icon"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="5"/><path d="M3 8h10M8 3v10M5 4.5C6 6 6 10 5 11.5M11 4.5C10 6 10 10 11 11.5"/></svg></div>
+          <span class="cat-label">Basketball</span>
+          <span class="cat-sub">Balls, hoops &amp; nets</span>
+        </a>
+        <a class="cat-card" href="index.html?dept=2&cat=lacrosse">
+          <div class="cat-icon"><svg viewBox="0 0 16 16"><circle cx="5" cy="4" r="2"/><line x1="6.5" y1="5.5" x2="13" y2="13"/><path d="M11 10l2 3-3-2"/></svg></div>
+          <span class="cat-label">Lacrosse</span>
+          <span class="cat-sub">Sticks &amp; protective</span>
+        </a>
+        <a class="cat-card" href="index.html?dept=2&cat=tennis">
+          <div class="cat-icon"><svg viewBox="0 0 16 16"><ellipse cx="8" cy="8" rx="5" ry="5" transform="rotate(45 8 8)"/><line x1="4" y1="4" x2="12" y2="12"/><line x1="12" y1="4" x2="4" y2="12"/></svg></div>
+          <span class="cat-label">Tennis &amp; Racquet</span>
+          <span class="cat-sub">Rackets, balls &amp; bags</span>
+        </a>
+        <a class="cat-card" href="index.html?dept=2&cat=hockey">
+          <div class="cat-icon"><svg viewBox="0 0 16 16"><path d="M4 3l2 10h4l2-10"/><line x1="3" y1="13" x2="13" y2="13"/></svg></div>
+          <span class="cat-label">Hockey</span>
+          <span class="cat-sub">Sticks, pads &amp; skates</span>
+        </a>
+        <a class="cat-card" href="index.html?dept=2&cat=more">
+          <div class="cat-icon"><svg viewBox="0 0 16 16"><circle cx="5" cy="8" r="1.2" fill="white" stroke="none"/><circle cx="8" cy="8" r="1.2" fill="white" stroke="none"/><circle cx="11" cy="8" r="1.2" fill="white" stroke="none"/></svg></div>
+          <span class="cat-label">More Sports</span>
+          <span class="cat-sub">All other sports</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- FOOTWEAR -->
+    <div class="dept-block">
+      <div class="dept-header">
+        <span class="dept-name">Footwear</span>
+        <span class="dept-count">6 categories</span>
+        <div class="dept-divider"></div>
+      </div>
+      <div class="cat-grid">
+        <a class="cat-card" href="index.html?dept=3&cat=mens">
+          <span class="cat-label">Men's Footwear</span>
+          <span class="cat-sub">Sneakers &amp; training</span>
+        </a>
+        <a class="cat-card" href="index.html?dept=3&cat=womens">
+          <span class="cat-label">Women's Footwear</span>
+          <span class="cat-sub">Running &amp; lifestyle</span>
+        </a>
+        <a class="cat-card" href="index.html?dept=3&cat=kids">
+          <span class="cat-label">Kids' Footwear</span>
+          <span class="cat-sub">All ages &amp; sports</span>
+        </a>
+        <a class="cat-card" href="index.html?dept=3&cat=cleats">
+          <span class="cat-label">Cleats</span>
+          <span class="cat-sub">Football, soccer &amp; more</span>
+        </a>
+        <a class="cat-card" href="index.html?dept=3&cat=featured">
+          <span class="cat-label">Featured Shops</span>
+          <span class="cat-sub">Curated collections</span>
+        </a>
+        <a class="cat-card" href="index.html?dept=3&cat=accessories">
+          <span class="cat-label">Accessories</span>
+          <span class="cat-sub">Socks, laces &amp; care</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- APPAREL -->
+    <div class="dept-block">
+      <div class="dept-header">
+        <span class="dept-name">Apparel</span>
+        <span class="dept-count">7 categories</span>
+        <div class="dept-divider"></div>
+      </div>
+      <div class="cat-grid">
+        <a class="cat-card" href="index.html?dept=4&cat=mens">
+          <span class="cat-label">Men's Apparel</span>
+          <span class="cat-sub">Tops, bottoms &amp; outerwear</span>
+        </a>
+        <a class="cat-card" href="index.html?dept=4&cat=womens">
+          <span class="cat-label">Women's Apparel</span>
+          <span class="cat-sub">Active &amp; lifestyle</span>
+        </a>
+        <a class="cat-card" href="index.html?dept=4&cat=boys">
+          <span class="cat-label">Boys' Apparel</span>
+          <span class="cat-sub">Youth sizes</span>
+        </a>
+        <a class="cat-card" href="index.html?dept=4&cat=girls">
+          <span class="cat-label">Girls' Apparel</span>
+          <span class="cat-sub">Youth sizes</span>
+        </a>
+        <a class="cat-card" href="index.html?dept=4&cat=accessories">
+          <span class="cat-label">Accessories</span>
+          <span class="cat-sub">Hats, bags &amp; belts</span>
+        </a>
+        <a class="cat-card" href="index.html?dept=4&cat=brands">
+          <span class="cat-label">Top Brands</span>
+          <span class="cat-sub">Nike, Adidas &amp; more</span>
+        </a>
+        <a class="cat-card" href="index.html?dept=4&cat=sport">
+          <span class="cat-label">Shop By Sport</span>
+          <span class="cat-sub">Sport-specific fits</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- GOLF -->
+    <div class="dept-block">
+      <div class="dept-header">
+        <span class="dept-name">Golf</span>
+        <span class="dept-count">11 categories</span>
+        <div class="dept-divider"></div>
+      </div>
+      <div class="cat-grid">
+        <a class="cat-card" href="index.html?dept=5&cat=mens-clubs">
+          <span class="cat-label">Men's Golf Clubs</span>
+          <span class="cat-sub">Drivers, irons &amp; sets</span>
+        </a>
+        <a class="cat-card" href="index.html?dept=5&cat=womens-clubs">
+          <span class="cat-label">Women's Golf Clubs</span>
+          <span class="cat-sub">Full sets &amp; singles</span>
+        </a>
+        <a class="cat-card" href="index.html?dept=5&cat=apparel">
+          <span class="cat-label">Golf Apparel</span>
+          <span class="cat-sub">Polos, pants &amp; more</span>
+        </a>
+        <a class="cat-card" href="index.html?dept=5&cat=shoes">
+          <span class="cat-label">Golf Shoes</span>
+          <span class="cat-sub">Spiked &amp; spikeless</span>
+        </a>
+        <a class="cat-card" href="index.html?dept=5&cat=bags">
+          <span class="cat-label">Golf Bags &amp; Carts</span>
+          <span class="cat-sub">Carry, cart &amp; staff</span>
+        </a>
+        <a class="cat-card" href="index.html?dept=5&cat=balls">
+          <span class="cat-label">Golf Balls</span>
+          <span class="cat-sub">All levels &amp; brands</span>
+        </a>
+        <a class="cat-card" href="index.html?dept=5&cat=gloves">
+          <span class="cat-label">Golf Gloves</span>
+          <span class="cat-sub">Men's &amp; women's</span>
+        </a>
+        <a class="cat-card" href="index.html?dept=5&cat=electronics">
+          <span class="cat-label">Electronics</span>
+          <span class="cat-sub">GPS &amp; rangefinders</span>
+        </a>
+        <a class="cat-card" href="index.html?dept=5&cat=kids">
+          <span class="cat-label">Kids' Golf Clubs</span>
+          <span class="cat-sub">Junior sets</span>
+        </a>
+        <a class="cat-card" href="index.html?dept=5&cat=accessories">
+          <span class="cat-label">Accessories</span>
+          <span class="cat-sub">Tees, towels &amp; more</span>
+        </a>
+        <a class="cat-card" href="index.html?dept=5&cat=tradein">
+          <span class="cat-label">Trade-In</span>
+          <span class="cat-sub">Sell your old clubs</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- OUTDOORS -->
+    <div class="dept-block">
+      <div class="dept-header">
+        <span class="dept-name">Outdoors</span>
+        <span class="dept-count">7 categories</span>
+        <div class="dept-divider"></div>
+      </div>
+      <div class="cat-grid">
+        <a class="cat-card" href="index.html?dept=6&cat=bike">
+          <span class="cat-label">Bike &amp; Skate</span>
+          <span class="cat-sub">Helmets, boards &amp; pads</span>
+        </a>
+        <a class="cat-card" href="index.html?dept=6&cat=camping">
+          <span class="cat-label">Camping &amp; Hiking</span>
+          <span class="cat-sub">Tents, packs &amp; gear</span>
+        </a>
+        <a class="cat-card" href="index.html?dept=6&cat=hunting">
+          <span class="cat-label">Hunting &amp; Shooting</span>
+          <span class="cat-sub">Archery &amp; accessories</span>
+        </a>
+        <a class="cat-card" href="index.html?dept=6&cat=fishing">
+          <span class="cat-label">Fishing</span>
+          <span class="cat-sub">Rods, reels &amp; tackle</span>
+        </a>
+        <a class="cat-card" href="index.html?dept=6&cat=games">
+          <span class="cat-label">Indoor/Outdoor Games</span>
+          <span class="cat-sub">Lawn, pool &amp; more</span>
+        </a>
+        <a class="cat-card" href="index.html?dept=6&cat=boating">
+          <span class="cat-label">Boating</span>
+          <span class="cat-sub">Life jackets &amp; gear</span>
+        </a>
+        <a class="cat-card" href="index.html?dept=6&cat=watersports">
+          <span class="cat-label">Water Sports</span>
+          <span class="cat-sub">Surfing, kayaking &amp; more</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- FAN SHOP -->
+    <div class="dept-block">
+      <div class="dept-header">
+        <span class="dept-name">Fan Shop</span>
+        <span class="dept-count">4 categories</span>
+        <div class="dept-divider"></div>
+      </div>
+      <div class="cat-grid">
+        <a class="cat-card" href="index.html?dept=7&cat=nfl">
+          <span class="cat-label">NFL</span>
+          <span class="cat-sub">Jerseys &amp; merch</span>
+        </a>
+        <a class="cat-card" href="index.html?dept=7&cat=nba">
+          <span class="cat-label">NBA</span>
+          <span class="cat-sub">Jerseys &amp; merch</span>
+        </a>
+        <a class="cat-card" href="index.html?dept=7&cat=mlb">
+          <span class="cat-label">MLB</span>
+          <span class="cat-sub">Jerseys &amp; merch</span>
+        </a>
+        <a class="cat-card" href="index.html?dept=7&cat=college">
+          <span class="cat-label">College</span>
+          <span class="cat-sub">Team gear</span>
+        </a>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-grid">
+      <div>
+        <p class="footer-col-title">Shop</p>
+        <a href="index.html?dept=5" class="footer-link">Men's gear</a>
+        <a href="index.html?dept=5" class="footer-link">Women's gear</a>
+        <a href="index.html?dept=5" class="footer-link">Kids' gear</a>
+        <a href="index.html?dept=2" class="footer-link">Equipment</a>
+        <a href="sale.html" class="footer-link">Sale</a>
+      </div>
+      <div>
+        <p class="footer-col-title">Support</p>
+        <a href="#" class="footer-link">Order status</a>
+        <a href="#" class="footer-link">Returns &amp; exchanges</a>
+        <a href="#" class="footer-link">Sizing guide</a>
+        <a href="#" class="footer-link">Contact us</a>
+        <a href="#" class="footer-link">FAQ</a>
+      </div>
+      <div>
+        <p class="footer-col-title">Company</p>
+        <a href="#" class="footer-link">About</a>
+        <a href="#" class="footer-link">Careers</a>
+        <a href="#" class="footer-link">Rewards</a>
+        <a href="#" class="footer-link">Gift cards</a>
+        <a href="#" class="footer-link">Press</a>
+      </div>
+      <div>
+        <p class="footer-col-title">Stay connected</p>
+        <a href="#" class="footer-link">Instagram</a>
+        <a href="#" class="footer-link">X / Twitter</a>
+        <a href="#" class="footer-link">YouTube</a>
+        <a href="#" class="footer-link">Newsletter</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copy">Copyright © 2026 Sports Equip Inc.</p>
+      <div class="footer-legal">
+        <span>Privacy policy</span>
+        <span>Terms of use</span>
+        <span>Accessibility</span>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout — Sports Equip</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #fff;
+      color: #111;
+      font-size: 14px;
+      min-height: 100vh;
+    }
+
+    .checkout-layout {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 40px;
+      padding: 40px 40px 80px;
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+
+    .back-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 13px;
+      color: #888;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 28px;
+      padding: 0;
+      font-family: inherit;
+    }
+
+    .back-btn:hover { color: #111; }
+
+    .checkout-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #111;
+      margin-bottom: 28px;
+      letter-spacing: -0.5px;
+    }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #888;
+      margin-bottom: 14px;
+    }
+
+    .input-group { margin-bottom: 16px; }
+
+    .input-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: #444;
+      margin-bottom: 6px;
+    }
+
+    .input-group input,
+    .input-group select {
+      width: 100%;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 14px;
+      font-family: inherit;
+      color: #111;
+      background: #fff;
+      outline: none;
+      transition: border-color 0.15s;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    .input-group input:focus,
+    .input-group select:focus { border-color: #111; }
+
+    .input-group input::placeholder { color: #bbb; }
+
+    .input-group input:disabled {
+      background: #f5f5f3;
+      color: #999;
+      cursor: not-allowed;
+    }
+
+    .select-wrap { position: relative; }
+
+    .select-wrap::after {
+      content: "";
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 0;
+      height: 0;
+      border-left: 4px solid transparent;
+      border-right: 4px solid transparent;
+      border-top: 5px solid #888;
+      pointer-events: none;
+    }
+
+    .select-wrap select { padding-right: 36px; cursor: pointer; }
+
+    .input-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .divider-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 24px 0;
+    }
+
+    .divider-line { flex: 1; height: 1px; background: #eee; }
+    .divider-text { font-size: 13px; color: #999; }
+
+    .signin-btn {
+      width: 100%;
+      background: #fff;
+      color: #111;
+      border: 1px solid #ddd;
+      border-radius: 999px;
+      padding: 14px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: border-color 0.15s, background 0.15s;
+    }
+
+    .signin-btn:hover { border-color: #111; background: #f7f7f7; }
+
+    .place-order-btn {
+      width: 100%;
+      border: none;
+      border-radius: 999px;
+      padding: 16px;
+      font-size: 15px;
+      font-weight: 600;
+      margin-top: 28px;
+      font-family: inherit;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .place-order-btn.disabled {
+      background: #e5e5e5;
+      color: #aaa;
+      cursor: not-allowed;
+    }
+
+    .place-order-btn.enabled {
+      background: #111;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .place-order-btn.enabled:hover { background: #333; }
+
+    /* ORDER SUMMARY */
+    .checkout-summary {
+      background: #f7f7f5;
+      border-radius: 14px;
+      padding: 28px;
+      height: fit-content;
+      position: sticky;
+      top: 20px;
+    }
+
+    .summary-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #111;
+      margin-bottom: 20px;
+    }
+
+    .checkout-summary-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .checkout-item-img {
+      width: 52px;
+      height: 52px;
+      border-radius: 8px;
+      background: #e8e8e4;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .checkout-item-badge {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      background: #888;
+      color: #fff;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      font-size: 10px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .checkout-item-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: #111;
+      flex: 1;
+      line-height: 1.35;
+    }
+
+    .checkout-item-price {
+      font-size: 13px;
+      font-weight: 600;
+      color: #111;
+    }
+
+    .summary-divider {
+      border: none;
+      border-top: 1px solid #e5e5e5;
+      margin: 16px 0;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      font-size: 14px;
+    }
+
+    .summary-row .label { color: #444; }
+    .summary-row .val { color: #111; font-weight: 500; }
+    .summary-row .free { color: #2a7d4f; font-weight: 600; }
+
+    .summary-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    @media (max-width: 768px) {
+      .checkout-layout { grid-template-columns: 1fr; padding: 24px 20px 48px; }
+      .input-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="checkout-layout">
+
+  <!-- FORM -->
+  <div>
+    <button class="back-btn" onclick="history.back()">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 3L5 8l5 5"/></svg>
+      Back to cart
+    </button>
+
+    <h1 class="checkout-title">Checkout</h1>
+
+    <p class="section-label">Contact information</p>
+    <div class="input-group">
+      <label>Full name</label>
+      <input id="f-name" type="text" placeholder="Jane Smith" maxlength="30" autocomplete="name" oninput="validate()">
+    </div>
+
+    <p class="section-label" style="margin-top:24px;">Shipping address</p>
+    <div class="input-group">
+      <label>Street address</label>
+      <input id="f-street" type="text" placeholder="123 Main St" maxlength="40" autocomplete="street-address" oninput="validate()">
+    </div>
+    <div class="input-group">
+      <label>Apt, suite, etc. <span style="color:#bbb;font-weight:400;">(optional)</span></label>
+      <input id="f-apt" type="text" placeholder="Apt 4B" maxlength="30" autocomplete="address-line2">
+    </div>
+    <div class="input-row">
+      <div class="input-group">
+        <label>City</label>
+        <input id="f-city" type="text" placeholder="Salt Lake City" maxlength="30" autocomplete="address-level2" oninput="validate()">
+      </div>
+      <div class="input-group">
+        <label>State</label>
+        <div class="select-wrap">
+          <select id="f-state" autocomplete="address-level1" onchange="validate()">
+            <option value="">Select state</option>
+            <option>AL</option><option>AK</option><option>AZ</option><option>AR</option><option>CA</option>
+            <option>CO</option><option>CT</option><option>DE</option><option>FL</option><option>GA</option>
+            <option>HI</option><option>ID</option><option>IL</option><option>IN</option><option>IA</option>
+            <option>KS</option><option>KY</option><option>LA</option><option>ME</option><option>MD</option>
+            <option>MA</option><option>MI</option><option>MN</option><option>MS</option><option>MO</option>
+            <option>MT</option><option>NE</option><option>NV</option><option>NH</option><option>NJ</option>
+            <option>NM</option><option>NY</option><option>NC</option><option>ND</option><option>OH</option>
+            <option>OK</option><option>OR</option><option>PA</option><option>RI</option><option>SC</option>
+            <option>SD</option><option>TN</option><option>TX</option><option>UT</option><option>VT</option>
+            <option>VA</option><option>WA</option><option>WV</option><option>WI</option><option>WY</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="input-row">
+      <div class="input-group">
+        <label>ZIP code</label>
+        <input id="f-zip" type="text" placeholder="84101" maxlength="5" inputmode="numeric" autocomplete="postal-code" oninput="this.value=this.value.replace(/[^0-9]/g,'');validate()">
+      </div>
+      <div class="input-group">
+        <label>Country</label>
+        <input type="text" value="USA" disabled autocomplete="country-name">
+      </div>
+    </div>
+
+    <div class="divider-row">
+      <div class="divider-line"></div>
+      <span class="divider-text">Or sign in</span>
+      <div class="divider-line"></div>
+    </div>
+
+    <button class="signin-btn" type="button">Sign in to your account</button>
+    <button id="place-order-btn" class="place-order-btn disabled" disabled type="button">Place order &rarr;</button>
+  </div>
+
+  <!-- ORDER SUMMARY -->
+  <div>
+    <div class="checkout-summary">
+      <p class="summary-title">Order summary</p>
+      <div class="checkout-summary-item">
+        <div class="checkout-item-img">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" style="opacity:0.25;"><rect x="1" y="4" width="26" height="20" rx="2" stroke="#111" stroke-width="1.5"/><circle cx="8" cy="11" r="3" stroke="#111" stroke-width="1.5"/><path d="M1 22l7-7 5 5 4-4 7 7" stroke="#111" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="checkout-item-badge">1</span>
+        </div>
+        <span class="checkout-item-name">Quest Q64 10 FT. x 10 FT. Slant Leg Instant U</span>
+        <span class="checkout-item-price">$59.98</span>
+      </div>
+      <div class="checkout-summary-item">
+        <div class="checkout-item-img">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" style="opacity:0.25;"><rect x="1" y="4" width="26" height="20" rx="2" stroke="#111" stroke-width="1.5"/><circle cx="8" cy="11" r="3" stroke="#111" stroke-width="1.5"/><path d="M1 22l7-7 5 5 4-4 7 7" stroke="#111" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="checkout-item-badge">8</span>
+        </div>
+        <span class="checkout-item-name">Quest Q64 10 FT. x 10 FT. Slant Leg Instant U</span>
+        <span class="checkout-item-price">$479.84</span>
+      </div>
+      <hr class="summary-divider">
+      <div class="summary-row"><span class="label">Subtotal</span><span class="val">$539.82</span></div>
+      <div class="summary-row"><span class="label">Shipping</span><span class="free">Free</span></div>
+      <hr class="summary-divider">
+      <div class="summary-total"><span>Total</span><span>$539.82</span></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function validate() {
+  const name   = document.getElementById('f-name').value.trim();
+  const street = document.getElementById('f-street').value.trim();
+  const city   = document.getElementById('f-city').value.trim();
+  const state  = document.getElementById('f-state').value;
+  const zip    = document.getElementById('f-zip').value.trim();
+  const allFilled = name && street && city && state && zip.length === 5;
+  const btn = document.getElementById('place-order-btn');
+  if (allFilled) {
+    btn.classList.remove('disabled'); btn.classList.add('enabled'); btn.disabled = false;
+  } else {
+    btn.classList.remove('enabled'); btn.classList.add('disabled'); btn.disabled = true;
+  }
+}
+</script>
+
+</body>
+</html>

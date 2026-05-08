@@ -1,0 +1,301 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#111;}
+.nav{background:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 40px;height:52px;border-bottom:0.5px solid #e5e5e5;}
+.nav-left{display:flex;align-items:center;gap:32px;}
+.nav-logo{font-size:15px;font-weight:600;color:#111;display:flex;align-items:center;gap:7px;}
+.nav-links{display:flex;gap:24px;}
+.nav-link{font-size:13px;color:#444;cursor:pointer;padding:4px 0;}
+.nav-link.active{color:#111;font-weight:600;}
+.nav-link.sale{color:#c00;}
+.nav-right{display:flex;align-items:center;gap:16px;}
+.search-box{display:flex;align-items:center;background:#f5f5f7;border-radius:8px;padding:6px 12px;gap:6px;width:180px;}
+.search-box input{background:none;border:none;outline:none;font-size:13px;color:#111;width:100%;}
+.search-box input::placeholder{color:#aaa;}
+.nav-icon{background:none;border:none;cursor:pointer;color:#444;display:flex;align-items:center;position:relative;}
+.cart-count{position:absolute;top:-4px;right:-6px;background:#111;color:#fff;font-size:9px;font-weight:600;width:15px;height:15px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+.page-header{background:#111;padding:36px 40px 40px;}
+.page-eyebrow{font-size:11px;font-weight:500;letter-spacing:2.5px;text-transform:uppercase;color:#666;margin-bottom:10px;}
+.page-title{font-size:44px;font-weight:700;color:#fff;letter-spacing:-1.5px;}
+.promo-wrap{padding:28px 40px;}
+.promo-banner{background:#111;border-radius:14px;padding:24px 32px;display:flex;align-items:center;justify-content:space-between;}
+.promo-tag{font-size:10px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:#666;margin-bottom:6px;}
+.promo-title{font-size:18px;font-weight:600;color:#fff;margin-bottom:4px;}
+.promo-desc{font-size:13px;color:#666;}
+.promo-btn{background:#fff;color:#111;font-size:13px;font-weight:600;border:none;border-radius:30px;padding:11px 24px;cursor:pointer;white-space:nowrap;}
+.filter-bar{padding:0 40px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;border-bottom:0.5px solid #e5e5e5;}
+.filter-left{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.filter-label{font-size:12px;font-weight:500;color:#888;margin-right:4px;white-space:nowrap;}
+.filter-pill{background:#fff;border:0.5px solid #ddd;border-radius:20px;font-size:12px;color:#555;padding:7px 16px;cursor:pointer;transition:border-color 0.15s,color 0.15s;white-space:nowrap;user-select:none;}
+.filter-pill:hover{border-color:#999;color:#111;}
+.filter-pill.active{background:#111;color:#fff;border-color:#111;}
+.filter-right{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+.results-count{font-size:12px;color:#888;white-space:nowrap;}
+.sort-wrap{position:relative;}
+.sort-btn{display:flex;align-items:center;gap:6px;background-color:#fff !important;border:0.5px solid #ddd;border-radius:8px;padding:8px 14px;font-size:13px;cursor:pointer;font-family:inherit;transition:border-color 0.15s;-webkit-appearance:none;appearance:none;}
+.sort-btn:hover{background-color:#fff !important;border-color:#999;}
+.sort-btn:active,.sort-btn:focus{background-color:#fff !important;outline:none;}
+.sort-btn.open{border-color:#111;background-color:#fff !important;}
+.sort-btn svg{transition:transform 0.2s;flex-shrink:0;}
+.sort-btn.open svg{transform:rotate(180deg);}
+.sort-label{font-size:12px;color:#888;white-space:nowrap;}
+.sort-selected-text{font-size:13px;color:#111;white-space:nowrap;}
+.sort-dropdown{position:absolute;top:calc(100% + 6px);right:0;background:#fff;border:0.5px solid #e5e5e5;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,0.1);min-width:210px;z-index:50;overflow:hidden;display:none;}
+.sort-dropdown.open{display:block;}
+.sort-option{padding:11px 16px;font-size:13px;color:#555;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:background 0.1s;}
+.sort-option:hover{background:#f5f5f7;color:#111;}
+.sort-option.selected{color:#111;font-weight:500;}
+.sort-option.selected::after{content:'✓';font-size:12px;color:#111;}
+
+/* ── Active filters bar ── */
+.active-filters{
+  padding:14px 40px 18px;
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:6px;           /* gap between the label, chips, and clear all */
+  border-bottom:0.5px solid #e5e5e5;
+}
+.active-filters-label{font-size:12px;color:#888;white-space:nowrap;margin-right:2px;}
+
+/* chips container — this is where we control spacing BETWEEN chips */
+#cat-chips{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:8px;           /* space between individual category chips */
+}
+
+.active-chip{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  background:#f5f5f7;
+  border-radius:20px;
+  padding:5px 12px;  /* original padding, unchanged */
+  font-size:12px;
+  color:#111;
+}
+.active-chip-x{background:none;border:none;cursor:pointer;color:#888;font-size:14px;line-height:1;padding:0;display:flex;align-items:center;}
+.active-chip-x:hover{color:#111;}
+.clear-all{font-size:12px;color:#0071e3;cursor:pointer;white-space:nowrap;margin-left:4px;}
+.clear-all:hover{text-decoration:underline;}
+
+.products-wrap{padding:32px 40px 56px;}
+.grid-header{margin-bottom:24px;}
+.grid-section-eye{font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:#888;margin-bottom:6px;}
+.grid-section-title{font-size:22px;font-weight:600;color:#111;letter-spacing:-0.4px;}
+.product-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;}
+.pcard{background:#f5f5f7;border-radius:16px;overflow:hidden;cursor:pointer;transition:background 0.15s,transform 0.15s;}
+.pcard:hover{background:#ebebed;transform:translateY(-2px);}
+.pcard-img{height:180px;display:flex;align-items:center;justify-content:center;padding:20px;position:relative;}
+.pcard-badge{position:absolute;top:10px;left:10px;font-size:10px;font-weight:500;padding:3px 8px;border-radius:20px;}
+.badge-sale{background:#fee2e2;color:#991b1b;}
+.badge-new{background:#e8f5e9;color:#1b5e20;}
+.pcard-body{padding:12px 16px 16px;}
+.pcard-brand{font-size:10px;font-weight:600;color:#888;letter-spacing:1px;text-transform:uppercase;margin-bottom:3px;}
+.pcard-name{font-size:13px;font-weight:500;color:#111;margin-bottom:2px;line-height:1.35;}
+.pcard-cat{font-size:11px;color:#aaa;margin-bottom:10px;}
+.pcard-bottom{display:flex;align-items:center;justify-content:space-between;}
+.pcard-price{font-size:14px;font-weight:600;color:#111;}
+.pcard-orig{font-size:11px;color:#aaa;text-decoration:line-through;margin-left:4px;}
+.add-btn{width:26px;height:26px;border-radius:50%;background:#111;border:none;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;transition:background 0.15s;}
+.add-btn:hover{background:#333;}
+</style>
+
+<nav class="nav">
+  <div class="nav-left">
+    <div class="nav-logo">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2L3 7v11h5v-5h4v5h5V7L10 2z" stroke="#111" stroke-width="1.4" stroke-linejoin="round"/></svg>
+      sports equip
+    </div>
+    <div class="nav-links">
+      <span class="nav-link">All Products</span>
+      <span class="nav-link">Sports</span>
+      <span class="nav-link active">Fitness</span>
+      <span class="nav-link">Footwear</span>
+      <span class="nav-link">Apparel</span>
+      <span class="nav-link">Golf</span>
+      <span class="nav-link">Outdoors</span>
+      <span class="nav-link">Fan Shop</span>
+      <span class="nav-link sale">Sale</span>
+    </div>
+  </div>
+  <div class="nav-right">
+    <div class="search-box">
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="5.5" cy="5.5" r="4" stroke="#aaa" stroke-width="1.2"/><line x1="8.5" y1="8.5" x2="12" y2="12" stroke="#aaa" stroke-width="1.2" stroke-linecap="round"/></svg>
+      <input placeholder="Search products..." />
+    </div>
+    <button class="nav-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5" r="3" stroke="#444" stroke-width="1.2"/><path d="M2 14c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="#444" stroke-width="1.2" stroke-linecap="round"/></svg></button>
+    <button class="nav-icon" style="margin-left:4px;">
+      <svg width="17" height="17" viewBox="0 0 17 17" fill="none"><path d="M2 3h13l-1.5 9H3.5L2 3z" stroke="#444" stroke-width="1.2" stroke-linejoin="round"/><circle cx="6" cy="14.5" r="1.1" fill="#444"/><circle cx="11.5" cy="14.5" r="1.1" fill="#444"/></svg>
+      <span class="cart-count">9</span>
+    </button>
+  </div>
+</nav>
+
+<div class="page-header">
+  <p class="page-eyebrow">Browse</p>
+  <h1 class="page-title">Fitness</h1>
+</div>
+
+<div class="promo-wrap">
+  <div class="promo-banner">
+    <div>
+      <p class="promo-tag">Limited time</p>
+      <p class="promo-title">Up to 40% off select gear</p>
+      <p class="promo-desc">New markdowns added daily across all departments</p>
+    </div>
+    <button class="promo-btn">Shop sale →</button>
+  </div>
+</div>
+
+<div class="filter-bar">
+  <div class="filter-left">
+    <span class="filter-label">Category</span>
+    <span class="filter-pill active" id="pill-all" onclick="togglePill(this, true)">All</span>
+    <span class="filter-pill" onclick="togglePill(this, false)">Strength</span>
+    <span class="filter-pill" onclick="togglePill(this, false)">Cardio</span>
+    <span class="filter-pill" onclick="togglePill(this, false)">Recovery</span>
+    <span class="filter-pill" onclick="togglePill(this, false)">Yoga &amp; Pilates</span>
+    <span class="filter-pill" onclick="togglePill(this, false)">Accessories</span>
+    <span class="filter-pill" onclick="togglePill(this, false)">Wearables</span>
+  </div>
+  <div class="filter-right">
+    <span class="results-count" id="results-count">48 products</span>
+    <div class="sort-wrap">
+      <button class="sort-btn" id="sort-btn" onclick="toggleSort()">
+        <span class="sort-label">Sort:&nbsp;</span>
+        <span class="sort-selected-text" id="sort-selected">On sale</span>
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="#111" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="sort-dropdown" id="sort-dropdown">
+        <div class="sort-option selected" onclick="setSort(this,'On sale')">On sale</div>
+        <div class="sort-option" onclick="setSort(this,'New arrivals')">New arrivals</div>
+        <div class="sort-option" onclick="setSort(this,'A → Z')">Name: A → Z</div>
+        <div class="sort-option" onclick="setSort(this,'Z → A')">Name: Z → A</div>
+        <div class="sort-option" onclick="setSort(this,'Price: Low to High')">Price: Low to High</div>
+        <div class="sort-option" onclick="setSort(this,'Price: High to Low')">Price: High to Low</div>
+        <div class="sort-option" onclick="setSort(this,'Best rated')">Best rated</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="active-filters" id="active-filters" style="display:none;">
+  <span class="active-filters-label">Filters:</span>
+  <span id="cat-chips"></span>
+  <span class="active-chip" id="active-sort-chip" style="display:none;">
+    <span id="active-sort-label"></span>
+    <button class="active-chip-x" onclick="clearSort()">×</button>
+  </span>
+  <span class="clear-all" onclick="clearAll()">Clear all</span>
+</div>
+
+<div class="products-wrap">
+  <div class="grid-header">
+    <p class="grid-section-eye">Fitness</p>
+    <h2 class="grid-section-title">Fitness products</h2>
+  </div>
+  <div class="product-grid">
+    <div class="pcard"><div class="pcard-img"><span class="pcard-badge badge-new">New</span><svg width="100" height="100" viewBox="0 0 100 100" fill="none"><rect x="20" y="30" width="60" height="40" rx="8" fill="#222"/><rect x="14" y="42" width="72" height="18" rx="6" fill="#444"/><ellipse cx="50" cy="72" rx="38" ry="10" fill="#ddd"/></svg></div><div class="pcard-body"><p class="pcard-brand">Nike</p><p class="pcard-name">Metcon 9 Training Shoe</p><p class="pcard-cat">Strength · Cardio</p><div class="pcard-bottom"><span class="pcard-price">$150.00</span><button class="add-btn">+</button></div></div></div>
+    <div class="pcard"><div class="pcard-img"><span class="pcard-badge badge-sale">Sale</span><svg width="100" height="100" viewBox="0 0 100 100" fill="none"><rect x="30" y="20" width="40" height="60" rx="6" fill="#1a1a1a"/><rect x="38" y="28" width="24" height="30" rx="3" fill="#333"/><circle cx="50" cy="43" r="9" fill="#111"/><rect x="36" y="70" width="28" height="4" rx="2" fill="#333"/></svg></div><div class="pcard-body"><p class="pcard-brand">Garmin</p><p class="pcard-name">Forerunner 265 GPS Watch</p><p class="pcard-cat">Wearables</p><div class="pcard-bottom"><div><span class="pcard-price">$349.99</span><span class="pcard-orig">$449.99</span></div><button class="add-btn">+</button></div></div></div>
+    <div class="pcard"><div class="pcard-img"><svg width="100" height="100" viewBox="0 0 100 100" fill="none"><rect x="15" y="44" width="70" height="14" rx="7" fill="#222"/><rect x="15" y="44" width="18" height="14" rx="7" fill="#444"/><rect x="67" y="44" width="18" height="14" rx="7" fill="#444"/><rect x="22" y="30" width="12" height="18" rx="4" fill="#333"/><rect x="66" y="30" width="12" height="18" rx="4" fill="#333"/></svg></div><div class="pcard-body"><p class="pcard-brand">Rogue</p><p class="pcard-name">Ohio Bar — 20kg Barbell</p><p class="pcard-cat">Strength</p><div class="pcard-bottom"><span class="pcard-price">$295.00</span><button class="add-btn">+</button></div></div></div>
+    <div class="pcard"><div class="pcard-img"><span class="pcard-badge badge-sale">Sale</span><svg width="100" height="100" viewBox="0 0 100 100" fill="none"><ellipse cx="50" cy="60" rx="30" ry="12" fill="#c5e0d8"/><ellipse cx="50" cy="55" rx="30" ry="14" fill="#3aa88a"/><ellipse cx="50" cy="50" rx="30" ry="14" fill="#2d8c72"/></svg></div><div class="pcard-body"><p class="pcard-brand">Lululemon</p><p class="pcard-name">The Reversible Mat 5mm</p><p class="pcard-cat">Yoga &amp; Pilates</p><div class="pcard-bottom"><div><span class="pcard-price">$68.00</span><span class="pcard-orig">$88.00</span></div><button class="add-btn">+</button></div></div></div>
+    <div class="pcard"><div class="pcard-img"><svg width="100" height="100" viewBox="0 0 100 100" fill="none"><rect x="22" y="30" width="56" height="40" rx="10" fill="#1a1a1a"/><rect x="30" y="38" width="40" height="24" rx="5" fill="#2a2a2a"/><rect x="36" y="44" width="8" height="12" rx="2" fill="#555"/><rect x="48" y="44" width="8" height="12" rx="2" fill="#555"/></svg></div><div class="pcard-body"><p class="pcard-brand">Therabody</p><p class="pcard-name">Theragun Prime Massager</p><p class="pcard-cat">Recovery</p><div class="pcard-bottom"><span class="pcard-price">$199.00</span><button class="add-btn">+</button></div></div></div>
+    <div class="pcard"><div class="pcard-img"><span class="pcard-badge badge-new">New</span><svg width="100" height="100" viewBox="0 0 100 100" fill="none"><rect x="18" y="38" width="64" height="26" rx="13" fill="#111"/><ellipse cx="50" cy="65" rx="34" ry="10" fill="#ddd"/><circle cx="30" cy="51" r="7" fill="#333"/><circle cx="70" cy="51" r="7" fill="#333"/></svg></div><div class="pcard-body"><p class="pcard-brand">Adidas</p><p class="pcard-name">Ultraboost 5 Running Shoe</p><p class="pcard-cat">Cardio</p><div class="pcard-bottom"><span class="pcard-price">$190.00</span><button class="add-btn">+</button></div></div></div>
+    <div class="pcard"><div class="pcard-img"><svg width="100" height="100" viewBox="0 0 100 100" fill="none"><rect x="30" y="25" width="40" height="50" rx="6" fill="#222"/><rect x="38" y="33" width="24" height="10" rx="2" fill="#555"/><rect x="38" y="47" width="24" height="4" rx="2" fill="#444"/><rect x="38" y="55" width="16" height="4" rx="2" fill="#444"/></svg></div><div class="pcard-body"><p class="pcard-brand">Whoop</p><p class="pcard-name">WHOOP 4.0 Fitness Tracker</p><p class="pcard-cat">Wearables</p><div class="pcard-bottom"><span class="pcard-price">$239.00</span><button class="add-btn">+</button></div></div></div>
+    <div class="pcard"><div class="pcard-img"><span class="pcard-badge badge-sale">Sale</span><svg width="100" height="100" viewBox="0 0 100 100" fill="none"><circle cx="50" cy="50" r="28" fill="#e0e0e0"/><circle cx="50" cy="50" r="18" fill="#bbb"/><circle cx="50" cy="50" r="5" fill="#888"/></svg></div><div class="pcard-body"><p class="pcard-brand">Bowflex</p><p class="pcard-name">SelectTech 552 Dumbbells</p><p class="pcard-cat">Strength</p><div class="pcard-bottom"><div><span class="pcard-price">$279.00</span><span class="pcard-orig">$349.00</span></div><button class="add-btn">+</button></div></div></div>
+  </div>
+</div>
+
+<script>
+  var counts = {All:48,Strength:12,Cardio:9,Recovery:7,'Yoga & Pilates':6,Accessories:8,Wearables:6};
+  var DEFAULT_SORT = 'On sale';
+  function togglePill(el, isAll) {
+    var pills = document.querySelectorAll('.filter-pill:not(#pill-all)');
+    var allPill = document.getElementById('pill-all');
+    if (isAll) {
+      pills.forEach(p => p.classList.remove('active'));
+      allPill.classList.add('active');
+    } else {
+      el.classList.toggle('active');
+      allPill.classList.remove('active');
+      var anyActive = Array.from(pills).some(p => p.classList.contains('active'));
+      if (!anyActive) allPill.classList.add('active');
+    }
+    updateCatChips(); updateCount(); updateActiveBar();
+  }
+  function updateCatChips() {
+    var allPill = document.getElementById('pill-all');
+    var container = document.getElementById('cat-chips');
+    container.innerHTML = '';
+    if (!allPill.classList.contains('active')) {
+      document.querySelectorAll('.filter-pill:not(#pill-all).active').forEach(function(p) {
+        var label = p.textContent.trim();
+        var chip = document.createElement('span');
+        chip.className = 'active-chip';
+        chip.innerHTML = label + ' <button class="active-chip-x" onclick="removeCat(this,\'' + label + '\')">×</button>';
+        container.appendChild(chip);
+      });
+    }
+  }
+  function removeCat(btn, label) {
+    document.querySelectorAll('.filter-pill:not(#pill-all)').forEach(function(p) {
+      if (p.textContent.trim() === label) p.classList.remove('active');
+    });
+    var anyActive = Array.from(document.querySelectorAll('.filter-pill:not(#pill-all)')).some(p => p.classList.contains('active'));
+    if (!anyActive) document.getElementById('pill-all').classList.add('active');
+    updateCatChips(); updateCount(); updateActiveBar();
+  }
+  function updateCount() {
+    var allPill = document.getElementById('pill-all');
+    if (allPill.classList.contains('active')) {
+      document.getElementById('results-count').textContent = '48 products';
+    } else {
+      var total = Array.from(document.querySelectorAll('.filter-pill:not(#pill-all).active'))
+        .reduce(function(sum, p) { return sum + (counts[p.textContent.trim()] || 0); }, 0);
+      document.getElementById('results-count').textContent = total + ' products';
+    }
+  }
+  function updateActiveBar() {
+    var catChips = document.getElementById('cat-chips').children.length > 0;
+    var sortChip = document.getElementById('active-sort-chip').style.display !== 'none';
+    document.getElementById('active-filters').style.display = (catChips || sortChip) ? 'flex' : 'none';
+  }
+  function toggleSort() {
+    document.getElementById('sort-btn').classList.toggle('open');
+    document.getElementById('sort-dropdown').classList.toggle('open');
+  }
+  document.addEventListener('click', function(e) {
+    if (!document.querySelector('.sort-wrap').contains(e.target)) {
+      document.getElementById('sort-btn').classList.remove('open');
+      document.getElementById('sort-dropdown').classList.remove('open');
+    }
+  });
+  function setSort(el, label) {
+    document.querySelectorAll('.sort-option').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    document.getElementById('sort-selected').textContent = label;
+    document.getElementById('sort-btn').classList.remove('open');
+    document.getElementById('sort-dropdown').classList.remove('open');
+    var chip = document.getElementById('active-sort-chip');
+    if (label === DEFAULT_SORT) { chip.style.display = 'none'; }
+    else { document.getElementById('active-sort-label').textContent = label; chip.style.display = 'flex'; }
+    updateActiveBar();
+  }
+  function clearSort() {
+    document.querySelectorAll('.sort-option').forEach(o => o.classList.remove('selected'));
+    document.querySelector('.sort-option').classList.add('selected');
+    document.getElementById('sort-selected').textContent = DEFAULT_SORT;
+    document.getElementById('active-sort-chip').style.display = 'none';
+    updateActiveBar();
+  }
+  function clearAll() {
+    document.querySelectorAll('.filter-pill:not(#pill-all)').forEach(p => p.classList.remove('active'));
+    document.getElementById('pill-all').classList.add('active');
+    document.getElementById('cat-chips').innerHTML = '';
+    clearSort(); updateCount(); updateActiveBar();
+  }
+</script>
