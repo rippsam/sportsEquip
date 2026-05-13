@@ -63,6 +63,10 @@ Standalone pages (no nav/footer, no shared scripts):
 - `instagram.html`, `twitter.html`, `newsletter.html` — full-screen image/gif pages.
 - `login-success.html` — post-checkout success page with random DataMonsters image.
 
+## Design files
+
+HTML mockups and prototypes live in `design/`. These are reference files only — they are not deployed and not linked from any page. Push them to GitHub for version history, but do not include them in the site build.
+
 ## Department pages
 - When `?dept=X` is in the URL, `js/home.js` intentionally hides `.hero`, `#promo-section`, `#top-categories-section`, and `.trust`, and shows `#dept-hero` and `#dept-sale-banner`. The dept name is set from the API after load. This is by design.
 
@@ -98,7 +102,26 @@ Loaded on every standard page before all other scripts. Do not redefine these in
 - `escHtml(str)` — HTML-escapes a string.
 - `MULTI_WORD_BRANDS` / `parseBrand(name)` — extracts brand name from product name.
 - `seededRand(seed)` — LCG deterministic RNG; returns a `rand()` function.
+- `pickUnique(arr, count, rand)` — picks `count` unique items from `arr` using the provided seeded RNG.
 - `makeCartControl(cartProduct)` — builds the `+` / qty-stepper DOM node for product cards.
+
+## API wrapper (`js/api.js`)
+
+Loaded on every standard page (included in the page template). Exposes `window.Api` with methods for every API endpoint. All requests go through `apiFetch()` which throws on non-2xx responses. Add new endpoint calls here — never call `fetch()` directly in page scripts.
+
+## Badge registry (`js/badge-registry.js`)
+
+Exposes `window.BadgeRegistry`. Tracks which product IDs currently carry "New" and "Sale" overlay badges, cached in `localStorage` by period number so the same badges appear consistently across all pages during the same period.
+
+Load it on any page that renders product cards, between `cart.js` and the page script:
+
+```html
+<script src="js/cart.js"></script>
+<script src="js/badge-registry.js"></script>
+<script src="js/[page].js"></script>
+```
+
+Pages that currently load it: `index.html`, `all-products.html`, `category.html`, `sale.html`, `product.html`.
 
 ## Cart
 
